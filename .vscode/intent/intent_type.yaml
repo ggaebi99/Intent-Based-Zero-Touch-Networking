@@ -1,0 +1,118 @@
+intent_taxonomy:
+  types:
+    performance:
+      description: "latency/jitter/loss/bandwidth/reliability 등 성능 목표 중심"
+      subtypes:
+        - code: RELIABILITY_FRER
+          description: "No interruption / low loss / redundancy via FRER."
+          primary_docs: ["IEEE 802.1CB — FRER"]
+          typical_keywords: ["without interruption", "no loss", "reliably", "redundancy"]
+
+        - code: DETERMINISTIC_SCHEDULING
+          description: "Bounded latency/jitter via scheduled traffic (TAS)."
+          primary_docs: ["IEEE 802.1Qbv — TAS"]
+          typical_keywords: ["bounded latency", "predictable", "cycle-time", "scheduled"]
+
+        - code: FRAME_PREEMPTION
+          description: "Lower latency/jitter via frame preemption/guard-band."
+          primary_docs: ["IEEE 802.1Qbu — Frame Preemption"]
+          typical_keywords: ["preemption", "guard band", "urgent", "without delay"]
+
+        - code: STREAM_FILTERING_POLICING
+          description: "Per-stream policing/filtering to protect performance under load."
+          primary_docs: ["IEEE 802.1Qci — Per-Stream Filtering and Policing"]
+          typical_keywords: ["bottleneck", "congestion", "limit", "police", "filter"]
+
+        - code: WIRELESS_URLLC
+          description: "Wireless URLLC performance requirements."
+          primary_docs: ["3GPP Release 16 — 5G NR URLLC"]
+          typical_keywords: ["wireless", "5g", "urllc", "interference"]
+
+        - code: INDUSTRIAL_MOTION_ETHERNET
+          description: "Motion/control loop performance in industrial Ethernet stacks."
+          primary_docs: ["EtherCAT System Description", "PROFINET IRT", "Ethernet POWERLINK"]
+          typical_keywords: ["motion", "torque", "position", "robotic arm", "cycle"]
+
+        - code: CONTROL_LOOP_REALTIME
+          description: "Real-time control semantics (immediate apply / real-time update)."
+          primary_docs: ["IEEE 802.1Qbv", "IEEE 802.1Qbu", "EtherCAT/PROFINET/POWERLINK"]
+          typical_keywords: ["real time", "immediately", "without delay", "promptly"]
+
+    operational:
+      description: "안전/동기화/deterministic 동작/운영 제약 중심"
+      subtypes:
+        - code: TIME_SYNC
+          description: "Clock/time synchronization and drift control."
+          primary_docs: ["IEEE 802.1AS-2020 — Timing and Synchronization"]
+          typical_keywords: ["synchronization", "clock", "timing", "drift", "gPTP"]
+
+        - code: SAFETY
+          description: "Safety-critical sensing/commands (e-stop, interlock)."
+          primary_docs: ["ISO 13849", "IEC 61508 overview (survey)"]
+          typical_keywords: ["safety", "emergency stop", "interlock", "failsafe"]
+
+        - code: DETERMINISTIC_SCHEDULING
+          description: "Operational deterministic behavior via TAS."
+          primary_docs: ["IEEE 802.1Qbv — TAS"]
+          typical_keywords: ["deterministic", "time-aware", "cycle-time", "gate control"]
+
+        - code: FRAME_PREEMPTION
+          description: "Operational guard-band/preemption requirement."
+          primary_docs: ["IEEE 802.1Qbu — Frame Preemption"]
+          typical_keywords: ["guard band", "preemption"]
+
+        - code: CONTROL_LOOP_REALTIME
+          description: "Operational real-time deadlines for control actions."
+          primary_docs: ["IEEE 802.1Qbv", "IEEE 802.1Qbu", "Industrial Ethernet docs"]
+          typical_keywords: ["deadline", "processed within", "strict", "immediate"]
+
+    application:
+      description: "사람이 원하는 동작/서비스 품질 (AGV smooth, vision quality 등)"
+      subtypes:
+        - code: CONTROL_LOOP_REALTIME
+          description: "Application-level realtime behavior (smooth motion, instant update)."
+          primary_docs: ["IEEE 802.1Qbv", "Industrial Ethernet docs", "3GPP Rel-16 (if wireless)"]
+          typical_keywords: ["smoothly", "instantly", "real-time", "update"]
+
+        - code: RELIABILITY_FRER
+          description: "Application-level continuity (no interruptions)."
+          primary_docs: ["IEEE 802.1CB — FRER"]
+          typical_keywords: ["continuous", "must not be interrupted"]
+
+        - code: STREAM_FILTERING_POLICING
+          description: "Protect app flows under congestion / fairness / bottleneck control."
+          primary_docs: ["IEEE 802.1Qci"]
+          typical_keywords: ["bottleneck", "congestion", "stable", "priority"]
+
+        - code: WIRELESS_URLLC
+          description: "If the app relies on wireless stability with mobility."
+          primary_docs: ["3GPP Release 16 — 5G NR URLLC"]
+          typical_keywords: ["wireless", "mobile", "many devices active"]
+
+        - code: OPCUA_PUBSUB
+          description: "If the app uses OPC UA PubSub semantics."
+          primary_docs: ["OPC UA Part 14: PubSub"]
+          typical_keywords: ["opc ua", "pubsub"]
+
+    policy:
+      description: "보안/격리/접근제어/우선순위 강제/경로 고정 등 정책 의도"
+      subtypes:
+        - code: STREAM_FILTERING_POLICING
+          description: "Isolation / filtering / access restriction / enforcement."
+          primary_docs: ["IEEE 802.1Qci — Per-Stream Filtering and Policing"]
+          typical_keywords: ["isolate", "restricted", "authorized", "blocked", "violation"]
+
+        - code: SAFETY
+          description: "Policy tied to safety-critical protection/priority."
+          primary_docs: ["ISO 13849", "IEC 61508 overview (survey)"]
+          typical_keywords: ["safety-critical", "incident", "emergency"]
+
+        - code: DETERMINISTIC_SCHEDULING
+          description: "Priority enforcement and deterministic handling policies."
+          primary_docs: ["IEEE 802.1Qbv — TAS"]
+          typical_keywords: ["priority", "elevated priority", "under congestion"]
+
+        - code: WIRELESS_URLLC
+          description: "Wireless policy constraints (e.g., secure wireless control)."
+          primary_docs: ["3GPP Release 16 — 5G NR URLLC"]
+          typical_keywords: ["wireless", "5g"]

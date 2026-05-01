@@ -1,0 +1,193 @@
+<<BasicFunctions>>
+3 Basic functions The basic functions of Conformance Class A include cyclic exchange of I/O data with real-time properties, acyclic data communication for reading and writing of demand-oriented data (parameters, diagnostics), including the identification & maintenance function (I&M) for reading out device information and a flexible alarm model for signaling device and network errors with three alarm levels (maintenance required, urgent maintenance required, and diagnostics) -> see Table 1.
+Requirement Technical function/ solution Cyclic data exchange PROFINET with RT communication Acyclic parameter data/ Device identification (HW/ FW) Read Record/ Write Record I&M0 Device/ network diagnos- tics (alarms) Diagnostics and maintenance Table 1: List of basic functions 3.1 Cyclic data exchange Cyclic I/O data are transmitted via the "IO Data CR" unacknowledged as real-time data between provider and consumer in an assignable time base.
+The cycle time can be specified individually for connections to the individual devices and are thus adapted to the requirements of the application.
+t Phase 1 (1 ms) Phase 2 (1 ms) Phase 3 (1 ms) Phase 4 (1 ms) Cycletime (4 ms) D1 D2 D3 IO-Controller IO-Devices 1 ms 2 ms 4 ms PROFINET Figure 10: Real-time communication with cycle time monitoring Likewise, different cycle times can be selected for the input and output data, within the range of from 250 µs to 512 ms.
+The connection is monitored using a time monitoring setting that is derived from a multiple of the cycle time.
+During data transmission in the frame, the data of a subslot are followed by a provider status.
+This status information is evaluated by the respective consumer of the I/O data.
+It can use this information to evaluate the validity of the data from the cyclic data exchange alone.
+In addition, the consumer statuses for the counter direction are transmitted.
+The data in the message frames are followed by accompanying information that provides information about the data's validity, the redundancy, and the diagnostic status (data status, transfer status).
+The cycle information (cycle counter) of the provider is also specified so that its update rate can be determined easily.
+Failure of cyclic data to arrive is monitored by the respective consumer in the communication relation.
+If the configured data fail to arrive within the monitoring time, the consumer sends an error message to the application (Figure 10).
+The cyclic data exchange can be realized with standard Ethernet controllers and takes place without any TCP/IP information directly on Layer 2 with Ethertype 0x8892.
+For the network infrastructure in the case of CC-A, commercially available switches that meet at least the following requirements can be used: • Support of 100 Mbps full duplex with auto crossover and auto negotiation according to IEEE 802.1D.
+• Prioritization of cyclic data with VLAN tag priority 6 according to IEEE 802.1Q.
+• Support of neighborhood detection with Link Layer Discovery Protocol (LLDP) according to IEEE 802.1AB, i.e., these messages with the special Ethertype must not be forwarded by the switch.
+3.2 Acyclic data exchange Acyclic data exchange using the "Record Data CR" can be used for parameter assignment or confi guration of IO devices or reading out status information.
+This is accomplished with the read/ write frames using standard IT services via TCP/IP1, in which the diff erent data records are distinguished by their index.
+In addition to the data records that are freely defi nable by device manufacturers, the following system data records are also specially defi ned: Diagnostic information about the network and the devices can be read out by the user from any device at any time.
+Identifi cation and maintenance information (I&M) for explicit identifi cation of the devices and modules and their versions.
+The ability to read out identifi cation information from a fi eld device is very helpful for maintenance purposes.
+For example, this allows inferences to be drawn regarding incorrect behavior or unsupported functionality in a fi eld device.
+This information is specifi ed in the I&M data structures.
+The I&M functions are subdivided into 5 diff erent blocks (IM0 ...
+IM4) and can be addressed separately using their index.
+Every IO device must support the IM0 function with information about hardware and fi rmware versions.
+The I&M Specifi cation "Identifi cation & Maintenance Functions" [3.502] provides additional information regarding this concept.
+1 In this brochure, TCP/IP is used as the term for the internet services.
+UDP is always used as the protocol for PROFINET IO.
+3.3 Device/network diagnostics A status-based maintenance approach is currently gaining relevance for operation and maintenance.
+It is based on the capability of devices and components to determine their states and to communicate them over agreed mechanisms.
+A system for reliable signaling of alarms and status messages by the IO devices to the IO controller was defi ned for PROFINET IO for this purpose.
+This alarm concept covers both system-defi ned events (such as removal and insertion of modules) as well as signaling of faults that were detected in the utilized controller technology (e.g., defective load voltage or wire break).
+This is based on a state model that defi nes "good" and "defective" status as well as the "maintenance required" and "maintenance demanded" prewarning levels.
+A typical example of "maintenance required" is the loss of media redundancy.
+When a redundant connection is lost, "maintenance required" is signaled, but all devices can still be reached.
+required demanded Diagnostics Alarm Alarm Data Maintenance Alarm IO-Device IO-Controller Figure 11: Diagnostic model for signaling faults with diff erent priority Diagnostic alarms must be used if the error or event occurs within an IO device or in conjunction with the connected components.
+You can signal an incoming or outgoing fault status (Figure 11).
+In addition, the user can defi ne corresponding process alarms for messages from the process, e.g., limit temperature exceeded.
+In this case, the IO device may still be operable.
+These process alarms can be prioritized diff erently from the diagnostic alarms.
+The documentation "Diagnosis for PROFINET IO" [7.142] provides additional information about these concepts.
+
+
+<<IRT>>
+5 Synchronous real-time Cable Cable Cable Cable t1 t2 t3 t4 Figure 16: Synchronization of clock pulse generators within an IRT domain by the clock master Conformance Class C includes all necessary network-wide synchronization functions for applications with the most stringent requirements for deterministic behavior.
+Networks based on Conformance Class C enable applications having a jitter of less than 1 microsecond.
+The cyclic data packets are transferred as synchronized packets on a reserved bandwidth.
+All other packets, such as packets for diagnostics or TCP/IP, share the rest of the Ethernet bandwidth.
+By default, the minimum update rate is defined at 250  µs in Conformance Class C.
+For maximum control performance, this can be reduced to as low as 31.25 µs, depending on the hardware used.
+In order to expand data volumes when cycle times are set at less than 250 µs, a message frame optimization method (dynamic frame packing, DFP) is incorporated.
+With this method, nodes that are wired together in a line structure are addressed with one frame.
+In addition, for cycle times less than 250 µs, the TCP/IP communication is fragmented and transmitted in smaller packets.
+These concepts and the planning procedure are explained in detail in the document "PROFINET IRT Engineering" [7.172].
+The most important elements are summarized in the following.
+5.1 Synchronized communication In order for the bus cycles to run synchronously (at the same time) with a maximum deviation of 1 µs, all devices involved in the synchronous communication must have a common clock.
+A clock master uses synchronization frames to synchronize all local clock pulse generators of devices within a clock system (IRT domain) to the same clock (Figure 16).
+For this purpose, all of the devices involved in this type of clock system must be connected directly to one another, without crossing through any non- synchronized devices.
+Multiple independent clock systems can be defined in one network.
+To achieve the desired accuracy for the synchronization and synchronous operation, the runtime on each connecting cable must be measured with defined Ethernet frames and figured into the synchronization.
+Special hardware precautions must be taken for implementing this clock synchronization.
+The bus cycle is divided into different intervals for synchronized communication (Figure 17).
+First, the synchronous data are transmitted in the red interval.
+This red interval is protected from delays caused by other data and allows a high level of determinism.
+In the subsequent open green interval, all other data are transmitted according to IEEE 802 and the specified priorities.
+The division of the individual intervals can vary.
+If forwarding of the data before the start of the next reserved interval is not assured, these frames are stored temporarily and sent in the next green interval.
+5.2 Mixed operation A combination of synchronous and asynchronous communication within an automation system is possible, if certain preconditions are met.
+Figure 18 shows a mixed operation.
+In this example, a synchronizable switch has been integrated in the field device for devices 1 to 3.
+The other two devices are connected via a standard Ethernet port and thus communicate asynchronously.
+The switch ensures that this communication occurs only during the green interval.
+IO-Controller (Sync-Master) IO-Device 1 IO-Device 2 IO-Device 3 Switch which supports IRT scheduling IRT Domain Devices without synchronous application Figure 18: Mixed operation of synchronized and unsynchronized applications Real-time phase TCP/IP phase TCP/IP phase Real-time phase C 3 C 3 C 3 C2 C 2 C1 Cycle e.g.
+1ms C1 C2 C2 C3 C3 C3 1 2 3 Controller Device 1 Device 2 Device 3 Figure 17: IRT communication divides the bus cycle into a reserved interval (red) and an open interval (green) 5.3 Optimized IRT mode When the time ratios are subject to stringent requirements, the efficiency of the topology- oriented synchronized communication can be optimized using dynamic frame packing (DFP) (Figure 19).
+TCP/IP phase Real-time phase C 3 C 3 C 3 C 2 C 2 C 1 Cycle e.g.
+1ms Header Header Header CRC CRC CRC Controller Device 3 Device 2 Device 1 Figure 19: Packing of individual frames into a group frame For a line structure, the synchronous data of several devices are optionally combined into one Ethernet frame.
+The individual cyclic real-time data can be dynamically extracted for each node.
+Because the data from the field devices to the controller are also strictly synchronized, these data can be assembled by the switch in a single Ethernet frame.
+Ideally, only one frame is then transmitted for all operated field devices in the red interval.
+This frame is disassembled or assembled in the corresponding switch, if required.
+The sum of these frames is shorter because the header only has to be transferred once.
+DFP is optional for systems with stringent requirements.
+The functionalities of the other intervals are retained, i.e., a mixed operation is also possible here.
+To achieve short bus cycles of up to 31.25 µs, however, the green interval must also be sharply reduced.
+To accomplish this, the standard Ethernet frames for the application are disassembled transparently into smaller fragments, transmitted in small pieces, and reassembled.
+
+
+<<OptionalRT>>
+6 Optional functions IO-Controller 1 IO-Controller 2 Figure 20: Shared device: Access by multiple controllers to different modules in a device PROFINET also offers a variety of optional functions that are not included in devices by default by way of conformance classes (Table 2).
+If additional functions are to be used, this must be checked on a case-by-case basis using the device properties (data sheet, manuals, GSDML file).
+Requirement Technical function/ solution Multiple access to inputs by various controllers Shared Input Distribution of device functions to various controllers Shared device Extended device identification Identification & Maintenance IM1-4 Automatic parameter assignment of devices using parameter sets Individual param- eter server Configuration changes during operation Configuration in Run (CiR) Time stamping of I/O data Time sync Fast restart after voltage re- covery Fast start up (FSU) Higher availability through ring redundancy MRP/MRPD Call of a device-specific engineering tool Tool Calling Inter- face (TCI) Table 2: List of possible optional functions 6.1 Multiple access to fi eld devices IO-Controller 1 IO-Controller 2 Figure 21: Shared input: Multiple controllers read the same inputs on a device The innovative starting point for shared devices is the parallel and independent access of two diff erent controllers to the same device (Figure 20).
+In the case of a shared device, the user confi gures a fi xed assignment of the various I/O modules used in a device to a selected controller.
+One possible application of a shared device is in fail- safe applications in which a fail-safe CPU controls the safe portion of the device and a standard controller controls the standard I/O within the same station.
+In the safety scenario, the F-CPU uses the fail-safe portion to safely switch off the supply voltage of the outputs.
+In the case of a shared input, there is parallel access to the same input by two diff erent controllers (Figure 21).
+Thus, an input signal that must be processed in two diff erent controllers of a system does not have to be wired twice or transferred via CPU-CPU communication.
+6.2 Extended device identifi cation Further information for standardized and simplifi ed identifi cation and maintenance is defi ned in additional I&M data records.
+The I&M1-4 data contain plant-specifi c information, such as installation location and date, and are created during confi guring and written to the device (Table 3).
+IM1 TAG_FUNCTION TAG_LOCATION Plant designation Location designation IM2 INSTALLATION_ DATE Installation date IM3 DESCRIPTOR Comments IM4 SIGNATURE Signature T able 3: Extended device identifi cation 6.3 Individual parameter server The individual parameter server functionality is available for backing up and reloading of other optional individual parameters of a fi eld device (Figure 22).
+General Parameters Engineering Tool PROFINET IO-Controller Host Device Tool iPar Server 3 6 5 4 2 1 GSDML i-Parameters (Individual Parameters) i-Parameters Read/Write Record Data GSD Connect/Write Alarm Notification Upload Figure 22: A parameter server can be used to automatically reload backed-up data during device replacement The basic parameter assignment of a fi eld device is carried out using the parameters defi ned in the GSDML fi le for the fi eld device.
+A GSDML fi le contains module parameters for I/O modules, among other things.
+These are stored as static parameters and can be loaded from the IO controller to an IO device during system power- up.
+For many fi eld devices it is either impossible or inappropriate to initialize parameters using the GSDML approach due to the quantities, the user guidance, or the security requirements involved.
+Such data for specifi c devices and technologies are referred to as individual parameters (iPar).
+Often, they can be specifi ed only during commissioning.
+If such a fi eld device fails or is replaced, these parameters must also be reloaded to the new fi eld device.
+An additional tool is not needed for this.
+The individual parameter server provides plant owners a convenient and uniform solution for this.
+IOC IOC IOC P AR AR CiR-AR P AR CiR-AR State before CiR Phase 1 Establish a second AR CiR Phase 2 AR switch over t IOD IOD IOD CiRP PB IOC P AR IOD CiR finish CiR (B) B: Backup P: Primary CiR: the CiR-AR is always Backup Figure 23: Confi guration changes without plant interruption thanks to redundant connection 6.4 Configuration in Run Like in the case of redundancy, uninterrupted plant operation also plays a critical role in process automation in the case of configuration changes to devices and the network or insertion, removal or replacement of devices or individual modules (Figure 23).
+All of these "Configuration in Run" measures (CiR) are carried out in PROFINET without any interruption and without adversely affecting network communication.
+This ensures that plant repairs, modifications, or expansions can be performed without a plant shutdown in continuous production processes, as well.
+This concept is described in detail in the document "Configure in Run" [7.112].
+6.5 Time stamping In large plants, the ability to assign alarms and status messages to a sequence of events is often required.
+For this purpose, an optional time stamping of these messages is possible in PROFINET IO.
+In order to time stamp data and alarms, the relevant field devices must have the same time of day.
+To accomplish this, a master clock and the time synchronization protocol are used to set the clocks to the same time.
+6.6 Fast start up Fast Start Up (FSU) defines an optimized system power-up in which data exchange begins much faster starting with the second power-up since many parameters are already stored in the field devices.
+This optional path can be used in parallel with standard power-up (which is still used after "Power On" in the case of the first power-up or "Reset").
+It must be possible to store communication parameters retentively for this.
+6.7 Higher availability Chaining of multiport switches allowed the star topology widely used in Ethernet to be effectively combined with a line structure.
+This combination is especially well-suited for control cabinet connections, i.e., line connection between control cabinets and star connection to process-level field devices.
+If the connection between two field devices in a line is interrupted, the field devices situated after the interruption are no longer accessible.
+If increased availability is required, provision must be made for redundant communication paths when planning the system, and field devices/switches that support the redundancy concept of PROFINET must be used.
+A redundant communication path can be formed efficiently by closing a line to form a ring.
+In the event of an error, the connection to all nodes is ensured via the alternative connection.
+This achieves a tolerance for one fault.
+Organizational measures must be taken to ensure that this fault is eliminated before a second once occurs.
+PROFINET has two mechanisms for setting up ring- shaped media redundancy, depending on the requirements: Media Redundancy Protocol (MRP) The MRP protocol according to IEC 62439 describes PROFINET redundancy with a typical reconfiguration time of < 200 ms for communication paths with TCP/IP and RT frames after a fault.
+Error- free operation of an automation system involves Bus operation is okay Logical opening of bus to a line Redundancy manager Closing of bus to a logical ring Logical ring Redundancy manager Figure 24: Preventing circulation of frames by logical separation of the bus a media redundancy manager (MRM) and several media redundancy clients (MRC) arranged in a ring, as shown in Figure 24.
+The task of a media redundancy manager (MRM) is to check the functional capability of the configured ring structure.
+This is done by sending out cyclic test frames.
+As long as it receives all of its test frames again, the ring structure is intact.
+Through this behavior, a MRM converts a ring structure into a line structure and thus prevents the circulating of frames.
+A media redundancy client is a switch that acts only as a "passer" of frames and generally does not assume an active role.
+In order for it to be integrated in a ring, it must have at least two switch ports.
+Media redundancy for planned duplication (MRPD) IEC 61158 describes the redundancy concept MRPD (Media Redundancy for Planned Duplication) for topology-optimized IRT communication, which enables smooth switchover from one communication path to another in the event of a fault.
+During system power-up, the IO controller loads the data of the communication paths for both communication channels (directions) in a communication ring to the individual nodes.
+Thus, it is immaterial which node fails because the loaded "schedule" for both paths is available in the field devices and is monitored and adhered to without exception.
+Loading of the "schedule" alone is sufficient to exclude frames from circulating in this variant: the recipient rejects the second frame.
+6.8 Call of an engineering tool Complex devices, such as drives, laser scanners, etc., often have their own tools (engineering software, tools) for making settings for these IO devices.
+With the tool calling interface (TCI) these device tools can now be called directly from the plant engineering system for parameter assignment and diagnostics.
+In this case, the communication of PROFINET is used directly for the settings in the field device.
+In addition to the directly integrated device tools, other technologies such as EDDL and FDT can also be used with appropriate adaption software.
+TCI consists of the following main components: Call interface: The user can call up various field device user interfaces (Device Tools = DT) from the engineering system (ES).
+Functions are primarily initiated in the device tools through user interaction.
+Communication interface: The TCI communication server allows the field device user interface (DT) to communicate with the field device.
+
+
+<<Profiles>>
+8 Application Profiles By default, PROFINET transfers the specified data transparently.
+It is up to the user to interpret the sent or received data in the user program of a PC- based solution or programmable logic controller.
+Application profiles are joint specifications concerning certain properties, performance characteristics, and behavior of devices and systems that are developed by manufacturers and users.
+The term "profile" can apply to a few specifications for a particular device class or a comprehensive set of specifications for applications in a particular industry sector.
+In general, two groups of application profiles are distinguished: General application profiles that can be used for different applications (examples of these include the PROFIsafe and PROFIenergy profiles).
+Specific application profiles that were developed in each case only for a specific type of application, such as PROFIdrive or devices for process automation.
+These application profiles are specified by PI based on market demand and are available on the PI website.
+8.1 PROFIsafe The PROFIsafe designation refers to a protocol defined in IEC 61784-3-3 for the implementation of functional safety (fail-safe) and recognized by IFA and TÜV.
+PROFIsafe can be used with PROFIBUS and PROFINET alike.
+The use of PROFIsafe enables elements of a fail- safe controller to be transferred directly to the process control on the same network.
+The need for additional wiring is eliminated.
+An introduction to PROFIsafe can be found in "PROFIsafe System Description" [4.352], and the specification is available under [3.192].
+8.2 PROFIdrive The PROFIdrive designation refers to the specification of a standardized drive interface for PROFIBUS and PROFINET.
+This application- oriented profile, which has been standardized in IEC 61800-7, contains standard definitions (syntax and semantics) for communication between drives and automation systems, thus assuring vendor neutrality, interoperability, and investment protection.
+The PROFIdrive application profile provides the foundation for almost every drive task in the field of industrial automation engineering.
+It defines the device behavior and the procedure for accessing drive data of electric drives and also optimally integrates the additional PROFIsafe and PROFIenergy profiles.
+An introduction to PROFIdrive can be found in "PROFIdrive System Description" [4.322], and the specification is available under [3.172].
+8.3 PROFIenergy The high cost of energy and compliance with legal obligations are compelling industry to engage in energy conservation.
+The recent trends toward the use of efficient drives and optimized production processes have been accompanied by significant energy savings.
+However, in today's plants and production units, it is common for numerous energy consuming loads to continue running during pauses.
+PROFIenergy addresses this situation.
+PROFIenergy enables an active and effective energy management.
+By purposefully switching off unneeded consumers, energy demand and, thus, energy costs can be significantly reduced.
+In doing so, the power consumption of automation components such as robots and laser cutting machines or other subsystems used in production industries is controlled using PROFIenergy commands.
+PROFINET nodes in which PROFIenergy functionality is implemented can use the commands to react flexibly to idle times.
+In this way, individual devices or unneeded portions of a machine can be shut down during short pauses, while a whole plant can be shut down in an orderly manner during long pauses.
+In addition, using PROFIenergy the plant production can be sized to the energy consumption (readback of energy values) and optimized.
+The specification of PROFIenergy is available under [3.802] .
+
+
+<<Security>>
+10.4 Security For networking within a larger production facility or over the Internet, PROFINET relies on a phased security concept.
+It recommends a security concept optimized for the specific application case, with one or more upstream security zones.
+On the one hand, this unburdens the PROFINET devices, and on the other hand, it allows the security concept to be optimized to changing security requirements in a consistent automation engineering solution.
+Office Firewall Security Modules Service Computer Internet Factory Figure 29: Access to machines and systems using secure connections The security concept provides for protection of both individual devices as well as whole networks from unauthorized access.
+In addition, there are security modules that will allow networks to be segmented and, thus, also separated and protected from the safety standpoint.
+Only explicitly identified and authorized messages reach the devices located inside such segments from the outside (Figure 29).
+Additional information regarding security can be found in the "PROFINET Security Guideline" [7.002].
+Production network Production line 2 Automation cell Automation cell Automation cell Automation cell Figure 30: Segmentation of automation network
+
+

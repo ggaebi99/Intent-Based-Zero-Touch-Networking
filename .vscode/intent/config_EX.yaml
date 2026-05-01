@@ -1,0 +1,15 @@
+llm:
+  mode: openai          # mock | openai
+  openai:
+    api_key: ""  # api_key
+    model: "gpt-5-nano"
+    temperature: 0.1
+
+paths:
+  index_dir: "./bm25_index"
+  data_dir: "" # data_directory
+
+retrieval:
+  routed_k: 2
+  top_k_per_kb: 6
+  final_top_k: 8

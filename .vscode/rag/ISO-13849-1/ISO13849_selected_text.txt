@@ -1,0 +1,846 @@
+<<Section3>>
+IEC 62061:2021, Safety of machinery — Functional safety of safety-related control systems IEC/IEEE 82079-1:2019, Preparation of information for use (instructions for use) of products — Part 1: Principles and general requirements 3 Terms, definitions, symbols and abbreviated terms 3.1 Terms and definitions For the purposes of this document, the terms and definitions given in ISO 12100:2010 and the following apply.
+ISO and IEC maintain terminology databases for use in standardization at the following addresses: — ISO Online browsing platform: available at https://www.iso.org/obp — IEC Electropedia: available at https://www.electropedia.org/ S14 safety-related part of a control system SRP/CS part of a control system that performs a safety function (3.1.27), starting from a safety-related input(s) to generating a safety-related output(s) Note 1 to entry: The safety-related parts of a control system start at the point where the safety-related inputs are initiated (including, for example, the actuating cam and the roller of the position switch) and end at the output of the power control elements (including, for example, the main contacts of a contactor).
+dA2 machine control system system which responds to input signals from parts of machine elements, operators, external control equipment or any combination of these and generates output signals causing the machine to behave in the intended manner Note 1 to entry: The machine control system can use any technology or any combination of different technologies (e.g.
+electrical/electronic, hydraulic, pneumatic and mechanical).
+2.1.3 safety requirements specification SRS specification containing the requirements for the safety functions (3.1.27) that have to be met by the safety-related control system in terms of characteristics of the safety functions (functional requirements) and required performance levels (PL,) (3.1.6) [SOURCE: IEC 61508-4:2010, 3.5.11, modified — Information from IEC 61508-4:2010, 3.5.12 has been included.] 3.1.4 category classification of the subsystem (3.1.45) in respect to its resistance to faults (3.1.8) and the subsequent behaviour in the fault condition which is achieved by the structural arrangement of the parts, fault detection and/or by their reliability 3.1.5 performance level PL discrete level used to specify the ability of safety-related parts of control systems (SRP/CS) (3.1.1) to perform a safety function (3.1.27) under foreseeable conditions Note 1 to entry: See 6.1 for a general overview of performance level.
+2 3.1.6 required performance level PL, performance level (3.1.5) required in order to achieve the required risk (3.1.19) reduction for each safety function (3.1.27) Note 1 to entry: See 5.3 and Figure A.1 for further information on required performance level (PL,).
+3.17 safety integrity level SIL discrete level (one out of a possible four) for specifying the safety integrity requirements of safety functions (3.1.27) to be allocated to the safety-related systems, where safety integrity level 4 has the highest level of safety integrity and safety integrity level 1 has the lowest Note 1 to entry: In this document only SIL 1 to SIL 3 are considered.
+[SOURCE: IEC 61508-4:2010, 3.5.8, modified — “allocated to safety-related systems” has been added to definition, NOTES have been deleted and new Note 1 to entry has been added.] 3.1.8 fault abnormal condition that may cause a reduction in, or loss of, the capability of a functional unit to perform a required function Note 1 to entry: A fault is often the result of a failure (3.1.10) of the item itself, but can exist without prior failure.
+Note 2 to entry: In this document “fault” means random fault or fault caused by a systematic failure (3.1.14).
+[SOURCE: IEC 60050-192:2015, modified — Note 2 to entry has been amended.] 3.1.9 fault exclusion exclusion of certain faults (3.1.8) within a safety-related part of a control system (SRP/CS), if this exclusion can be justified due to the negligible probability of these faults 3.1.10 failure termination of the ability of a device to perform a required function Note 1 to entry: After a failure, the device has a fault (3.1.8).
+Note 2 to entry: “Failure” is an event, as distinguished from “fault”, which is a state.
+Note 3 to entry: Failures which only affect the availability of the process under control are outside of the scope of this document.
+[SOURCE: IEC 60050-192:2015, modified — Note 3 to entry has been amended.| S.A1,11 permanent fault fault (3.1.8) of an item that persists until an action of corrective maintenance is performed [SOURCE: IEC 60050-192:2015] 3.1.12 dangerous failure failure (3.1.10) of an element and/or subsystem (3.1.45) and/or system that plays a part in implementing the safety function (3.1.27) that: a) prevents a safety function from operating when required (demand mode) or causes a safety function to fail (continuous mode) such that the machine/machinery is put into a hazardous or potentially hazardous state; or 3 b) decreases the probability that the safety function operates correctly when required [SOURCE: IEC 61508-4:2010, 3.6.7, modified — "EUC" has been replaced by "machine/machinery".] 31.13 common cause failure CCF failure (3.1.10) that is the result of one or more events, causing concurrent failures of two or more separate channels (3.1.47) in a multiple channel subsystem (3.1.45), leading to failure of a safety function (3.1.27) Note 1 to entry: Common cause failures are not identical with common mode failures (see ISO 12100:2010, 3.36).
+[SOURCE: IEC 61508-4:2010, 3.6.10, modified — "system failure" has been changed to "failure of a safety function".
+Note 1 to entry has been added.| 3.1.14 systematic failure failure (3.1.10) related in a deterministic way to a certain cause, which can only be eliminated by a modification of the design or of the manufacturing process, operational procedures, documentation or other relevant factors Note 1 to entry: Corrective maintenance without modification will usually not eliminate the failure cause.
+Note 2 to entry: A systematic failure can be induced by simulating the failure cause.
+Note 3 to entry: Examples of causes of systematic failures include human error in — the safety requirements specification (SRS) (3.1.3), — the design, manufacture, installation, operation of the hardware, — the design, implementation, of the software, and — inadequately specifying environmental conditions.
+[SOURCE: IEC 60050-192:2015] 3.4.15 muting temporary automatic suspension of a safety function(s) (3.1.27) by the SRP/CS [SOURCE: IEC 61496-1:2020, 3.16] 3.1.16 harm physical injury or damage to health [SOURCE: ISO 12100:2010, 3.5] a117 hazard potential source of harm (3.1.16) Note 1 to entry: The term "hazard" can be qualified in order to define its origin (e.g.
+mechanical hazard, electrical hazard) or the nature of the potential harm (e.g.
+electric shock hazard, cutting hazard, toxic hazard and fire hazard).
+Note 2 to entry: The hazard envisaged in this definition either: — is permanently present during the intended use of the machine (e.g.
+motion of hazardous moving elements, electric arc during a welding phase, unhealthy posture, noise emission, high temperature); or 4 — can appear unexpectedly (e.g.
+explosion, crushing hazard as a consequence of an unintended/unexpected start-up, ejection as a consequence of a breakage, fall as a consequence of acceleration/deceleration).
+[SOURCE: ISO 12100:2010, 3.6, modified — Note 3 to entry has been deleted.| 3.1.18 hazardous situation circumstance in which a person is exposed to at least one hazard (3.1.17) Note 1 to entry: The exposure can result in harm (3.1.16) immediately or over a period of time.
+[SOURCE: ISO 12100:2010, 3.10] 3.1.19 risk combination of the probability of occurrence of harm (3.1.16) and the severity of that harm [SOURCE: ISO 12100:2010, 3.12] 3.1.20 residual risk risk (3.1.19) remaining after risk reduction measures (protective measures) (3.1.22) have been taken Note 1 to entry: See Figure 3.
+[SOURCE: ISO 12100:2010, 3.13, modified — Note 1 to entry has been modified.] 3.1.21 risk assessment overall process comprising risk analysis (3.1.23) and risk evaluation (3.1.24) [SOURCE: ISO 12100:2010, 3.17] 3.1.22 risk reduction measure protective measure action or means to eliminate hazards (3.1.17) or reduce risks (3.1.19) EXAMPLE Inherently safe design; protective devices; personal protective equipment; information for use and installation; organization of work; training; application of equipment; supervision.
+[SOURCE: ISO/IEC Guide 51:2014, 3.13] 3.1.23 risk analysis combination of the specification of the limits of the machine, hazard (3.1.17) identification and risk (3.1.19) estimation [SOURCE: ISO 12100:2010, 3.15] 3.1.24 risk evaluation judgement, on the basis of risk analysis (3.1.23), of whether risk reduction objectives have been achieved [SOURCE: ISO 12100:2010, 3.16] 3.1.25 intended use of the machine use of a machine in accordance with the information provided in the instructions for use [SOURCE: ISO 12100:2010, 3.23] 5 3.1.26 reasonably foreseeable misuse use of a machine in a way not intended by the designer, but which can result from readily predictable human behaviour [SOURCE: ISO 12100:2010, 3.24] 3.1.27 safety function function of a machine whose failure (3.1.10) can result in an immediate increase of the risk(s) (3.1.19) Note 1 to entry: A safety function is a function implemented by a safety-related part of a control system, which is needed to achieve or maintain a safe state for the machine, in respect of a specific hazardous event.
+[SOURCE: ISO 12100:2010, 3.30, modified — Note 1 to entry has been added.] 3L.28 sub-function part of a safety function (3.1.27) whose failure (3.1.10) results in a failure of the safety function Note 1 to entry: A sub-function is a function implemented by a subsystem (3.1.45) of the safety-related part of a control system (SRP/CS).
+See also IEC 61800-5-2:2016.
+EXAMPLE Sub-functions according to IEC 61800-5-2 are, e.g.
+safe torque off (STO), safe stop 1 (SS1).
+See Figure 6.
+3.1.29 monitoring diagnostic measure which detects a state and compares it to the expected value Note 1 to entry: Monitoring is realised by the following methods, e.g.
+plausibility check (3.1.52), direct, indirect or cross monitoring (3.1.30) (see Annex E), cyclic test stimulus.
+3.1.30 cross monitoring diagnostic measure which checks plausibility of redundant signals in both channels (3.1.47) of a redundant subsystem (3.1.45) KA | programmable electronic system PE system system for control, protection or monitoring (3.1.29) based on one or more programmable electronic devices, including all elements of the system such as power supplies, sensors and other input devices, data highways and other communication paths, and actuators and other output devices [SOURCE: IEC 61508-4:2010, 3.3.1] 3.1.32 mean time to dangerous failure MTTFp expectation of the mean time to dangerous failure Note 1 to entry: In the case of items with an exponential distribution of operating times to dangerous failure (i.e.
+a constant failure rate) the MTTF) is numerically equal to the reciprocal of the dangerous failure rate.
+[SOURCE: IEC 62061:2021, 3.2.38, modified — Note 1 to entry has been modified.] 341.33 MTBF mean time between failures expected value of the operating time between consecutive failures (3.1.10) 6 3.1.34 RDF ratio of dangerous failures fraction of the overall failure (3.1.10) rate of an element that can result in a dangerous failure (3.1.12) 3.1.35 diagnostic coverage DC measure of the effectiveness of diagnostics, which is determined as the ratio between the failure (3.1.10) rate of detected dangerous failures (3.1.12) and the failure rate of total dangerous failures Note 1 to entry: Diagnostic coverage can exist for the whole or parts of a safety-related system.
+For example, diagnostic coverage can exist for sensors and/or logic systems and/or power control elements.
+3.1.36 mission time Ty period of time covering the intended use of a safety-related part of a control system (SRP/CS) 3.1.37 test rate rt frequency of tests to detect faults (3.1.8) in a safety-related part of a control system (SRP/CS) Note 1 to entry: Test rate is also used as reciprocal value of diagnostic test interval.
+3.1.38 demand rate rd frequency of demands for a safety function (3.1.27) to be performed by the safety-related part of a control system (SRP/CS) 3.1.39 limited variability language LVL type of language that provides the capability to combine predefined, application specific, library functions to implement the safety requirements specifications (SRSs) (3.1.3) Note 1 to entry: An LVL provides a close functional correspondence with the functions required to achieve the application.
+Note 2 to entry: Typical examples of LVL are given in IEC 61131-3.
+They include ladder diagram, function block diagram and sequential function chart.
+Instruction lists and structured text are not considered to be LVL.
+Note 3 to entry: Typical example of systems using LVL: Programmable Logic Controller (PLC) configured for machine control.
+[SOURCE: IEC 62061: 2021, 3.2.62] 3.1.40 full variability language FVL type of language that provides the capability to implement a wide variety of functions and applications Note 1 to entry: Typical example of systems using FVL are general-purpose computers.
+Note 2 to entry: FVL is normally found in embedded software and is rarely used in application software.
+Note 3 to entry: FVL examples include: Ada, C, Pascal, Instruction List, assembler languages, C++, Java, SQL.
+[SOURCE: IEC 62061: 2021, 3.2.61] 7 3.1.41 safety-related application software SRASW software specific to the application and generally containing logic sequences, limits and expressions that control the appropriate inputs, outputs, calculations and decisions necessary to meet the safety- related part of a control system (SRP/CS) requirements 3.1.42 safety-related embedded software SRESW software that is part of the system supplied by the manufacturer and is not intended for modification by the end-user Note 1 to entry: Embedded software is also referred to as firmware or system software.
+See, full variability language (FVL) (3.1.40).
+[SOURCE: IEC 61511-1:2016, 3.2.76.2] 3.1.43 high demand or continuous mode mode of operation in which the frequency of demands on a safety-related part of a control system (SRP/ CS) to perform its safety function (3.1.27) is greater than one per year or the safety function retains the machine in a safe state as part of normal operation [SOURCE: IEC 61508-4:2010, 3.5.16] 3.1.44 low demand mode mode of operation in which the frequency of demands on the safety-related part of a control system (SRP/CS) to perform its safety function (3.1.27) is not greater than once per year Note 1 to entry: Low demand mode is not addressed in this document.
+See Clause 1 for further details.
+[SOURCE: IEC 61508-4:2010, 3.5.16, modified — Note 1 to entry has been amended.| 3.1.45 subsystem entity which results from a first-level decomposition of a safety-related part of a control system (SRP/ CS) and whose dangerous failure (3.1.12) results in a dangerous failure of a safety function (3.1.27) Note 1 to entry: The subsystem specification includes its role in the safety function and its interface with the other subsystems of the SRP/CS.
+Note 2 to entry: One subsystem can be part of one or several SRP/CS, e.g.
+the same combination of contactors can be used to de-energise a motor in case of detection of a person in a danger zone and also in case of opening a safe guard.
+3.1.46 subsystem element part of a subsystem (3.1.45) comprising a single component or any group of components Note 1 to entry: A subsystem element can comprise hardware or a combination of hardware and software.
+For the purposes of this document, software-only components are not considered subsystem elements.
+Note 2 to entry: For the safety-related values of components or parts of control systems, see Annex O.
+3.1.47 channel element or group of elements that independently implement a safety function (3.1.27) or a part of it Note 1 to entry: Channel can be a functional channel or a testing channel.
+8 [SOURCE: IEC 61508-4:2010, 3.3.6, modified — “or a part of it” has been added to the definition and Note 1 to entry has been added.| 3.1.48 operating mode mode of operation in a machine (e.g.
+automatic, manual, maintenance) to select predefined machine functions and safety measures related to those functions Note 1 to entry: For each specific operating mode, the relevant safety functions (3.1.27) and/or risk reduction measures (3.1.22) are implemented.
+Note 2 to entry: Operating mode is not a machine function itself.
+The functions (including safety functions) summarized under an operating mode can only be used when that particular operating mode has been activated.
+3.1.49 well-tried safety principle principle that has proved effective in the design or integration of safety-related control systems in the past, to avoid or control critical faults (3.1.8) or failures (3.1.10) which can influence the performance of a safety function (3.1.27) Note 1 to entry: Newly developed safety principles can only be considered as equivalent to well-tried if they are verified using methods which demonstrate their suitability and reliability for safety-related applications.
+Note 2 to entry: Well-tried safety principles are effective not only against random hardware failures, but also against systematic failures (3.1.14) which can creep into the product at some point in the course of the product life cycle, e.g.
+faults arising during product design, integration, modification or deterioration.
+Note 3 to entry: ISO 13849-2:2012, Tables A.2, B.2, C.2 and D.2 address well-tried safety principles for different technologies.
+3.1.50 well-tried component component successfully used in safety-related applications Note 1 to entry: See 6.1.11 for requirements and ISO 13849-2:2012 for a list of recognized well-tried components.
+3.1.51 dynamic test executing either software or operating hardware, or both, in a controlled and systematic way, so as to demonstrate the presence of the required behaviour and the absence of unwanted behaviour Note 1 to entry: The test fails if monitoring (3.1.29) did not detect the change as expected.
+Note 2 to entry: The use of test pulses is a common technology of dynamic testing and is widely used to detect short circuits or interruptions in signal paths or malfunctions.
+3.1.52 plausibility check diagnostic measure which is monitoring (3.1.29) that the state of an input (output) fits to the state of the system or other inputs (outputs) 3.1.53 verification confirmation, through the provision of objective evidence, that specified requirements have been fulfilled Note 1 to entry: The objective evidence needed for a verification can be the result of an inspection or of other forms of determination such as performing alternative calculations or reviewing documents.
+Note 2 to entry: The activities carried out for verification are sometimes called a qualification process.
+Note 3 to entry: The word “verified” is used to designate the corresponding status.
+9 [SOURCE: ISO 9000:2015, 3.8.12] 3.1.54 validation confirmation by examination and provision of objective evidence that the particular requirements for a specific intended use are fulfilled Note 1 to entry: The objective evidence needed for a validation is the result of a test or other form of determination such as performing alternative calculations or reviewing documents.
+Note 2 to entry: The word “validated” is used to designate the corresponding status.
+Note 3 to entry: The use conditions for validation can be real or simulated.
+[SOURCE: IEC 61508-4:2010, 3.8.2] 3.1.55 skilled person person with relevant training, education, and experience to enable him or her to perceive risks (3.1.19) and to avoid hazards (3.1.17) associated with the relevant equipment Note 1 to entry: Several years of practice in the relevant technical field can be taken into consideration in assessment of professional training.
+[SOURCE: ISO 14990-1:2016, 3.5.4, modified — “electricity” has been replaced by “the relevant equipment” in the definition and Note 1 to entry has been added.] 3.1.56 black box device, system or object which can be viewed in terms of its inputs and outputs only alb7 grey box device, system or object where some of the internal functions are known Note 1 to entry: The third way for functional testing is “white box”, where all internal functions are known.
+3.1.58 average frequency of a dangerous failure per hour PFH average frequency of a dangerous failure of a safety-related part of a control system (SRP/CS) (3.1.1) to perform the specified safety function over a given period of time [SOURCE: IEC 61508-4:2010, 3.6.19, modified — “an E/E/PE” has been deleted.] 3.2 Symbols and abbreviated terms Table 1 — Symbols and abbreviated terms Symbol or abbreviated Description Subclause or section term denotation of performance levels Table K.1 AOPD active optoelectronic protective device (e.g.
+light barrier) B number of cycles until 10 % of the components fail dangerously A 10D Annex C (for components with mechanical wear) category 3.1.4 current converter Annex I 10 Table 1 (continued) Symbol or abbreviated Description term Subclause or section common cause failure diagnostic coverage electromagnetic interference FMEA FMECA failure modes and effects analysis failure modes, effects and criticality analysis cc D C ETA event tree analysis F, F1, F2 frequency and/or exposure times to hazard F function block FV FT.
+F C avg B full variability language A FT fault tree analysis Fp(t) cumulated distribution function H hardware fault tolerance 1, 1,52 input device, e.g.
+sensor i,j index for counting Annex D inputs/outputs [in fintereonnectingmeans ———SSOS~Sw Table E.1 Figures 7, 8, 9, 10 Annex | 3.1 motor Annex C 1/0 bin LVL limited variability language Ap dangerous failure rate of a component MTTF mean time to failure MTTF) mean time to dangerous failure number of subsystems with PL), in a combination of subsystems | ty mean number of annual operations 0, 01, 02, OTE output device, output of the test equipment, e.g.
+power control elements P,.P1,-P2 possibility of avoiding or limiting harm PE system programmable electronic system PPP average frequency of a dangerous failure per hour | PL performance level Annex | ya I 4 Annex D 4 3 6.2, D.1 iz al, 6.2 6.1 A 31, Annex H 8 2 3131, 3.1.58, 13.
+| PL, required performance level pty fdemandrate a ratio of dangerous failures PFH PL PLC programmable logic controller lowest performance level of a subsystem in a combination of sub- systems PL Va rt RDF RS rotation sensor 11
+
+
+<<Section4>>
+Table 1 (continued) Symbol or abbreviated Description Subclause or section term §,$1,82 severity of injury A.3.1 subsystem : SB safe operating stop SW1A, SW1B, __| position switches SW2 SIL safety integrity level SL SRASW safety-related application software safely limited speed S SRESW safety-related embedded software S SRP/CS safety-related part ofa control system SR safety requirements specification STO safe torque off , mean time until 10 % of the components fail dangerously nnex 4 Overview 4.1 Risk assessment and risk reduction process at the machine The risk assessment and risk reduction process is defined by ISO 12100:2010 as shown in Figure 2.
+ISO 13849-1 (this document) is included in the risk reduction process when a safety function and its corresponding SRP/CS are used to provide the risk reduction.
+NOTE1 _ For further information see ISO/TR 22100-2:2013.
+The SRS and the design of the SRP/CS shall take into account the result of the risk assessment including the intended use and reasonably foreseeable misuse of the machine (see Figure 1 and Figure 2).
+NOTE2 This document does not apply to non-SRP/CS of a machine (see Figure 6).
+12 Key a O NOTE Determination of the limits RISK ASSESSMENT of the machinery F iJ iJ iJ ‘ iJ iJ iJ ‘ iJ J TT J ' ' Hazard identification ‘ ‘ iJ iJ ‘ iJ i] iJ ot This iterative risk reduction process shall be carried out separately for each hazard, hazardous situation, under each condition of use.
+Risk estimation Risk evaluation NO Has the risk been adequately reduced?
+@ Documentation At each step of the iterative process: Can risk estimation, risk evaluation and, the hazard if applicable, risk comparsion.
+be removed?
+Is the NO Risk reduction by intended visk inherently safe caduction Can design measures achigvad?
+the risk be reduced by inherently safe design measures?
+Can Risk reduction by i safeguardin Is the be resuced by Ore .
+intended risk guards, protective implementation of reduction devices?
+complementary achieved?
+protective measures Is the intended risk reduction achieved?
+Can the limits be specified again?
+Risk reduction by information for use The first time the question is asked, it is answered by the result of the initial risk assessment.
+Figure reproduced from ISO 12100:2010, Figure 1.
+Are other hazards generated?
+YES Risk reduction by safeguarding may be realized by SRP/CS that execute safety functions.
+In this case this document can be applied.
+Figure 2 — Schematic representation of risk reduction process including iterative three-step method 13 NOTE3 _ In special cases, this document applies also to step 3 of Figure 2.
+For examples of indications and alarms see Annex M.
+4.2 Contribution to the risk reduction From the risk assessment, the designer shall decide the contribution to the risk reduction provided by each relevant safety function carried out by the SRP/CS.
+This contribution covers the risk reduced by the application of each particular safety function (see Figure 3).
+It does not cover the overall risk of machinery under control.
+EXAMPLE Safety-related stop function ona press initiated by using an electro-sensitive protective device or the door-locking safety function of a washing machine.
+residual required risk before risk risk protective obtained reduction measures adequately reduced risk inadequately reduced risk low risk high risk safety function KC other measures Solution 1 , other T function measures Solution 1 Important part of risk reduction due to protective measures other than the safety function (e.g.
+mechanical measures), small part of risk reduction due to safety function (e.g.
+guard or interlocking function).
+Solution 2 Key Solution 2.
+Important part of risk reduction due to the safety function, small part of risk reduction due to protective measures other than the safety function.
+NOTE See ISO 12100:2010 for further information on risk reduction.
+Figure 3 — Overview of the risk reduction measures for each hazardous situation 4.3 Design process of an SRP/CS Figure 4 shows the design process of an SRP/CS and determining whether the SRP/CS achieves the intended risk reduction.
+14 From Figure 2 Risk reduction by safeguarding?
+Figure 4 — Iterative process for design of safety-related parts of control systems (SRP/CS) 4.4 Methodology Step 2 Risk reduction by safeguarding Implementation of complementary protective measures Risk reduction by safety functions?
+no Verification successful PL = PL;?
+(Clause 8) no yes Validation successful?
+(Clause 10) no yes a 4 | Performed for each | safety function | | | Specify the safety function including the | | determination of the PL; in SRS | (Clause 5) | | | | Design the SRP/CS to perform the safety | function | (Clause 6) | | | | !
+Evaluate PL !
+| e Category (6.1.3) | | ¢ MTTFp (6.1.4) | | ¢ DC (6.1.5) | | ° CCF (6.1.6) | ¢ Systematic failures (6.1.7) !
+| ¢ Basic safety principles (ISO 13849-2) | When applicable: | ¢ Well-tried safety principles (3.1.49) | | ¢ Well-tried components (3.1.50) | | * Software (7 and Annex J) | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | | J All safety functions analysed?
+no yes This document uses the following methodology: a) specification of safety functions (Clause 5); To Figure 2 Is the in- tended risk reduction achieved?
+15 b) design and technical realization of the safety functions including identification of the SRP/CSs and their subsystems which carry out each safety function; 1) design considerations (Clause 6), 2) software safety requirements (Clause 7); c) verification that the achieved PL meets PL, (Clause 8); d) ergonomic aspects of the design (Clause 9); e) validation (Clause 10 or ISO 13849-2:2012); f) maintenance (Clause 11); g) technical documentation (Clause 12); h) information for use (Clause 13).
+The required performance level (PL,) corresponds to the required risk reduction to be provided by the safety function.
+The greater the contribution to the risk reduction needed (depending on the initial risk), the higher the required safety performance shall be.
+The performance levels of the safety function are defined in terms of average frequency of dangerous failure of the safety function per hour.
+There are five performance levels, ranging from providing a low contribution to risk reduction for PL a, toa high contribution to the risk reduction for PL e.
+The defined ranges of frequency of a dangerous failure per hour are shown in Table 2.
+Table 2 — Performance levels Average frequency ofa _ failure per hour (PFH) a WF SPeH I b 3x 10-6 < PFH < 10-5 c d 10-6 < PFH <3 x 10-6 10-7 < PFH < 10-6 PFH< 10-7 NOTE The PFH value is considered to be identical to the PFH according to IEC 62061:2021 and the IEC 61508 series.
+Subsystems (see 5.5) shall be evaluated using the same process as is used for SRP/CS systems, according to Clauses 5 to 13.
+For each safety function, the achieved performance level shall meet or exceed the required performance level (PL,).
+4.5 Required information To fulfil the requirements of this document, the following information is necessary: — results of the risk assessment of the machine or part of it; — information for all safety functions (see Clause 5) determined to be necessary for the risk reduction process for each hazard including: — detailed description of each safety function including their contribution to risk reduction (see Dude): — determination of the required performance level (PL,) for each safety function (see 5.3).
+NOTE This information can be given in applicable Type-C standards.
+16
+
+
+<<Section5>>
+4.6 Safety function realization by using subsystems The realisation of a safety function can be done by: — using previously validated subsystems according to this document, IEC 62061:2021, the IEC 61508 series or other relevant safety-related product standards (e.g.
+the IEC 61496 series and IEC 61800-5-2); — designing new subsystems according to this document; or — acombination of both alternatives above (see example in Figure 5).
+Initiation ' ; ; aaa 2 pers | | ' ) (e.g.
+fluidic (e.g.
+person 1 <: a iB ae ~ w enters the | | cf TXB well 2 cylinder hazard zone) : | plit pttr causing | T i} hazardous movement) OUTPUT subsystem (e.g.
+valves) (e.g.
+ESPE@ protective device) (e.g.
+safety relay) safety sub-function: safety sub-function: Detect presence in field, Evaluate ESPE @ inputs, generate outputs generate outputs, Monitor if a stop is executed safety sub-function: stop hazardous movement new subsystem | | | | | INPUT subsystem LOGIC subsystem | | | | | Safety Function (detect entry to hazard zone and stop hazardous movement) Key a Electrosensitive protective equipment (ESPE).
+Figure 5 — Example of combination of subsystems 5 Specification of safety functions 5.1 Identification and general description of the safety function A safety function shall have a general description to define how the SRP/CS contributes to risk reduction.
+The description shall be linked to hazards identified in the risk assessment and shall state how the function operates to achieve the required safety.
+The process for specifying safety functions requires detailed information from the risk assessment performed in accordance with ISO 12100:2010.
+The objective of this subclause is to provide guidance on how to specify the requirements of each safety function to be implemented by the SRP/CS.
+Part of the risk reduction process is to determine the safety functions of the machine, e.g.
+prevention of unexpected start-up.
+A safety function may be implemented by one or more subsystems combined as an SRP/CS, and several safety functions may share one or more subsystems, e.g.
+a logic unit, power control element(s).
+Specification of the safety function can take place as described in ISO 12100:2010, 6.2.11 and afterwards as a part of the design specification for the SRP/CS according to this document.
+Clause 5 addresses the following steps: a) General description of the safety function (linking hazards to safety functions); b) Detailed description of the safety requirements (see 5.2); 17 c) Determination of the PL, for each safety function (see 5.3); d) Review of the SRS (see 5.4).
+5.2 Safety requirements specification 5.2.1 General requirements 5.2.1.1 General The SRS is the basis for all SRP/CS design activities and shall document details of each safety function to be performed.
+The SRS provides the necessary information at the transition from the risk assessment and risk reduction process according to ISO 12100:2010 to the SRP/CS design and evaluation process according to this document, especially if these two processes are performed by different persons or organizations (see Table 3).
+18 Table 3 — Transition from the risk assessment and risk reduction process according to ISO 12100:2010 to the SRP/CS design and evaluation process according to ISO 13849-1 (this document) Necessary information to produce the Examples of specifications of safety func- Transformation SRS (see 5.2.1.2) results of risk assessment of the machine or part of it, including hazardous parts and required overall risk reduction machine operating characteristics, e.g.
+intended use emergency operation description of the interaction of different working processes and manual activities, e.g.
+repairing ergonomic aspects limits of use in relation to tions in the SRS (see 5.2.1.3) required safety functions (examples): 1) _ interlocking function — operating mode (all) triggering event: opening of a movable guard safety-related reaction: safe torque off (STO) of all movements PL, d response time etc.
+environmental conditions safely limited speed (SLS) — operating mode (manual) triggering event: speed is higher than the specified limit safety-related reaction: safe torque off (STO) of all movements PL= 6 response time etc: 5.2.1.2 Necessary information to produce the safety requirements specification (SRS) NOTE1_ The following information is used for technical documentation.
+For information for users see 13.3.
+The following information shall be available to the designer of the safety-related control system to develop the SRS where relevant: a) results of the risk assessment of the machine or part of it for each specific hazard where the associated risk reduction measure(s) relies on a safety-related control system to perform a safety function; b) machine operating characteristics, including: 1) intended use of the machine, 2) reasonably foreseeable misuse, 3) operating modes (e.g.
+local mode, automatic mode, modes related to a zone or part of the machine), 4) the mode(s) of operation during which the safety function is to be active, 19 c) d) e) f) g) 5) cycle time, and 6) response time until a safe state is achieved according to ISO 13855:2010, 5.1; NOTE 2 The response time of the control system is part of the overall response time of the machine.
+The required overall response time of the machine can influence the design of the safety- related part, e.g.
+the need to provide a braking system.
+NOTE 3 Operational functions (e.g.
+starting, normal stopping) can also be safety functions, but this can be ascertained only after a complete risk assessment on the machinery has been carried out.
+emergency operation (IEC 60204-1:2016+AMD1:2021, Annex E); description of the interaction of different working processes and manual activities (e.g.
+repairing, setting, cleaning, trouble shooting, modes of operation with the safeguards suspended); ergonomic aspects to minimize incorrect operation or defeating; limits of use in relation to environmental conditions; effect of overlapping hazards (see A.4).
+5.2.1.3 Specification of all safety functions in the safety requirements specification (SRS) The SRS shall have the following information for each safety function in relation to the specific application: a) the brief description / title of the safety function; b) the event that triggers the safety function; c) the reaction to be initiated by the safety function output(s) to reach the intended safe state; EXAMPLE1 _ Stop hazardous movements.
+d) the required performance level PL, (see 5.3); e) the response time for the machine to achieve a safe state after the demand is made upon the safety function, e.g.
+the overall system stopping performance (reaction time plus stopping time) according to ISO 13855:2010; f) the operating mode(s) during which the safety function is to be active; g) interfaces of the safety function with the machine control system and other safety functions; h) if needed, in case of a fault detection in a functional channel, procedures to bring the machine toa safe state including how the safe state is maintained until the fault is repaired; EXAMPLE 2 _ If there is a fault in a functional channel and a controlled stop is not possible, then a fault reaction can be initiated by using an immediate, uncontrolled stop.
+i) the behaviour of the machine on the loss of power (see 5.2.2.8); EXAMPLE3 _ It can be necessary to hold a vertical axis in position to prevent a fall due to gravity forces.
+Where external forces can have an impact on functional safety, for instance on those gravity loaded axes, a reinforcement (e.g.
+for power elements) can be necessary because of systematic requirements.
+An appropriate design solution can be the integration of a non-return valve on cylinders or supplementary mechanical brakes.
+This can also require the design of two separate safety functions: One with power available and another without power available.
+j) the demand rate of the safety function and/or the frequency of operation of the SRP/CS; k) the priority of the safety functions that can be simultaneously active and that can cause conflicting action; 20 EXAMPLE4 Anemergency stop function has priority over all other functions.
+EXAMPLES The safely limited speed (SLS) function can be a precondition of a "hold to run" safety function.
+1) safety-requirements of type-C standards for the design of an SRP/CS or subsystem (e.g.
+ISO 23125:2015, ISO 16090-1); m) the conditions to permit the restart after the activation of the safety function.
+NOTE Automatic reset of a safety function is appropriate in situations where continuous detection of an individual prevents the hazardous situation.
+See 5.2.2 and Annex M for typical safety functions and their characteristics and safety-related parameters.
+5.2.2 Requirements for specific safety functions 5.2.2.1 General This subclause provides additional requirements for specific safety functions that are commonly applied in many SRP/CS.
+5.2.2.2 Safety-related stop function A safety-related stop function (e.g.
+initiated by a safeguard) shall as soon as necessary after actuation, put the machine in a safe state.
+Such a safety-related stop function shall have priority over all relevant starts and non-safety-related stops.
+When a group of machines is working together in a coordinated manner, provision shall be made for signalling either the supervisory control or the other machines, or both, that such a stop condition exists.
+As a result of the risk assessment, safety-related stop functions can be realised according to the stop categories in IEC 60204-1:2016+AMD1:2021, 9.2.2.
+NOTE IEC 61800-5-2:2016 provides information about safety-related power drive systems including descriptions of safe-torque off (STO), safe stop 1 (SS1), safe stop 2 (SS2) and safe operating stop (SOS).
+After a stop command has been initiated by a safety function, the stop condition shall be maintained until safe conditions for restarting exist.
+See also Table M.1.
+5.2.2.3.
+Manual reset function The re-establishment of the safety function by resetting of the safeguard cancels the stop command.
+If indicated by the risk assessment, this cancellation of the stop command shall be confirmed by a manual, separate and intended action (manual reset).
+The manual reset function shall: — be provided through a separate and manually operated device that is separate from start command, — only be achieved if all affected safety functions and safeguards are operational, — not initiate a hazardous situation by itself, — be initiated by intended action, — enable the control system to accept a separate start command, and — only be accepted by monitored signal change, in order to avoid foreseeable misuse.
+21 When the function “manual reset” is required to be a safety function (e.g.
+prevention of unexpected start-up), the required performance level (PL,.) shall be determined.
+The PL of the manual reset function can be different from the PL, of the associated safety function.
+NOTE The manual reset function often is not a separate additional safety function when the safe state is still maintained by a safety function (safe condition), e.g.
+initiated by a safeguard (cover) where stepping behind is not possible.
+The reset actuator shall be located outside the hazard zone and in a position from which there is sufficient visibility to ensure that no person is inside the hazard zone.
+It shall not be possible to activate the reset function from inside the hazard zone.
+Where the visibility of the hazard zone is not sufficient, a specific reset sequence or monitoring of the area that is not visible, shall be provided.
+When specific reset sequence or monitoring of the area are not possible, other equivalent risk reduction measures shall be used.
+EXAMPLE One solution is the use of a sequenced resetting.
+The reset function is initiated within the hazard zone by the first actuator in combination with a second reset actuator located outside the hazard zone (near the safeguard).
+This reset procedure can be realized within a limited time before the control system accepts a separate start command.
+Monitoring of the area can be done by, e.g.
+use of presence sensing devices that detect persons in hazard zones not visible from the reset position.
+See also Table M.1.
+5.2.2.4 Restart function A restart shall take place automatically only if the safe condition is guaranteed.
+In particular, for interlocking guards with a start function, ISO 12100:2010, 6.3.3.2.5 shall apply.
+EXAMPLE In automatic machine operations, sensor feedback signals to the control system are often used to control the process flow.
+If a workpiece has come out of position, the process flow is stopped.
+If the monitoring of the interlocked safeguard does not have a higher priority than the automatic process control, there can be a danger of unexpected restarting of the machine while the operator readjusts the workpiece.
+Therefore, the automatic restart should not to be allowed until the safeguard is closed again and the operator has left the hazard zone.
+The contribution of the prevention of unexpected start-up (see ISO 14118:2017) provided by the control system is dependent on the result of the risk assessment.
+See also Table M.1.
+5.2.2.5 Local control function When a machine is controlled locally, e.g.
+by a portable control station that can be a portable device or pendant, the following requirements shall apply: — the means for granting local control shall be situated outside the hazard zone; — itshall only be possible to initiate command by a local control station in a zone defined by the risk assessment in order to avoid hazardous situations; — switching between local and a different control shall not create a hazardous situation; — initiation of commands from multiple control stations (local or remote) shall not lead to a hazardous situation.
+It can be necessary to preclude use of other control stations when a local control station is selected or when certain commands are initiated.
+See also Table M.1.
+5.2.2.6 Muting function Muting is a temporary automatic suspension of a safety function by the machine safety-related control system.
+It can be used to allow access by persons or by materials: — during a non-hazardous portion of the machine cycle, or 22 — when safety is maintained by other means.
+The muting function shall be initiated and terminated automatically.
+This shall be achieved by the use of appropriately selected and placed sensors or by signals from the machine control system.
+Incorrect signals, sequence, or timing of the muting sensors or signals shall not allow a mute condition.
+The part or parts of the control system that performs the muting function shall have an appropriate safety-related performance (PL according to this document or SIL according to IEC 62061:2021) and shall not reduce the safety-related performance of the protective function below that required for the application.
+At the end of muting, all affected safety functions shall be reinstated and active.
+The implementation of muting shall meet the requirements of IEC 62046:2018.
+See also Table M.1.
+5.2.2.7 Safety-related parameters When safety-related parameters, e.g.
+position, speed, temperature, time, torque or pressure, deviate from pre-set limits, the safety-related control system shall initiate appropriate measures.
+If errors in manual inputting of safety-related data in programmable or configurable electronic systems can lead to a hazardous situation, then a data checking measure shall be provided, e.g.
+check of limits, either format or logic input values, or both.
+For additional requirements, see 6.3 and Table M.2.
+5.2.2.8 Fluctuations, loss and restoration of power sources When fluctuations in energy levels outside the designed operating range occur, including loss of energy supply, the SRP/CS shall continue to provide or initiate output signal(s) which will enable other parts of the machine system to maintain a safe state.
+See also Table M.2.
+5.2.2.9 Requirements for operating mode selection Selection of operating mode is a safety function when the selection enables or disables safety function(s).
+The following is required: a) only one operating mode shall be active at a time; each selected operating mode shall be clearly identifiable or indicated; b) mode selection by itself shall not initiate machine operation.
+A separate actuation of the start control shall be required; c) when changing from one operating mode to another, safety functions and/or risk reduction measures necessary for the selected operating mode shall be activated without any loss of the intended risk reduction during the transition; d) the means of selecting the operating mode shall not degrade the PL of the safety functions active in that mode.
+See also Table M.1.
+5.2.2.10 Safety function(s) for maintenance tasks The design of the machine shall take into account maintenance tasks on the machine and provide safety functions for these tasks.
+The results of the risk assessment for each maintenance task shall be considered in the specification of the safety functions.
+NOTE1 Maintenance tasks can include, but are not limited to: — setting; — teaching/programming; 23 — process/tool changeover; — cleaning and housekeeping; — sanitizing; — planned or unplanned preventive or corrective maintenance; — troubleshooting/fault finding; — fault diagnosis.
+Some maintenance tasks require a full isolation of the machine from all power sources and therefore do not rely on the SRP/CS.
+Where manual suspension or override of specific safety functions is needed for maintenance tasks that require either power or machine movements, or both, while maintenance personnel are inside the hazard zone, such operation shall only be allowed by providing appropriate alternative safety functions (e.g.
+enabling device safety function with a speed limiting safety function).
+EXAMPLE Teaching/ programming, troubleshooting, process fine-tuning are tasks requiring power and machine movement.
+The following safety functions, used singularly or in combination, are examples of what is often provided for maintenance tasks: a) hold-to-run; b) enabling control; c) monitoring or limiting of, e.g.
+speed, torque, power, position, location, temperature, level; d) prevention of unexpected start-up; e) disconnection and energy dissipation; f) mechanical restraint or containment.
+See Annex M for additional information.
+The motivation to defeat or circumvent risk reduction measures provided by the SRP/CS during maintenance of the machine shall be considered when specifying, designing and selecting the SRP/CS (see 5.2.3).
+The design of SRP/CS shall consider that additional personnel other than the intended operator(s) perform a task, e.g.: — an operator performs reset and restart functions while maintenance personnel are inside the hazard zone; — risk reduction measures intended to protect an individual are inappropriately used for multiple personnel.
+In maintenance mode, the design of the SRP/CS shall prevent a remote access (see 5.2.4) to the machine control system without appropriate notification or indication to persons that are at or near the machine.
+5.2.3.
+Minimizing motivation to defeat safety functions The motivation to defeat or circumvent a safety function depends on the process, the intended use of the machine (or parts of the machine) and the design details of the risk reduction measure(s).
+The motivation to defeat a safety function shall be minimized in the design of the SRP/CS.
+NOTE1 Safety research has shown that many injuries occur due to defeat of either safety function or safeguards, or both.
+See Bibliography for more information.
+24 EXAMPLE When designing risk reduction measures and safety functions, the following circumstances can introduce a motivation to defeat and can be considered: — therisk reduction measure prevents the task from being performed; — there is aneed to perform a task that was not identified and assessed for hazards and risks; — the risk reduction measure slows down production or interferes with any other activities or preferences of the user; — therisk reduction measure is difficult to use; — either the risk reduction measure or its associated hazard, or both, are not recognized as such by personnel; — therisk reduction measure is not accepted as suitable, necessary or appropriate for its function; — unlimited access to the SRP/CS hardware and software systems which implement the safety functions.
+NOTE2 Providing means to perform tasks easily whilst protecting operators can lessen the motivation to defeat or circumvent safety function(s) and/or safeguard(s).
+NOTE3 ISO 14119 gives a method and shows examples on how to minimize possibilities to defeat an interlocking device.
+The use and access to programmable systems introduces an additional possibility to defeat or circumvent safety functions if not properly applied or supervised.
+5.2.4 Remote access When the machine control system can be accessed remotely, the SRP/CS shall remain operational.
+Additional risk reduction measures can be used when provided in the information for use.
+The design of the SRP/CS shall only allow remote access of a machine when specific measures are in place to prevent dangerous situations that can arise due to the undetected presence of persons being inside or near to the machine (e.g.
+see 5.2.2.2).
+Safety-related software of the SRP/CS shall not be modifiable by remote access unless the local validation of the safety function is performed.
+NOTE A remote start that is unexpected to persons working at the machine can lead to injury.
+5.3 Determination of required performance level (PL,) for each safety function For each selected safety function, a required performance level (PL,) shall be determined and documented.
+The determination of the PL, shall be based on the result of the risk assessment and shall correlate to the needed risk reduction (see Figure 3).
+Annex A provides guidance for the determination of the PL, for the safety function.
+Overlapping hazards, if relevant, shall also be considered when defining the safety functions.
+See A.3 for further guidance.
+NOTE1 Other methods for the determination of PL, can be used (e.g.
+the method in IEC 62061:2021, Annex A).
+NOTE2 _Type-C standards typically provide information on PL,.
+NOTE3 Asthe methodology for determining PL, includes subjective estimations, some variability is acceptable in the practical application of particular cases.
+NOTE4 The PL, for a safety function determines the required reliability of the control system to execute the safety function and to achieve the intended risk reduction.
+The PL, is determined using several factors of risk.
+See also Annex A.
+25 5.4 Review of the safety requirements specification (SRS) The SRS shall be verified against the risk assessment before starting the design.
+The review shall ensure that all safety functions are specified to achieve the intended risk reduction at the machine.
+See also 10.2 for the validation of the SRS.
+The SRS shall be validated according to the requirements of 10.1.1 5.5 Decomposition of SRP/CS into subsystems The safety functions can be decomposed into sub-functions that are allocated to subsystems.
+The description of each sub-function shall include: — the safety requirements for the sub-function (functional and integrity); — inputs and outputs of each sub-function.
+An SRP/CS can comprise: — one or several previously validated subsystem(s); — one or several subsystem(s) based on subsystem element(s); — acombination of both alternatives above.
+By definition of the subsystem, a dangerous failure of any subsystem results in the loss of the whole safety function.
+EXAMPLE Figure 6 provides an example of decomposition starting with a detection and evaluation of an ‘initiating event’ (e.g.
+manual actuation of a push button, opening of guard, interruption of beam of AOPD) and ending with an output causing a safe reaction of a ‘machine actuator’ (e.g.
+motor, cylinder).
+NOTE1 — Safety function 1 is decomposed into sub-function 1, sub-function 2 and sub-function 3.
+Sub-function 1is performed by subsystem 1, etc.
+NOTE2 — Safety function 2 is decomposed into sub-function 4 and sub-function 5.
+Sub-function 4 is performed by subsystem 4, etc.
+NOTE3 _ Safety function 3 is decomposed into sub-function 6 and sub-function 5.
+Sub-function 6 is performed by subsystem 6, etc.
+initiation event —————————_ control system —————————_» _ machine actuator sensing evaluating controlling safety function 1 SRP/CS 1 safety function 2 bi!
+performedby @ vartat SRP/CS 2 cia | trol Logic 2 Output 2 ae safety function 3 z : performed by @- subsystem SRP/CS 3 operational function 1 non- performed by safety control system 1 related part of operational function 2 the control system 2 system Figure 6 — Example of decomposition of safety functions and their allocation to subsystems 26
+
+
+<<Section6>>
+Figure 6 shows a block diagram of subsystems combined as SRP/CS(s) for: — initiation event (e.g.
+opening of a guard, interruption of beam of AOPD); — input (e.g.
+limit switch, sensor, AOPD) (subsystems 1, 4 and 6); — logic/processing (subsystems 2 and 5); — output/power control elements (e.g.
+valve, contactor, current converter, brakes) (subsystems 3 and 5); — machine actuator (e.
+g.
+motor, cylinder); — interconnecting means (e.g.
+electrical, optical).
+The decomposition of an SRP/CS into subsystems represented in Figure 6 is typical, but the whole SRP/ CS may be also realized by a single subsystem or more than three subsystems.
+NOTE4 An SRP/CS can be implemented by one single subsystem having a sensor, logic and power control elements.
+An example for an SRP/CS implementation with a single subsystem is an “Intelligent” sensor unit (e.g.
+light curtain, laser scanner) with integrated output switching device (e.g.
+relay to switch-off a dangerous movement).
+NOTE5 One subsystem or SRP/CS can implement safety functions and standard control functions.
+The designer can use any of the technologies available, single or in combination.
+SRP/CS can also provide an operational function (e.g.
+an AOPD asa means of cycle initiation).
+The designer of a previously validated subsystem shall provide the relevant information according to 132.
+NOTE6 The designer of a previously validated subsystem can be a system integrator, machine manufacturer or a component manufacturer.
+6 Design considerations 6.1 Evaluation of the achieved performance level 6.1.1 General overview of performance level The ability to perform a safety function is determined by the evaluation of the performance level.
+A performance level shall be determined for either each subsystem or each combination of subsystems, or both, that perform a safety function.
+The PL of the subsystem shall be determined by the estimation of the following aspects: a) the architecture (see 6.1.3); 1) assign a category to the subsystem; 2) evaluate if the applicable qualitative (non-quantifiable) requirements of the category are met, including: — basic safety principles (ISO 13849-2:2012, Tables A.1, B.1, C.1 and D.1); — well-tried safety principles (ISO 13849-2:2012, Tables A.2, B.2, C.2 and D.2); — well-tried components (ISO 13849-2:2012, Tables A.3 and D.3, Annexes B and C); 3) evaluate that required behaviour under fault condition(s) is met; b) the MTTF) value for single components (see 6.1.4, and Annexes C and D); 27 c) the DC (see 6.1.5 and Annex E); d) the CCF (see 6.1.6 and Annex F); e) the effect of the safety-related software design on the operation of the hardware (see Clause 7 and Annex J); f) the effect of measures against systematic failures (see 6.1.7 and Annex G).
+NOTE1 Other parameters, e.g.
+operational aspects, demand rate, test rate, can have a particular influence.
+NOTE2 For safety-related values of components or parts of control systems see Annex O.
+These aspects can be grouped under two approaches in relation to the evaluation process: — quantifiable aspects (MTTF) value for single components, DC, CCF, architecture); — non-quantifiable, qualitative aspects which affect the behaviour of the subsystem (behaviour of the safety function under fault conditions, safety-related software, systematic failure, the application of basic and well-tried safety principles, the use of well-tried components, environmental conditions and fault exclusion).
+NOTE3 The contribution of reliability (e.g.
+MTTF, architecture) can vary with the SRP/CS used.
+NOTE4 _ There are several methods for estimating the quantifiable aspects of the PL for any type of system (e.g.
+a complex structure), for example, Markov modelling, generalized stochastic petri nets (GSPN), reliability block diagrams (see, e.g.
+the IEC 61508 series, IEC 61078, the IEC 62021 series).
+To make the assessment of the PL easier, this document provides a simplified method based on the definition of five designated architectures that fulfil specific design criteria and behaviour under a fault condition (see 6.1.3).
+For PL evaluation of a subsystem the requirements are given in 6.1.
+A simplified approach for the PL evaluation of a subsystem is given in 6.1.8 (Figure 12) and 6.1.9, using the procedure given in Annexes B to Annex H, Annex J, Annex K and Annex L.
+For PL evaluation of subsystem combinations see 6.2.
+Qualitative aspects of the PL and the avoidance of systematic failures shall be achieved by fulfilling the requirements and guidance of this document.
+See 6.1.7 for systematic failure and guidance in Annex G.
+Where product-specific standards such as the IEC 61496 series for electro-sensitive protective equipment (ESPE) or the ISO 13856 series for pressure-sensitive protective equipment, specify requirements to avoid or control systematic or random failures, such subsystems shall meet the requirements of these product standards in addition to the requirements specified in this document.
+Risk reduction measures shall be applied and the following shall be fulfilled: — Reduce the probability of faults at the component level which affect the safety function.
+This can be done by increasing the reliability of components, e.g.
+by selection of either well-tried components or applying well-tried safety principles, or both, in order to minimize or exclude critical faults or failures (see also ISO 13849-2:2012).
+— Improve the architecture of the subsystem to avoid the dangerous effect of a fault.
+Some faults can require detection, thereby necessitating an either redundant or monitored architecture, or both.
+Reducing the probability of faults and avoiding dangerous effects of faults can be applied separately or in combination.
+Depending on the technologies, this can be achieved by — selecting reliable components and by fault exclusions; or — the safety function having either a redundant or monitored architecture system, or both.
+28 The structure including fault tolerance and fault detection are important parameters to determine the PL.
+Architectural constraints limit the maximum achievable PL of category B, 1 and 2.
+For these architectural constraints, see 6.1.3.2.2 to 6.1.3.2.4.
+Requirements to prevent or avoid CCFs shall be fulfilled.
+For subsystems that have PL or SIL and PFH values from the manufacturer, further estimation (e.g.
+DC, MTTFp, CCF, SRESW evaluation) is unnecessary.
+See also Table 0.1.
+6.1.2 Correlation between performance level (PL) and safety integrity level (SIL) When a safety function is designed using one or more subsystems, each subsystem shall be designed either using PLs according to this document, or using SILs according to IEC 62061:2021 or the IEC 61508 series.
+Subsystems designed according to the IEC 61508 series or IEC 62061:2021 may be used but shall be restricted to those designed for high demand or continuous mode that use Route 1, (see IEC 61508-2:2010, 7.4.4.2).
+Subsystems shall be combined according to 6.2.
+See Table 4 for correlations between PLs and SILs.
+Table 4 — Correlation between performance level (PL) and safety integrity level (SIL) SIL (see IEC 62061:2021 for information) high/continuous operating mode no correlation NOTE1 PLahas no correlation on the SIL scale and is mainly used to reduce the risk of slight, normally reversible, injury.
+NOTE 2 PLecorresponds to SIL 3 which is defined as the highest level typically used for machinery.
+6.1.3 Architecture — Categories and their relation to MTTF) of each channel, average diagnostic coverage and common cause failure (CCF) 6.1.3.1 General Subsystems designed according to this document shall be in accordance with the requirements of one of the categories specified in 6.1.3.2.
+The categories are fundamental to achieving a specific PL.
+They describe the required behaviour of the subsystem in respect to its resistance to faults based on the design considerations described in 6.1.1.
+Category B is the basic category.
+The occurrence of a fault can lead to the loss of the safety function.
+In category 1, improved resistance to faults is achieved predominantly by using high quality components.
+In categories 2, 3 and 4, improved performance is achieved predominantly by improving either fault tolerance or diagnostic measures, or both.
+In category 2 this is provided by periodically checking that the specified sub-function is being performed correctly (without faults).
+In categories 3 and 4, this is provided by ensuring that the single fault does not lead to the loss of the sub-function.
+In category 4, and whenever reasonably practicable in category 3, such faults are detected.
+Category 4 is resistant to accumulation of faults.
+Table 5 gives an overview of categories of the subsystem, the requirements and the sub-function behaviour in case of faults.
+When considering the causes of failures in some components it is possible to exclude certain faults (see 6.1.10.3).
+29 Category Table 5 — Overview of requirements for categories Summary of require- ments for subsystems Either subsystems or their protective equipment, or both, as well as their com- ponents, shall be designed, constructed, selected, assembled and combined in accordance with relevant standards so that they can withstand the expected influences.
+Basic safety principles shall be used.
+Requirements of B shall apply.
+Well-tried compo- nents and well-tried safety principles shall be used.
+Sub-function be- haviour The occurrence ofa fault can lead to the loss of the sub-func- tion.
+The occurrence of a fault can lead to the loss of the sub-func- tion, but the proba- bility of occurrence is lower than for category B.
+MTTF) Principle used| of each to achieve func- safety tional channel Low to medium Mainly char- acterized by selection of components Mainly char- acterized by selection of components Not rel- evant Not rel- evant Requirements of B and the use of well-tried safety principles shall apply.
+Subsystems shall be tested at suitable intervals.
+Requirements of B and the use of well-tried safety principles shall apply.
+Subsystem shall be de- signed, so that a single fault in any of these parts does not lead to the loss of the sub- function, and whenever reasonably practicable, the single fault is detected.
+The occurrence of a fault can lead to the loss of the sub-func- tion between the tests.
+The loss of sub-func- tion is detected by the test.
+When a single fault occurs, the sub-func- tion is always per- formed.
+Some, but not all, faults will be detect- ed.
+Accumulation of un- detected faults can lead to the loss of the sub-function.
+Mainly char- acterized by structure Mainly char- acterized by structure (re- dundancy) Low to medium See Annex F Low to medium NOTE For full requirements, see 6.1.3.2.
+30 Table 5 (continued) MTTF) Principle used| ofeach to achieve func- safety tional channel Summary of require- Sub-function be- ments for subsystems haviour Category Requirements of Band the |When a single fault Mainly char- High use of well-tried safety occurs, the sub-func-| acterized by including principles shall apply.
+tion is always per- structure (re- accumu- formed.
+dundancy) lation of Subsystem shall be de- faults signed, so that Detection of accu- mulated faults re- duces the probabil- ity of the loss of the sub-function (high DC).
+the single fault is The faults will be detected atorbefore | getected in time to the next demand upon prevent the loss of the sub-function, the sub-function.
+but if this detection is not possible, an accumulation of undetected faults shall not lead to the loss of the sub-function.
+— asingle fault in any of these parts does not lead to a loss of the sub-function, and NOTE _ For full requirements, see 6.1.3.2.
+The selection of a category for a particular subsystem depends mainly upon a) the reduction in risk to be achieved by the safety function to which the subsystem contributes, b) the required performance level (PL,), c) the technologies used, d) the consequences arising in the case of a fault(s) in an element of the subsystem, e) the possibilities of avoiding a fault(s) in that subsystem (systematic failure), f) the mean time to dangerous failure (MTTF)), g) the diagnostic coverage (DC), and h) the CCFs in the case of categories 2, 3 and 4.
+6.1.3.2 Designated architectures — Specification of categories 6.1.3.2.1 General The following designated architectures meet the requirements of the respective category.
+The designated architectures show a logical representation of the structure of the subsystems for each category.
+NOTE1_ For categories 3 and 4 not all parts are necessarily physically redundant but there are redundant means of assuring that a single fault cannot lead to the loss of the sub-function.
+Therefore, the technical realization (for example, the circuit diagram) can differ from the logical representation of the architecture.
+Figure 7 to Figure 11 do not show examples but general designated architectures.
+A deviation from these architectures is always possible, but any deviation shall be justified, by means of appropriate 31 analytical tools, e.g.
+Markov modelling, fault tree analysis (FTA), such that the subsystem meets the required performance level (PL,).
+For a subsystem that deviates from the designated architectures, a detailed calculation shall be provided to demonstrate the achievement of the PL,.
+The lines and arrows in Figure 7 to Figure 11 represent logical interconnecting means and, where applicable, diagnostic means.
+NOTE2 The structure of a subsystem is a key characteristic having great influence on the PL.
+Even if the variety of possible structures is high, the basic concepts are often similar.
+Thus, most structures that are present in the machinery field can be mapped to one of the categories.
+For each category, a typical representation as a safety-related block diagram can be made.
+These typical realizations are called designated architectures and are listed in the context of each of the following categories.
+If the simplified procedure of 6.1.8 is used to estimate the PL, the architecture of the subsystem shall be equivalent to the designated architecture of the claimed category.
+6.1.3.2.2 Category B Subsystem of category B shall, as a minimum, be designed, constructed, selected, assembled and combined in accordance with the relevant standards and use basic safety principles (see also ISO 13849-2:2012) for the specific application to withstand — the expected operating stresses, e.g.
+the reliability with respect to breaking capacity and frequency, — the influence of the processed material, e.g.
+detergents in a washing machine, and — other relevant external influences, e.g.
+mechanical vibration, electromagnetic interference (EMI), power supply interruptions or disturbances.
+The MTTFy of the channel shall be at least low.
+The maximum PL achievable with category B is PL b.
+NOTE1_ There is no average diagnostic coverage (DC, = none) within category B architectures.
+In such structures, the consideration of CCF is not relevant.
+NOTE2 Whena fault occurs it can lead to the loss of the sub-function.
+Specific requirements for EMI (immunity requirements) are found in the relevant product or generic standards.
+Immunity requirements are particularly relevant for subsystems.
+Subsystems containing active electronic components shall meet EMI immunity requirements based on the environment as appropriate.
+For practical guidance see Annex L.
+Key im interconnecting means I input device, e.g.
+sensor L logic O output device, e.g.
+main contactor Figure 7 — Designated architecture for category B 6.1.3.2.3 Category 1 For category 1, the same requirements as those according to 6.1.3.2.2 for category B shall apply.
+In addition, the following applies.
+32 Subsystems of category 1 shall be designed and constructed using well-tried components according to 6.1.11 and well-tried safety principles (see 3.1.49 and ISO 13849-2:2012).
+The MTTF) of the channel shall be high.
+NOTE1_ There is no average diagnostic coverage (DC,,,, = none) within category 1 architectures.
+In such structures (single-channel architectures) the consideration of CCF is not relevant.
+The maximum PL achievable with category 1 is PL c.
+NOTE2 When a fault occurs it can lead to the loss of the safety function.
+However, the MTTF) of the single channel in category 1 is higher than in category B.
+Consequently, the loss of the safety function is less likely.
+Key i,, interconnecting means I input device, e.g.
+sensor L logic O output device, e.g.
+main contactor Figure 8 — Designated architecture for category 1 6.1.3.2.4 Category 2 For category 2, the same requirements as those according to 6.1.3.2.2 for category B shall apply.
+“Well- tried safety principles” according to 3.1.49 and ISO 13849-2:2012 shall also be followed.
+In addition, the following applies.
+Subsystems of category 2 shall be designed so that their functional channel (I, L, O) is tested at suitable intervals.
+The test of the sub-function(s) shall be performed before or at least at the demand of the safety function prior to any hazardous situation, e.g.: a) prior to the start of anew cycle; b) prior to the start of other movements; c) immediately upon demand of the safety function; d) periodically during operation if the risk assessment and the kind of operation shows that it is necessary.
+The test itself shall not lead to a hazardous situation (e.g.
+due to an increase in response time).
+The test equipment may be integral with, or separate from, the safety-related part(s) providing the safety function.
+Based on the risk assessment of the machine or part of it, the initiation of this test may be manual.
+Any test of the sub-function(s) shall either — allow operation if no faults have been detected, or — generate an output [output of the test equipment (OTE)] that initiates appropriate control action, if a fault is detected.
+For PL,.d the OTE shall initiate a safe state that is maintained until the fault is cleared.
+33 For PL, up to and including PL, c, whenever practicable the output (OTE) shall initiate a safe state that is maintained until the fault is cleared.
+When this is not practicable (e.g.
+welding of the contact in the final switching device) it may be sufficient for the OTE to provide a warning.
+The calculation of DC,,, shall take into account only the blocks of the functional channel (i.e.
+I, L and O in Figure 9) and not the blocks of the testing channel.
+For category 2, the following shall be applied: — demand rate < 0,01 test rate (see Table K.1, NOTE 1); or testing occurs immediately upon demand of the safety function and the overall time to detect the fault and to bring the machine to a non- hazardous condition (usually to stop the machine) is shorter than the time to reach the hazard (see also ISO 13855:2010).
+— MTTF, of the testing channel (TE and OTE in Figure 9) is greater than one half of MTTFp of the functional channel.
+The DC of all parts of the functional channel (I, L, 0) shall be at least low.
+The MTTF) of the functional channel shall be low-to-high, depending on the required performance level (PL,).
+Measures against CCF of the functional channel and the testing channel shall be applied (see 6.1.6 and Annex F).
+The maximum PL achievable with category 2 is PL d.
+NOTE1_ The test of the blocks in the functional channel can be realized by, e.g.
+monitoring.
+NOTE2 Category 2 system behaviour can be characterized by — the occurrence ofa fault leading to the loss of the sub-function between tests, and — the loss of sub-function being detected by the tests.
+NOTE3 The principle that supports the validity of a category 2 function is that the adopted technical provisions, and, for example, the choice of test rate and reliability of the test equipment, can decrease the probability of occurrence of a dangerous fault.
+Key i, interconnecting means O output device, e.g.
+main contactor I input device, e.g.
+sensor TE test equipment L logic OTE output of TE m monitoring/testing The dashed lines represent reasonably practicable fault detection.
+Figure 9 — Designated architecture for category 2 34 6.1.3.2.5 Category 3 For category 3, the same requirements as those according to 6.1.3.2.2 for category B shall apply.
+Well- tried safety principles according to 3.1.49 and ISO 13849-2:2012 shall also be followed.
+In addition, the following applies.
+The maximum PL achievable with category 3 is PLe.
+Subsystems of category 3 shall be designed so that a single fault does not lead to the loss of the sub- function.
+Whenever reasonably practicable, the single fault shall be detected at or before the next demand upon the safety function.
+The DC of the total subsystem shall be at least low.
+The MTTF) of each of the redundant channels shall be low-to-high, depending on the PL,.
+Measures against CCF shall be applied (see Annex F).
+NOTE1 The requirement of single-fault detection does not mean that all faults will be detected.
+Consequently, the accumulation of undetected faults can lead to an unintended output and a hazardous situation at the machine.
+Typical examples of practicable measures for fault detection are use of the feedback of mechanically guided relay contacts and monitoring of redundant electrical outputs (see Annex E).
+NOTE2 _ If necessary, because of technology and application, type-C standard makers can give further details on the detection of faults.
+NOTE3 Category 3 subsystem behaviour is characterized by — continued performance of the sub-function in the presence of a single fault, — detection of some, but not all, faults, and — possible loss of the sub-function due to accumulation of undetected faults.
+Key ly interconnecting means L1,L2 logic Cc cross monitoring m monitoring 11,12 input device, e.g.
+sensor 01,02 output device, e.g.
+main contactor or drive system The dashed lines represent reasonably practicable fault detection.
+Figure 10 — Designated architecture for category 3 6.1.3.2.6 Category 4 For category 4, the same requirements as those according to 6.1.3.2.2 for category B shall apply.
+Well- tried safety principles according to 3.1.49 and ISO 13849-2:2012 shall also be followed.
+In addition, the following applies.
+35 The maximum PL achievable with category 4 is PL e.
+Subsystem of category 4 shall be designed such that — asingle fault does not lead to a loss of the safety function, and — the single fault is detected at or before the next demand upon the safety functions, e.g.
+immediately, at switch on, or at the end of a machine operating cycle but if this detection is not possible, then an accumulation of undetected faults shall not lead to the loss of the safety function.
+NOTE1 Based on an analysis, e.g.
+FMEA, undetected failures with a very low probability do not need to be considered for accumulation of faults if this is documented and verified.
+The average diagnostic coverage (DC...) of the total subsystem shall be high.
+The MTTFp of each of the redundant channels shall be high.
+Measures against CCF shall be applied (see Annex F).
+NOTE2 Category 4 system behaviour is characterized by — continued performance of the safety function in the presence of a single fault, — detection of faults in time to prevent the loss of the safety function, and — the accumulation of undetected faults being taken into account.
+NOTE3 The difference between category 3 and category 4 is a higher DC MTTFE) of each channel of “high” only.
+avg in category 4 and a required In practice, the consideration of a fault combination of two faults can be sufficient.
+Key i.
+interconnecting means L1,L2 logic c cross monitoring m monitoring 11,12 input device, e.g.
+sensor 01,02 output device, e.g.
+main contactor or drive system Solid lines for monitoring (m) represent DC that is higher than in the designated architecture for category 3.
+Figure 11 — Designated architecture for category 4 6.1.4 Mean time to dangerous failure (MTTF)) The mean time to dangerous failure (MTTF)) is a quantity with the dimension of time to characterize the basic reliability of the components used.
+Given a constant dangerous failure rate, the MTTF) is reciprocal of the dangerous failure rate (e.g.
+with failures in 109 hours converted into years between failures).
+For the estimation of MTTFp of a component, the order of priorities is: a) use manufacturer’s data; 36 NOTE1 When MTTF) data of components (e.g.
+electromechanical components) are provided by the manufacturer, the number of operations indicated by the manufacturer is considered so that the number of operations in the real application is not higher than the number of operations indicated by the manufacturer.
+b) use methods in Annex C; c) failure rate field data from identical component applications in similar environments collected over a significant period of time and where the collection and analysis method results in a reasonable level of confidence in the data; NOTE2 Further information about field data is detailed in IEC 61508-7:2010, B.5.4.
+d) choose 10 years.
+Annex C gives practical guidance on how to calculate or evaluate MTTF) values for single components.
+Annex D describes how to derive the MTTF, of each channel from this, including parts-count method and symmetrisation.
+For each subsystem according to Table 5, the maximum value of MTTFp for each channel is limited to 100 years.
+For category 4 subsystems, the maximum value of MTTF) for each channel is limited to 2 500 years.
+NOTE3 _ This higher value is justified because in category 4 the other quantifiable aspects, structure and DC, are at their maximum point and this allows the series combination of more than 3 subsystems with category 4 to achieve PL e in accordance with 6.2.
+The value of the MTTF) of each channel is given in three levels (see Table 6) and shall be taken into account for each channel (e.g.
+single channel, each channel of a redundant system) individually.
+Table 6 — Mean time to dangerous failure (MTTF)) of each channel Denotation of each channel Range of each channel low 3 years s MTTFp < 10 years medium 10 years s MTTF) < 30 years high 30 years < MTTF) < 100 years@ NOTE1 The choice of the MTTFp ranges of each channel is based on failure rates found in the field as state-of-the-art, forming a kind of logarithmic scale fitting to the logarithmic PL scale.
+An MTTF) value of each channel less than three years is not expected to be found for real subsystems since this would mean that after one year about 30 % of all systems on the market will fail and will need to be replaced.
+An MTTFp value of each channel greater than 100 years is not acceptable because subsystems for high risks should not depend on the reliability of the components alone.
+To reinforce the subsystems against systematic and random failure, additional means such as redundancy and testing are necessary.
+To be practicable, the number of ranges was restricted to three.
+The limitation of MT TF) of each channel to a maximum of 100 years refers to the single channel of the subsystem which carries out the safety function.
+Higher MTTF) values can be used for single components (see Table D.1).
+NOTE 2 The indicated limit values of this table are assumed within an accuracy of 5 %.
+a For Category 4, the MTTF) is limited to 2 500 years.
+6.1.5 Diagnostic coverage (DC) Diagnostic coverage (DC) is determined as the ratio between rate of detected dangerous failures and the rate of total dangerous failures.
+DC shall be considered in categories 2, 3 and 4.
+pe=—>400_ (1) > Aptotal where XApp is the sum of all failure rates of detected dangerous failures; 37 LAptotal iS the sum of all failure rates of total dangerous failures.
+DC shall be based on either failure modes and effects analysis (FMEA) (see IEC 60812:2018), or by using simplified estimation of DC based on E.1 and Table E.1.
+E.2 describes how the average diagnostic coverage (DC,,,) can be estimated.
+NOTE1 __ For the estimation of DC, in most cases, FMEA (see IEC 60812 and EN 50495:2010, Annex B) or similar methods can be used to consider either all relevant faults or failure modes, or both.
+See also ISO 13849-2:2012, E.5.3) NOTE2 Often logic units take care of diagnostic functions of input and output device.
+NOTE3 Theused technology will influence the possibilities for the implementation of fault detection.
+The value of the DC is given in four levels as shown in Table 7.
+Table 7 — Diagnostic coverage (DC) Denotation none DC <60% low 60% <DC<90% medium 90% <DC<99% high 99% <DC NOTE1 Forsubsystems consisting of several parts an average value DC.,,, for DC is used in Figure 12, Clause 7 and E.2.
+avg NOTE 2 The choice of the DC ranges is based on the key values 60 %, 90 % and 99 % also established in other standards dealing with DC of tests.
+Investigations show that (1 - DC) rather than DC itself is a characteristic measure for the effectiveness of the test.
+(1 - DC) for the key values 60 %, 90 % and 99 % forms a kind of logarithmic scale fitting to the logarithmic PL scale.
+A DC value less than 60 % has only a slight effect on the reliability of the tested system and is therefore called “none”.
+A DC value greater than 99 % for complex systems is very hard to achieve.
+To be practicable, the number of ranges was restricted to four.
+The indicated limited values of this table are assumed within an accuracy of 5 %.
+6.1.6 Common cause failures (CCFs) The probability of two or more separate faults having a common cause shall be taken into account for subsystems of category 2, 3 and 4.
+In category 2 CCF refers to common cause failures in the functional channel and the testing channel.
+In category 3 and 4, CCF refers to common cause failures in both functional channels.
+Sufficient measures against CCF shall be carried out (for guidance, see Annex F).
+6.1.7 Systematic failures Systematic failures occur for a variety of reasons, including, e.g.: — wrong design specifications; — manufacturing failures; — environmental stress effects (e.g.
+temperature, vibration and EMI immunity); — operational failures; — humanerrors in the SRS, design of hardware and software.
+To establish a sufficient level of systematic integrity, the approach to design and implement safety functions shall be systematic.
+Activities that are necessary for the achievement of the required functional safety of the SRP/CS shall be documented in a functional safety plan.
+The functional safety plan is intended to provide measures for preventing incorrect specification, implementation, or modification issues.
+38 In the design process especially, control and avoidance of systematic failures shall be implemented (see Clause 10 and Annex G).
+6.1.8 Simplified procedure for estimating the performance level for subsystems This subclause describes a simplified procedure for estimating the PL of a subsystem based on designated architectures.
+Other architectures may be mapped to these designated architectures in order to obtain an estimation of the PL (see 6.1.1).
+The designated architectures are represented as block diagrams and are listed in the context of each category in 6.1.3.2.
+Information about the block method and the safety-related block diagrams are given in 6.1.3.2 and Annex B.
+See also IEC 61078:2016.
+A designated architecture is always assigned to a subsystem.
+In case the SRP/CS consists of one subsystem, the designated architecture will be the same for the entire SRP/CS.
+In case the SRP/CS consists of multiple subsystems, every subsystem shall be assigned a designated architecture, so a single SRP/CS can comprise multiple architectures.
+The simplified approach is based on: a) mission time (7},), 20 years (see 3.1.36); b) constant failure rates within the mission time; c) sufficient measures to prevent CCF have been applied (beta factor of 2 %).
+For guidance see Annex F or IEC 61508-6:2010, Annex D.
+NOTE The mission time (7\y) is assumed to be 20 years, within which the component reliability by constant failure rates can be described or approximated.
+This is generally accomplished in electronic subsystems.
+The SRP/CS is replaced when the mission time has been reached or equivalent measures are performed to ensure that the estimated PL is still valid.
+In order to claim a mission time of 20 years, the requirements according to 6.1.3.2.2 for Category B shall be observed.
+The actual mission time may be less than 20 years when using components which wear out sooner or for other technical reasons which should be documented.
+See also C.4.
+The methodology considers the categories as architectures with defined DC,,,.
+The PL of each subsystem depends on the architecture, the MTTF) in each channel and the DC,,,,.
+For a subsystem with software, the requirements of Clause 7 shall be applied.
+The combination of several subsystems is considered in 6.2.
+Figure 12 shows which selection of categories in combination with the MTTF) of each channel and DC,,, is able to achieve the PL.
+For the estimation of the PL, Figure 12 gives the different possible combinations of category with DC,,,, (horizontal axis) and the MTTFp of each channel (columns).
+The columns in the diagram represent the three MTTF) ranges of each channel (low, medium and high) which can be selected to achieve the required PL.
+Before using this simplified approach with Figure 12 (which represents results of different Markov models based on designated architectures of 6.1.3), the category of the subsystem (see 6.1.3.2) as well as DC,,,, (see 6.1.5) and the MTTF) of each channel (see 6.1.4) shall be determined (see Annex C to Annex E).
+For categories 2, 3 and 4, sufficient measures against CCF shall be carried out (for guidance, see 6.1.6 and Annex F).
+Taking these parameters into account, Figure 12 provides a graphical method for determining the PL, achieved by the subsystem.
+The combination of category (including CCF) and DC,,, determines which column of Figure 12 is to be chosen.
+According to the MTTFp of each channel, one of the three different shaded areas of the relevant column shall be chosen.
+The vertical bands in Figure 12 show the range of performance that can be expected from each combination of MTTFp, Category and DC,,,,.
+Finding the appropriate ranges for each of these variables in the bands in the Figure 12 and then reading across to the vertical axis will indicate the PL that can be 39 achieved with this combination.
+For a more precise numerical selection of PL depending on the precise value of MTTF) of each channel, see Annex K.
+A detailed example of this simplified procedure for estimating the performance level for subsystems is shown in Annex I.
+PFH (1/h) PL | 10* 10° DC ayg= | DCavg= | DCavg= | DCavg= | DCavg= | DCavg= | DC avg = PFH average frequency of dangerous failure per hour performance level low MTTF) of each channel PL Y] medium MTTF) of each channel high MTTF) of each channel Figure 12 — Relationship between categories, DC,,,, MTTFp of each channel and PL avg’ 6.1.9 Alternative procedure to determine the performance level and PFH without MTTF) 6.1.9.1 General The alternative procedure to determine the PL without MTTF,) is limited to subsystems incorporating mechanical, hydraulic, pneumatic, electrohydraulic or electropneumatic components where no reliability data is available and where the good engineering practice method given in C.2 cannot be applied.
+In that case, the machine manufacturer may use the alternative procedure described in 6.1.9.2 to 6.1.9.4 to evaluate the PL without any MTTF, calculation.
+The combination of several subsystems is considered in 6.2.
+40 6.1.9.2 Preconditions If for mechanical, hydraulic or pneumatic components (or components comprising a mixture of technologies) no application-specific or component manufacturer reliability data is available and the good engineering practice method of C.2 cannot be applied, the machine manufacturer may evaluate the quantifiable aspects of the PL without any MTTF) calculation.
+Where no MTTFp data is available, the safety-related performance level (PL) can be implemented by the architecture, the DC and the measures against CCF.
+As a worst case assumption the Tj9p value is limited to 10 years.
+For well-tried components an assumption for T;9p of 20 years may be accepted.
+In this procedure the calculation of the DC,,, is reduced to the arithmetic mean value of all individual component DC values in the subsystem.
+The mission time (7) is assumed to be 20 years.
+For category 2, a sufficient test rate is required (see 6.1.3.2.4).
+The requirements, e.g.
+according to DC.,,, and CCF and systematic issues, for each category (see 6.1.3) shall be fulfilled.
+avg 6.1.9.3.
+Inputs or output subsystem Table 8 shows the relationship between achievable PL (corresponding to Figure 12) and categories.
+PLa and PL b can be implemented with Cat.
+B if basic safety principles are followed.
+PL c can be implemented with Cat.
+1 or Cat.
+2, if well-tried components, basic and well-tried safety principles are used.
+PL d can be implemented with Cat.
+3, respectively PL e with Cat.
+4, if well-tried components, basic and well-tried safety principles are used.
+Table 8 — Performance level and PFH estimation based on category and component selection Category?
+Additional requirements | | aah BPH Achievable PL» 5,0 x 10-6 b 1,7 x 10-6 Cc Only well-tried components are used 1,7 x 10-6 Only well-tried components are used 2,9 x 10-7 Only well-tried components are used 4,7 x 10-8 a Allrequirements in 6.1.3.2.2 to 6.1.3.2.6 for the respective category shall be fulfilled, except MTTFp.
+b The achievable PL mentioned here only covers quantifiable aspects.
+Additional requirements for non-quantifiable aspects such as systematic failure and software (see 6.1.1) shall be fulfilled.
+6.1.9.4 Logic subsystem Where no MTTF) data is available a conservative approach using estimated MTTF) can be assumed.
+— For category B, 2 and 3 MTTFy for each channel is 10 years.
+— Forcategory 1a MTTF) ofthe channel of 30 years can be assumed since well-tried components shall be used (see 6.1.3.2.3).
+The maximum PL that can be achieved is PL c (see Annex K).
+For category 2 and category 3 common-cause failures and DC shall be considered.
+The DCV¢ shall match at least 60 % for category 2 and category 3.
+Category 4 is excluded in this method.
+With the category, the MTTFp and the DC,,,,, the PL and the PFH of the subsystem can be determined with Table K.1.
+41 6.1.10 Fault consideration and fault exclusion 6.1.10.1 General When designing safety subsystems, faults and their effects shall be assessed.
+Each element, whose fault may cause the failure of the safety function in one of the functional channels of a subsystem, shall be considered.
+The designer shall make a list of faults, which can occur in the SRP/CS.
+This list shall include all considered faults, explanation how these faults have been noted in the design, and if fault exclusion is claimed to give reasons for these exclusions.
+For subsystems pre-validated by the component manufacturer, it is not necessary by the designer of the safety functions to take into account internal failures of the component(s), only failures of the interfaces.
+NOTE Faults of elements, which are not directly necessary for the execution of the safety function, but which can support it (e.g.
+filter elements, protection against over-voltage), generally do not contribute to the MTTF)p of each channel.
+6.1.10.2 Fault consideration ISO 13849-2:2012 lists the important faults and failures for the various technologies.
+The lists of faults are not exhaustive and, if necessary, additional faults shall be considered and listed.
+In such cases, the method of evaluation shall also be clearly elaborated.
+For components not mentioned in ISO 13849-2:2012, a methodology to evaluate the impact of either probable faults or failures of components, or both, shall be carried out, e.g.
+FMEA (see IEC 60812), aiming at the identification of faults that are to be considered for those components.
+In general, the following fault criteria shall be taken into account: if, as a consequence of a fault, further components fail, the first fault together with all following faults shall be considered as a single fault; — the simultaneous occurrence of two or more faults having separate causes is considered highly unlikely and therefore needs not be considered.
+Two or more separate faults having a common cause shall be considered as a CCF (see Annex F).
+6.1.10.3 Fault exclusion It can be necessary to exclude faults in order to evaluate subsystems.
+Fault exclusion is a compromise between technical safety requirements and the theoretical possibility of occurrence of a fault.
+Fault exclusion can be based on a) the technical improbability of occurrence of some faults, b) generally accepted technical experience, independent of the considered application, and c) technical requirements related to the application and the specific hazard.
+Fault exclusion is only applicable for certain failures of an element and it is up to the designer (manufacturer or integrator) to prove the exclusion of the respective faults based on the limits set forward by the design and use.
+Such fault exclusion is only possible provided that their unlikely occurrence can be justified based on the known laws of physical science.
+Any such fault exclusions shall be justified and documented.
+The application of fault exclusion to certain faults for an element inside a subsystem does not limit the necessity of applying measures against systematic failures.
+It is possible that some faults are excluded by the manufacturer and some by the subsystem integrator.
+There shall be a specific characterization of the type of fault that is excluded.
+It would not be acceptable to state simply that a component will not break, distort or degrade due to wear.
+It is necessary to state 42 the direct influence under which the component will not break, distort or degrade due to wear.
+For example, the component will have no faults when subjected to a force of X Newtons from direction Y.
+The fault exclusion shall be justifiable under all expected environmental conditions including temperature, pressure, vibration, pollution, corrosive atmosphere.
+PL e shall not depend solely on fault exclusion.
+NOTE1 Information on fault exclusions is available in ISO 13849-2:2012, Annexes A to D.
+NOTE2 Product standards can give further information.
+6.1.11 Well-tried component A well-tried component for safety-related applications is a component, which shall be either a) widely used in the past with documented successful results in similar applications, or NOTE See IEC 61508-2:2010, 7.4.10, for “proven in use”.
+b) listed in ISO 13849-2:2012, Annexes A to D, or c) made, verified and validated using principles which demonstrate its suitability and reliability for safety-related applications according to relevant product and application standards.
+The decision to accept a particular component as being well-tried depends on the application, e.g.
+owing to the environmental influences.
+Complex components (e.g.
+PLC, microprocessor, and application-specific integrated circuit) shall not be considered as equivalent to well-tried.
+6.2 Combination of subsystems to achieve an overall performance level of the safety function 6.2.1 General An SRP/CS may be realized using a combination of subsystems and an overall PL may be achieved using the methods described in this subclause.
+In this case, the validation of the combination of subsystems as an SRP/CS is required (see Figure 13).
+These subsystems may be assigned to one or different categories.
+According to 6.1.3.2, the combination of subsystems to an SRP/CS starts at the points where the safety- related signals are initiated and ends at the output of the power control elements.
+The combined subsystems can consist of several parts connected in a linear (series alignment) way.
+To avoid a new complex estimation of the performance level (PL) achieved by combined subsystems where the separate PLs of all parts are already calculated, the following estimations are presented for a combination of subsystems.
+If previously validated subsystems according to IEC 62061:2021 or the IEC 61508 series (SIL) for high demand or continuous mode that use Route 1, (see IEC 61508-2:2010, 7.4.4.2) are used, the SIL can be correlated to a PL using 6.1.2 and 6.2.2.
+PFH values calculated according to the IEC 61508 series or IEC 62061:2021 with the above-mentioned limitations can be considered as PFH values according to this document.
+Category cannot always be deduced and is not required from a subsystem validated according to IEC 62061:2021 or the IEC 61508 series.
+6.2.2.
+Known PFH values When combining subsystems with known PFH values, the PFH values can be combined as shown below assuming that there are n separate subsystems SB, to SB,.
+These subsystems operate in a 43 series combination, which as a whole performs a safety function.
+For each SB;, a PL; has already been evaluated.
+This situation is illustrated in Figure 13 (see also Figure 5 and Figure H.2).
+If the PFH values of all subsystemss are known, then the PFH of the SRP/CS is the sum of all PFH values of the n individual subsystem.
+The PL of the SRP/CS is limited by: — the lowest PL of any individual subsystem involved in performing the safety function, and — the PL corresponding to the PFH of the combined SRP/CS according to Table 2.
+NOTE See Annex H for an example of this method.
+SBn PLn PFHn PFH = PFH, + PFH, +...
++ PFHn Figure 13 — Combination of subsystems to achieve overall PL 6.2.3.
+Unknown PFH values If the PFH values of all individual SB; are not known, then as an alternative to 6.2.2, the PL of the SRP/CS performing the safety function may be defined according to 6.1 or calculated using Table 9 as follows: a) Identify the lowest PL of all subsystems: this is PL),,,; b) Identify the number of subsystems with PL),v: this number is Njw; c) Look-up PLin Table 9.
+Table 9 — Determination of PL for series alignment of subsystems None, not allowed U U i) UJU)UTY a b b c c YJUSY a}a > e NOTE _ This table is based on the defined PFH ranges for each PL (see Table 2) forming a kind of logarithmic scale.
+6.3 Software based manual parameterization 6.3.1 General This subclause is limited in scope to only manual, software based parameterization that is performed and controlled by an authorized person.
+See also 5.2.2.6 and Table M.2.
+4a Some safety-related subsystems or SRP/CS need parameterization for a safety function or a sub- function.
+EXAMPLE A converter with integrated sub-functions can be parameterized via a PC-based configuration tool for setting the upper speed limit parameter.
+To establish the detection zone of a laser scanner, parameters such as angle and distance can be configured per the manufacturer’s safety documentation and the machine risk assessment.
+The objective of the requirements for software based manual parameterization is to guarantee that the safety-related parameters specified for a safety function or a sub-function are correctly transferred into the hardware performing the safety function or a sub-function.
+Different methods can be applied to set such parameters, such as dip-switch based parameterization or dedicated parameterization software (commonly called configuration or parameterization tools).
+NOTE1 _ — Safety-related parameterization which is carried out automatically without human interaction, for example, based on input signals, is not considered in this subclause.
+NOTE2 Direct control of a machine by an operator, e.g.
+speed control of a forklift truck, is not considered as manual parameterization as described in this subclause.
+If the configuration or parameterization tool is pre-designed in accordance with this document or the IEC 61508 series, for example together with its dedicated subsystem, it is assumed that there will be no dangerous failures due to the influences listed in 6.3.2 or any other influence that is reasonably foreseeable.
+The requirements of 6.3.5 apply when a software based manual parameterization is performed with the pre-designed tool.
+If a safety-related subsystem or SRP/CS is not capable of being parameterized by software based manual parameterization as described above, 6.3 does not apply.
+6.3.2 Influences on safety-related parameters Safety-related parameters shall be designed to withstand applicable external influences.
+During software based manual parameterization, the parameters can be affected by several influences, such as: a) data entry errors by the person responsible for parameterization; b) faults of the software of the parameterization tool; c) faults of further software and/or service provided with the parameterization tool; d) faults of the hardware of the parameterization tool; e) faults during transmission of parameters from the parameterization tool to the SRP/CS or a subsystem; f) faults of the SRP/CS or a subsystem to store transmitted parameters correctly; g) systematic interference during the parameterization process, e.g.
+by EMI or loss of power.
+h) interference due to external influences or factors, such as EMI or (random) loss of power.
+With no measures applied to counteract, avoid or control potential dangerous failures caused by the influences listed above, such influence can lead to the following: — parameters are not updated by the parameterization process, completely or in parts without notice to the person responsible for the parameterization; — parameters are incorrect, completely or in parts; — parameters are applied to an incorrect device, such as when transmission of parameters is carried out via a wired or wireless network.
+45 6.3.3.
+Requirements for software based manual parameterization Software based manual parameterization shall use a dedicated tool provided by the manufacturer or supplier of the SRP/CS or the related subsystem(s).
+The SRP/CS or the related subsystem(s) and the parameterization tool shall have the capability to prevent unauthorized modification, for example by using a dedicated password.
+Parameterization while the machine is running shall be permitted only if it does not cause an unsafe state.
+It is possible to fulfil the requirements by using a pre-designed subsystem.
+When using a pre-designed SRP/CS or subsystem that is capable of software based manual parameterization, the target is to prevent dangerous failure due to the influences listed in 6.3.2 or any other influence that is reasonably foreseeable.
+The validation of the pre-designed subsystem shall include the issue of parameterization.
+When an SRP/CS or subsystem that is capable of software based manual parameterization is designed according to this document there shall be no undetected dangerous failure due to the influences listed above or any other influence that is reasonably foreseeable.
+The following requirements shall be fulfilled in addition: a) The design of the software based manual parameterization shall be considered as a safety-related aspect of SRP/CS design that is described in an SRS.
+b) The SRP/CS or subsystem shall provide means to check the data plausibility, e.g.
+checks of data limits, format and/or logic input values.
+c) The integrity of all data used for parameterization shall be maintained.
+This shall be achieved by applying measures to: 1) control the range of configured values by a validity (range) check; 2) control data corruption before transmission; 3) control the effects of errors from the parameter transmission process; 4) control the effects of incomplete parameter transmission; 5) control the effects of faults and failures of hardware and software of the parameterization; 6) control the effect of the interruption of the power supply.
+d) The parameterization tool shall fulfil all relevant requirements for SRP/CS according to this document or the IEC 61508 series.
+e) Alternatively to d), a special procedure shall be used for setting the safety-related parameters.
+This procedure shall include confirmation of input parameters to the SRP/CS by either: — retransmitting of modified parameters to the parameterization tool; or — other means to confirm the integrity of the parameters; — as well as subsequent confirmation, for example by a suitably skilled person and by means of an automatic check by a parameterization tool.
+New values of safety-related parameters shall not be used for safety-related operation before the changes are acknowledged and confirmed.
+NOTE This is of particular importance where a parameterization software tool uses a device not specifically intended for this purpose (e.g.
+personal computer or equivalent).
+The software modules used for encoding/decoding within the transmission/retransmission process and software modules used for visualization of the safety-related parameters to the user shall, as a minimum, use diversity in function(s) to avoid systematic failures.
+46
+
+
+<<AnnexA>>
+Annex A (informative) Guidance for the determination of required performance level (PL,) A.1 General Key 1 L H 52 starting point for evaluation of safety function’s contribution to risk reduction low contribution to risk reduction high contribution to risk reduction PL, required performance level Risk parameters: Ss S1 S2 F F1 F2 P P1 P2 severity of injury slight (normally reversible injury) serious (normally irreversible injury or death) frequency and/or exposure times to hazard seldom-to-less-often and/or exposure time is short frequent-to-continuous and/or exposure time is long possibility of avoiding or limiting harm possible under specific conditions scarcely possible Figure A.1 — Diagram for determining PL, for safety function Figure A.1 provides guidance for the determination of the safety-related PL, for the safety function.
+The diagram should be considered for each safety function.
+71 A.2 Selection of required performance level (PL,) Annex A is concerned with the contribution to the risk reduction made by the SRP/CS being considered.
+The method given in this clause is based on the estimation of risk parameters (which is by nature partly subjective as for any other risk estimation method).
+Therefore, this method is only a guidance to machine designers and standard makers for estimating the PL, for each safety function to be carried out by an SRP/CS.
+This methodology to estimate the PL, is not mandatory.
+It is a generic approach which assumes a worst-case probability of occurrence of a hazardous event (the probability of occurrence is 100 %).
+In cases where the probability of occurrence can be assessed as low (this decision should be justified and documented), a downgrade by one performance level is possible otherwise the probability of occurrence is 100 %.
+Other risk estimation methods for specific types of machines can be used as appropriate and experience in successfully dealing with similar machines/hazards should be taken into account when estimating PL,.
+Therefore, the PL required by a type-C standard can deviate from that indicated by the generic approach given in Figure A.1.
+The diagram in Figure A.1 is based on the situation prior to the provision of the intended safety function (see also ISO/TR 22100-2:2013).
+Risk reduction by technical measures independent of the control system (e.g.
+mechanical guards), or additional safety functions, are to be taken into account in determining the PL, of the intended safety function, in which case, the starting point of Figure A.1 is selected after the implementation of these measures (see also Figure 3).
+The parameters used in determining the PL, are: — severity of injury (S); — frequency and/or exposure times to hazard (F); — possibility of avoiding or limiting harm (P).
+These parameters can be combined, as in Figure A.1, to give a gradation of the contribution to required risk reduction from low to high.
+A.3 Guidance for selecting parameters S, F and P for the risk estimation A.3.1 Severity of injury, $1 and S2 In estimating the risk, only slight injuries or serious injuries are considered.
+To make a decision, the usual consequences of accidents and normal healing processes should be taken into account in determining S1 and S2.
+For example, bruising and/or lacerations without complications would be classified as S1, whereas amputation or death would be S2.
+NOTE For guidance about the evaluation of severe or slight injury see also ISO/TR 14121-2.
+A.3.2 Frequency and/or exposure times to hazard, F1 and F2 A generally valid time period to be selected for parameter F1 or F2 cannot be specified.
+However, the following explanation can facilitate the decision-making process.
+F2 should be selected if a person is frequently or continuously exposed to the hazard.
+It is irrelevant whether the same or different persons are exposed to the hazard on successive exposures, e.g.
+for the use of lifts.
+The frequency parameter should be chosen according to the frequency and duration of access to the hazard.
+Where the demand on the safety function is known by the designer, the frequency and duration of this demand can be chosen instead of the frequency and duration of access to the hazard.
+In this document, the frequency of demand on the safety function is assumed to be more than once per year.
+y fA The period of exposure to the hazard should be evaluated on the basis of an average value which can be seen in relation to the total period of time over which the equipment is used.
+For example, if it is necessary to reach regularly between the tools of the machine during cyclic operation in order to feed and move workpieces, then F2 should be selected.
+In case of no other justification, F2 should be chosen if the frequency is higher than once per 15 min.
+F1 may be chosen if the accumulated exposure time does not exceed 1/20 of the overall operating time and the frequency is not higher than once per 15 min.
+EXAMPLE At a machine with an overall operating time of 8 h per day a person is exposed 2 min once an hour to change workpieces (estimated average value) so the accumulated exposure time is 16 min in relation to 8 min x 60 min resulting in 1/30.
+Since also the frequency is 1/h, F1 can be chosen.
+A.3.3 Possibility of avoiding or limiting harm, P1 and P2 It is important to know whether a hazardous event can be recognized before it can cause harm and be avoided.
+For example, can the exposure to a hazard be directly identified by its physical characteristics, or recognized only by technical means, e.g.
+indicators.
+Other important aspects which influence the selection of parameter P include, for example: a) speed with which the hazardous situation arises (e.g.
+quickly or slowly); b) possibilities to withdraw from the hazardous situation (e.g.
+avoidance by escaping); c) practical safety experiences relating to the process; d) whether operated by trained and suitable operators; e) operated with or without supervision.
+When a hazardous event occurs, P1 should only be selected if there is a realistic possibility of avoiding or significantly reducing harm.
+Otherwise, P2 should be selected.
+One possibility to determine P is the following approach: — determine the letter of each factor of the Table A.1 that reflects the specific application (only one choice for each factor is possible); — count the number of chosen letters “A”, “B” and “C”; — determine the corresponding value of the parameter P in Table A.2.
+Table A.1 — Determination of parameter P based on five factors 1.
+use of the machine by 2.
+speed of the part of the machine that can create a hazardous event (de- pending on the specific machine and time to escape from or to avoid a hazardous situation) NOTE Any numbers in this table are purely indicative and can be different in type-C standards or based on the specific machine application.
+a 3.1.55 defines a ‘skilled person’ which incorporates instruction and training as well as years of practice according to this document.
+73 Table A.1 (continued) 3.
+spatial possibility to escape from the hazard 4.
+possibility of recog- nition/awareness of the hazard (e.g.
+hot/cold surface, non-ionising radiation etc.) 5.
+complexity of the oper- ations (human interaction in terms of numbers of operation and/or timing available for this opera- tions) NOTE Any numbers in this table are purely indicative and can be different in type-C standards or based on the specific machine application.
+a 3.1.55 defines a ‘skilled person’ which incorporates instruction and training as well as years of practice according to this document.
+Table A.2 — Selection of parameter P1 or P2 [_oneormrec?
+| EEE ODOOSO—S no “C”, two “B”, the rest “A” | See P1 or P2 depending on the specific situation The approach based on Table A.1 and Table A.2 should always be used with the following basic intention: P1 should only be selected if there is a realistic possibility of avoiding harm or of significantly reducing its effect; otherwise P2 should be selected.
+AA Overlapping hazards When using this document, all hazards are considered as a specific hazard or hazardous situation.
+Each hazard can therefore be evaluated separately.
+When it is obvious that there is a combination of directly linked hazards which always occur simultaneously then they should be combined during risk estimation.
+The determination of whether hazards should be considered separately or in combination should be considered during the risk assessment of the machine.
+EXAMPLE1 A continuous welding robot can create various simultaneous hazardous situations, e.g.
+crushing caused by movement and burning due to the welding process.
+This can be considered as a combination of directly linked hazards.
+EXAMPLE 2 _ For arobot cell in which separate robots are working, for the cell areas where only one robot can create at the same time a hazard, the robots can be considered separately.
+74
+
+
+<<AnnexB>>
+Annex B (informative) Block method and safety-related block diagram B.1 Block method The simplified approach requires a block-oriented logical representation of the subsystem.
+The subsystem should be separated into a small number of blocks according to the following: a) b) c) d) e) blocks should represent logical units of the subsystem related to the execution of the safety function; different channels performing the sub-function should be separated into different blocks; if one block is no longer able to perform its function, the execution of the sub-function through the blocks of the other channel should not be affected; each channel may consist of one or several blocks - three blocks per channel in the designated architectures, input, logic and output, is not an obligatory number, but simply an example for a logical separation inside each channel; each hardware unit of the subsystem should belong only to one block, thus allowing for the calculation of the MTTF) of the block based on the MTTFp of the hardware units belonging to the block (e.g.
+by FMEA or the parts count method, see D.1).
+B.2 Safety-related block diagram The blocks defined by the block method may be used to graphically represent the logical structure of the subsystem in a safety-related block diagram.
+For such a graphical representation, the following guidance can be used: the failure of one block in a series alignment of blocks leads to the failure of the whole channel (e.g.
+if one hardware unit in one channel of the subsystem fails dangerously, the whole channel might not be able to execute the sub-function any longer); only the dangerous failure of all channels in a parallel alignment leads to the loss of the sub-function (e.g.
+a sub-function performed by several channels is performed as long as at least one channel has no failure); CCFs are capable of creating this type of condition (see 6.1.6 and Annex F and Annex G); blocks used only for testing purposes of cat 3 or cat 4 SRP/CSs that do not affect the execution of the sub-function when they fail dangerously may be separated from blocks in the different channels.
+See Figure B.1 for an example.
+76
+
+
+<<AnnexE>>
+Annex E (informative) Estimates for diagnostic coverage (DC) for functions and subsystems E.1 Examples of diagnostic coverage (DC) See Table E.1.
+Table E.1 — Estimates for diagnostic coverage (DC) ease Input device cyclic test stimulus by dynamic change of the input signals 90% plausibility check, e.g.
+use of normally open and normally closed 99% mechanically linked contacts cross monitoring of inputs without dynamic test percentage to be defined depending on the specific application, e.g.
+depending on how often a signal change is done by the application (see NOTE 4) cross monitoring of input signals with dynamic test if short circuits are not detectable (for multiple 1/0) cross monitoring of input signals and intermediate results within the logic (L), and temporal and logical software monitor of the program flow and detection of static faults and short circuits (for multiple 1/0) indirect monitoring (e.g.
+monitoring by pressure switch, electrical 90 % to 99 %, depending on the applica- position monitoring of machine actuators) tion (see NOTE 2) direct monitoring (e.g.
+electrical position monitoring of control 99% valves, monitoring of electromechanical devices by mechanically linked contact elements) fault detection by the process percentage to be defined depending on the specific application; this measure alone is not sufficient for the required performance level (PL,) e (see NOTES 2, 3 and 5) monitoring some characteristics of the sensor (response time, range of analogue signals, e.g.
+electrical resistance, capacitance) Logic indirect monitoring (e.g.
+monitoring by pressure switch, electrical 90 % to 99 %, depending on the applica- position monitoring of machine actuators, plausibility check of final tion (see NOTE 2) result) direct monitoring (e.g.
+electrical position monitoring of control valves, monitoring of electromechanical devices by mechanically linked contact elements, plausibility check of intermediate results) simple temporal time monitoring of the logic (e.g.
+timer as watchdog, where trigger points are within the program of the logic) temporal and logical monitoring of the logic by the watchdog, where the test equipment does plausibility checks of the behaviour of the logic 88 Table E.1 (continued) start-up self-tests to detect latent faults in parts of the logic (e.g.
+pro- 60 % to 90 % (see NOTE 2) gram and data memories, input/output ports, interfaces) checking the monitoring device reaction capability (e.g.
+watchdog) 90% by the main channel at start-up or whenever the safety function is demanded or whenever an external signal demand it, through an input facility dynamic principle (all components of the logic are required to change the state ON-OFF-ON when the safety function is demanded), e.g.
+interlocking circuit implemented by relays invariable memory: signature of one word (single bus width) invariable memory: signature of double word (double bus width) variable memory: RAM-test by use of redundant data e.g.
+flags, 60% markers, constants, timers and cross comparison of these data variable memory: check for readability and write ability of used data 60 % memory cells variable memory: RAM self-test (e.g.
+“galpat” or “Abraham”) or double RAM with hardware or software comparison and read/write test.
+processing unit: self-test by software (see IEC 61508-7:2010, A.3) 60 % to 90 % (see NOTE 2) processing unit: coded processing (see IEC 61508-7:2010, A.3) 90 % to 99 % (see NOTE 2) fault detection by the process percentage to be defined depending on the specific application; this measure alone is not sufficient for the required performance level (PL,.) e (see NOTES 2, 3 and 5) Output device monitoring of outputs by one channel without dynamic test percentage to be defined depending on the specific application, e.g.
+depending on how often a signal change is done by the application (see NOTE 4) cross monitoring of outputs without dynamic test percentage to be defined depending on the specific application, e.g.
+depending on how often a signal change is done by the application (see NOTE 4) cross monitoring of output signals with dynamic test without detec- 90% tion of short circuits (for multiple I/O) cross monitoring of output signals and intermediate results within 99% the logic (L) and temporal and logical software monitor of the program flow and detection of static faults and short circuits (for multiple I/O) redundant shut-off path with monitoring of the outputs by logic and 99% test equipment, see example ISO 13849-2:2012, Annex E indirect monitoring (e.g.
+monitoring by pressure switch, electrical 90 % to 99 %, depending on the applica- position monitoring of machine actuators) tion (see NOTE 2) fault detection by the process percentage to be defined depending on the specific application; this measure alone is not sufficient for the required performance level (PL,) e (see NOTES 2, 3 and 5) direct monitoring (e.g.
+electrical position monitoring of control valves, monitoring of electromechanical devices by mechanically linked contact elements) 89 Table E.1 (continued) NOTE 1 For additional estimations for DC, see, e.g.
+IEC 61508-2:2010, Table A.2 to Table A.14.
+NOTE 2 For measures where a DC range is given (e.g.
+fault detection by the process) the correct DC value can be determined by considering all dangerous failures and then deciding which of them are detected by the DC measure.
+In case of any doubt a FMEA should be the basis for the estimation of the DC.
+NOTE 3 For the DC measure “Fault detection by the process” the demand rate of the safety function (rd) and the process diagnostic (test) rate (rt) can be considered together with a limitation of the effective DC of the tested component: a) r,/rqg>1 DC is limited to 60 % b) r/rg>10 DCis limited to 90% c) r,/rg>100 DCis limited to 99% NOTE 4 For the DC measure “Cross monitoring of inputs or outputs without dynamic test”, the effect of the test rate can be incorporated using the following limitations for the effective DC of the tested component: For Category 3 and 4: — r,< 1/year DCisO% — r,2 1/year DC is limited to 90 % — r,21/month _DCis limited to 99 % NOTE 5 When the DC measure “fault detection by the process” is combined with other DC measures as listed in Annex E this measure can still be included in the DC estimation of the block, even for PLr e.
+4 DC measures can be combined to achieve a higher DC.
+5 If medium or high DC is claimed for the logic, at least one measure for each of variable memory, invariable memory and processing unit with each DC at least 60 % shall be applied.
+Other measures can be used than those listed in this table.
+For the application of Table E.1 see the indicative examples below.
+EXAMPLE1 ISO 13849-2:2012, Annex E presents a complete worked example (which is very detailed) for the validation of fault behaviour and diagnostic means on an automatic assembly machine.
+NOTE ISO/TR 24119 describes a pragmatic step-by-step table-based methodology for evaluation of DC for series connected interlocking devices with potential free contacts.
+EXAMPLE2 The DC measure “fault detection by the process” can only be applied if the safety-related component is involved in the production process, e.g.
+a standard PLC or standard sensors are used for workpiece processing and as part of one of two channels executing the safety function.
+The appropriate DC level depends on the overlap of the commonly used resources (logic, inputs/outputs).
+For example, when all faults of a rotary encoder on a printing machine lead to highly visible interruption of the printing process, the DC for this sensor used to monitor a safely limited speed can be estimated as 90 % up to 99 %,.
+E.2 Estimation of the average diagnostic coverage In many systems, several measures for fault detection can be used.
+These measures can check different parts of the SRP/CS and have different DC.
+For an estimation of the PL according to 6.1.8 and Figure 12 only one average DC for the whole SRP/CS performing the safety function is applicable.
+90
+
+

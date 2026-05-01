@@ -1,0 +1,1097 @@
+<<Section2>>
+EtherCAT basics 2.1 System overview 2.1.1 Limits of existing Ethernet communication approaches There are many different approaches that try and provide real-time capability for Ethernet: for example, the CSMA/CD access procedure is disabled via higher-level protocol layers and replaced by the time slices procedure or polling; other propositions use special switches that distribute Ethernet packets in a precisely controlled timely manner.
+Whilst these solutions may be able to transport data packets more or less quickly and accurately to the connected Ethernet nodes, the times required for the redirection to the outputs or drive controllers and for reading the input data strongly depend on the implementation.
+A sub-bus is usually also required, particularly in modular I/O systems, which, like the Beckhoff K-Bus, can be synchronized and fast, but nevertheless always adds small delays to the communication that cannot be avoided.
+If individual Ethernet frames are used for each device, the usable data rate is very low in principle: The shortest Ethernet frame is 84 bytes long (incl.
+inter-packet gap IPG).
+If, for example, a drive cyclically sends 4 bytes of actual value and state information and accordingly receives 4 bytes of set value and control word information, at 100% bus load (i.e.
+with infinitely short response time of the drive) a usable data rate of only 4/84= 4.7% is achieved.
+At an average response time of 10 µs, the rate drops to 1.9%.
+These limitations apply to all real-time Ethernet approaches that send an Ethernet frame to each device (or expect a frame from each device), irrespective of the protocols used within the Ethernet frame.
+2.1.2 New approach EtherCAT technology overcomes these inherent limitations of other Ethernet solutions: the Ethernet packet is no longer received, then interpreted and copied as process data at every connection.
+The newly developed FMMU (fieldbus memory management unit) in each I/O terminal reads the data addressed to it, whilst the telegram continues through the device.
+Similarly, input data are inserted while the telegram passes through.
+The telegrams are only delayed by a few nanoseconds.
+Fig.
+1: Dynamic telegram processing Since an Ethernet frame reaches the data of many devices both in send and receive direction, the usable data rate increases to approx.
+80%.
+The full-duplex features of 100BaseTx are fully utilized, so that effective data rates of > 100 Mbit/s (up to 80% of 2 x 100 Mbit/s) can be achieved.
+Ethernet up to the terminal The Ethernet protocol conforms to IEEE 802.3 remains intact right up to the individual terminals; no sub-bus is required.
+Only the transfer physics is converted in the coupler from twisted pair or optical fiber physics to E-bus, in order to meet the requirements of the electronic terminal block.
+Fig.
+2: Full duplex Ethernet in the ring, one frame for many devices.
+The EtherCAT system architecture increases the communication efficiency.
+On the control side, the TwinCAT Y driver for Ethernet complements the FMMU technology.
+This integrates transparently into the system, so that it appears as an operating system-compatible network driver, and additionally as a TwinCAT fieldbus card.
+An internal prioritization and buffer is provided at the transmitter end which always finds a free transmission channel for Ethernet frames from the real-time system that may be queuing.
+The operating system's Ethernet frames are only a later transmitted in the gaps if sufficient time is available.
+At the receiving end, all the Ethernet frames received are examined by the TwinCAT I/O system, and those with real-time relevance are filtered out.
+All other frames are passed on to the operating system after examination, outside the context of the real-time system.
+Fig.
+3: Operating system-compatible TwinCAT Y driver: Very inexpensive, commercially available standard network interface cards (NIC) are used as hardware in the controller.
+The data transfer to the PC takes place via DMA (direct memory access).
+Therefore, no CPU performance is lost for network access.
+Since the Ethernet functionality of the operating system is fully maintained, all operating system-compatible protocols can be operated in parallel on the same physical network.
+This not only includes standard IT- protocols such as TCP/IP, HTTP, FTP or SOAP, but also practically all Industrial-Ethernet-protocols such as Modbus TCP, ProfiNet or Ethernet/IP.
+2.1.3 System properties Protocol The EtherCAT protocol is optimized for process data and is transported directly within the Ethernet frame thanks to a special Ether-type.
+It may consist of several sub-telegrams, each serving a particular memory area of the logical process images that can be up to 4 gigabytes in size.
+The data sequence is independent of the physical order of the Ethernet terminals in the network; addressing can be in any order.
+Broadcast, Multicast and communication between slaves are possible.
+Transfer directly in the Ethernet frame is used in cases where EtherCAT components are operated in the same subnet as the control computer.
+However, EtherCAT applications are not limited to a subnet: EtherCAT UDP packs the EtherCAT protocol into UDP/IP datagrams.
+This enables any control with Ethernet protocol stack to address EtherCAT systems.
+Even communication across routers into other subnets is possible.
+In this variant, system performance obviously depends on the real-time characteristics of the control and its Ethernet protocol implementation.
+The response times of the EtherCAT network itself are hardly restricted at all: the UDP datagram only has to be unpacked in the first station.
+Fig.
+4: EtherCAT protocol structure Protocol structure: The process image allocation is freely configurable.
+Data are copied directly in the I/O terminal to the desired location within the process image: no additional mapping is required.
+The available logical address space is with very large (4 GB).
+Topology Line, tree or star: EtherCAT supports almost any topology.
+The bus or line structure known from the fieldbuses thus also becomes available for Ethernet.
+Particularly useful for system wiring is the combination of line and junctions or stubs.
+The required interfaces exist on the couplers; no additional switches are required.
+Naturally, the classic switch-based Ethernet star topology can also be used.
+Fig.
+5: Sample: Ethernet topology Maximum wiring flexibility: with or without switch, line or tree topologies, can be freely selected and combined.
+Wiring flexibility is further maximized through the choice of different cables.
+Flexible and cost-effective standard Ethernet patch cables transfer the signals in Ethernet mode (100Base-TX).
+The complete bandwidth of the Ethernet network - such as different optical fibers and copper cables - can be used in combination with switches or media converters.
+Distributed Clocks Accurate synchronization is particularly important in cases where spatially distributed processes require simultaneous actions.
+This may be the case, for example, in applications where several servo axes carry out coordinated movements simultaneously.
+The most powerful approach for synchronization is the accurate alignment of distributed clocks, as described in the new IEEE 1588 standard.
+In contrast to fully synchronous communication, where synchronization quality suffers immediately in the event of a communication fault, distributed aligned clocks have a high degree of tolerance vis-à-vis possible fault-related delays within the communication system.
+With EtherCAT, the data exchange is fully based on a pure hardware machine.
+Since the communication utilizes a logical (and thanks to full-duplex Fast Ethernet also physical) ring structure, the mother clock can determine the run-time offset to the individual daughter clocks simply and accurately - and vice versa.
+The distributed clocks are adjusted based on this value, which means that a very precise network-wide time base with a jitter of significantly less than 1 microsecond is available.
+However, high-resolution distributed clocks are not only used for synchronization, but can also provide accurate information about the local timing of the data acquisition.
+For example, controls frequently calculate velocities from sequentially measured positions.
+Particularly with very short sampling times, even a small temporal jitter in the displacement measurement leads to large step changes in velocity.
+With EtherCAT new, extended data types are introduced as a logical extension (time stamp and oversampling data type).
+The local time is linked to the measured value with a resolution of up to 10 ns, which is made possible by the large bandwidth offered by Ethernet.
+The accuracy of a velocity calculation then no longer depends on the jitter of the communication system.
+It is orders of magnitude better than that of measuring techniques based on jitter-free communication.
+Performance EtherCAT reaches new dimensions in network performance.
+Protocol processing is purely hardware-based through an FMMU chip in the terminal and DMA access to the network card of the master.
+It is thus independent of protocol stack run-times, CPU performance and software implementation.
+The update time for 1000 I/Os is only 30 µs - including terminal cycle time.
+Up to 1486 bytes of process data can be exchanged with a single Ethernet frame - this is equivalent to almost 12000 digital inputs and outputs.
+The transfer of this data quantity only takes 300 µs.
+The communication with 100 servo axes only takes 100 µs.
+During this time, all axes are provided with set values and control data and report their actual position and status.
+Distributed clocks enable the axes to be synchronized with a deviation of significantly less than 1 microsecond.
+The extremely high performance of the EtherCAT technology enables control concepts that could not be realized with classic fieldbus systems.
+For example, the Ethernet system can now not only deal with velocity control, but also with the current control of distributed drives.
+The tremendous bandwidth enables status information to be transferred with each data item.
+With EtherCAT, a communication technology is available that matches the superior computing power of modern Industrial PCs.
+The bus system is no longer the bottleneck of the control concept.
+Distributed I/Os are recorded faster than is possible with most local I/O interfaces.
+The EtherCAT technology principle is scalable and not bound to the baud rate of 100 Mbaud – extension to Gbit Ethernet is possible.
+Diagnostics Experience with fieldbus systems shows that availability and commissioning times crucially depend on the diagnostic capability.
+Only faults that are detected quickly and accurately and which can be precisely located can be corrected quickly.
+Therefore, special attention was paid to exemplary diagnostic features during the development of EtherCAT.
+During commissioning, the actual configuration of the I/O terminals should be checked for consistency with the specified configuration.
+The topology should also match the saved configuration.
+Due to the built-in topology recognition down to the individual terminals, this verification can not only take place during system start-up, automatic reading in of the network is also possible (configuration upload).
+Bit faults during the transfer are reliably detected through evaluation of the CRC checksum: The 32 bit CRC polynomial has a minimum hamming distance of 4.
+Apart from breaking point detection and localization, the protocol, physical transfer behavior and topology of the EtherCAT system enable individual quality monitoring of each individual transmission segment.
+The automatic evaluation of the associated error counters enables precise localization of critical network sections.
+Gradual or changing sources of error such as EMC influences, defective push-in connectors or cable damage are detected and located, even if they do not yet overstrain the self-healing capacity of the network.
+Integration of standard Bus Terminals from Beckhoff In addition to the new Bus Terminals with E-Bus connection (ELxxxx), all Bus Terminals from the familiar standard range with K-bus connection (KLxxxx) can be connected via the BK1120 or BK1250 Bus Coupler.
+This ensures compatibility and continuity with the existing Beckhoff Bus Terminal systems.
+Existing investments are protected.
+2.1.4 Application areas Control loops via the bus In conjunction with fast machine control systems the outstanding performance of EtherCAT can be demonstrated particularly well.
+The bus system offers access speeds similar to local I/Os.
+EtherCAT enables not only the position control loop, but also the velocity control loop or even the current control loop to be closed via the bus, resulting in cost-effective drive controllers.
+EtherCAT therefore takes full advantage of the performance of fast PC-based control technology.
+The IPCs become small and economical, since slots are avoided: Expansion cards are also controlled via EtherCAT.
+EtherCAT is not only suitable for very fast applications.
+Since all protocol processing takes place in hardware, the technology only places low demands on the master connection: a commercially available Ethernet Controller is sufficient.
+The master only has to send EtherCAT frames cyclically or as required – mapping, addressing, node monitoring etc.
+takes place in the slave ASICs.
+The input process image arrives at the master fully sorted and therefore ready prepared for the control application.
+For simple cyclic applications with a process image size of up to 1486 bytes, only one telegram has to be processed in the master, consisting almost exclusively of the process data.
+Larger process images are distributed over several frames.
+EtherCAT may therefore be the fieldbus technology placing the lowest demands on the master.
+EtherCAT instead of PCI With increasing miniaturization of the PC-components, the physical size of Industrial PCs is increasingly determined by the number of required slots.
+The bandwidth of Fast Ethernet, together with the data width of the EtherCAT communication hardware (FMMU chip) enables new directions: Interfaces that are conventionally located in the IPC are transferred to intelligent interface terminals at the EtherCAT.
+Apart from the decentralized I/Os, axes and operating devices, complex systems such as fieldbus masters, fast serial interfaces, gateways and other communication interfaces can be addressed.
+Even further Ethernet devices without restriction on protocol variants can be connected via decentralized switch port terminals.
+The central IPC becomes smaller and therefore cost-effective.
+An Ethernet interface is sufficient for complete communication with the periphery.
+Fig.
+6: Decentralization through intelligent interface terminals on the EtherCAT fieldbus Fieldbus devices (e.g.
+Profibus, CANopen, DeviceNet, AS interface, etc.) are integrated through decentral fieldbus master terminals.
+2.1.5 EtherCAT is open The EtherCAT technology is not only fully Ethernet-compatible, but also characterized by a particular open design: the protocol tolerates other Ethernet-based services and protocols on the same physical network - usually only with minimum loss of performance: in EtherCAT OpenMode directly side by side, in EtherCAT DirectMode tunneled "to" the EtherCAT frame.
+There is no restriction on the type of Ethernet device that can be connected within the EtherCAT strand via a switch port.
+Devices with fieldbus interface are integrated via EtherCAT fieldbus master terminals.
+The UDP protocol variant can be implemented on each socket interface.
+EtherCAT devices can additionally have a TCP/IP stack and therefore externally behave like a normal Ethernet device.
+The master serves as a switch that transfers the frames to the respective devices according to the address information.
+Instead of switch ports, only the EtherCAT addresses automatically assigned during startup are used.
+Fig.
+7: Switch port terminals tunnel Ethernet frames through the EtherCAT protocol.
+Note: the picture shows a mixture of EtherCAT OpenMode with Ethernet/EtherCAT via switches and EtherCAT DirectMode with on-the-fly processing n the subordinated devices.
+The switch port terminals work accordingly: any Ethernet devices can be connected.
+The Ethernet frames are tunneled via the EtherCAT protocol, as usual in the Internet (e.g.
+VPN, PPPoE (DSL) etc.).
+The EtherCAT network is fully transparent for the Ethernet device, and the real-time characteristics of the EtherCAT are not impaired.
+EtherCAT Technology Group The EtherCAT Technology Group (ETG, http://www.ethercat.org) is the international manufacturer and user association with a mission to disseminate, further develop and support EtherCAT.
+All companies are invited to become members.
+Internationally standardized The EtherCAT Technology Group is an official standardization partner of IEC (International Electrotechnical Commission).
+The EtherCAT specification was published by the IEC as IEC/PAS 62407 and is available from the IEC (http://www.iec.ch).
+It is currently integrated in the following fieldbus standards: IEC 61158, IEC 61800-7 and ISO 15745.
+2.1.6 Summary and Outlook EtherCAT is characterized by outstanding performance, very simple wiring and openness for other protocols.
+EtherCAT sets new standards where conventional fieldbus systems reach their limits: 1000 I/O in 30 µs, optionally twisted pair cable or optical fiber and, thanks to Ethernet and Internet-technologies, optimum vertical integration.
+With EtherCAT, the costly Ethernet star topology can be replaced with a simple line structure - no expensive infrastructure components are required.
+Optionally, EtherCAT may also be wired in the classic way using switches, in order to integrate other Ethernet devices.
+Where other real-time-Ethernet approaches require special connections in the controller, EtherCAT manages with very cost-effective standard Ethernet cards (NIC).
+With EtherCAT, Ethernet down to the terminal block becomes technically feasible and economically sensible.
+Full Ethernet compatibility, Internet technologies even in very simple devices, maximum utilization of the large bandwidth offered by Ethernet, outstanding real-time characteristics at low costs are outstanding features of this new network.
+As a high-speed bus and I/O bus for Industrial PCs or in combination with smaller control technology, EtherCAT is expected to be widely used in a wide range of applications.
+2.2 Basic principles 2.2.1 EtherCAT State Machine The state of the EtherCAT slave is controlled via the EtherCAT State Machine (ESM).
+Depending upon the state, different functions are accessible or executable in the EtherCAT slave.
+Specific commands must be sent by the EtherCAT master to the device in each state, particularly during the bootup of the slave.
+A distinction is made between the following states: • Init • Pre-Operational • Safe-Operational and • Operational • Boot The regular state of each EtherCAT slave after bootup is the OP state.
+Fig.
+8: States of the EtherCAT State Machine Init After switch-on the EtherCAT slave in the Init state.
+No mailbox or process data communication is possible.
+The EtherCAT master initializes sync manager channels 0 and 1 for mailbox communication.
+Pre-Operational (Pre-Op) During the transition between Init and Pre-Op the EtherCAT slave checks whether the mailbox was initialized correctly.
+In Pre-Op state mailbox communication is possible, but not process data communication.
+The EtherCAT master initializes the sync manager channels for process data (from sync manager channel 2), the FMMU channels and, if the slave supports configurable mapping, PDO mapping or the sync manager PDO assignment.
+In this state the settings for the process data transfer and perhaps terminal-specific parameters that may differ from the default settings are also transferred.
+Safe-Operational (Safe-Op) During transition between Pre-Op and Safe-Op the EtherCAT slave checks whether the sync manager channels for process data communication and, if required, the distributed clocks settings are correct.
+Before it acknowledges the change of state, the EtherCAT slave copies current input data into the associated DP- RAM areas of the EtherCAT slave controller (ECSC).
+In Safe-Op state mailbox and process data communication is possible, although the slave keeps its outputs in a safe state, while the input data are updated cyclically.
+Outputs in SAFEOP state The default set watchdog monitoring sets the outputs of the module in a safe state - depending on the settings in SAFEOP and OP - e.g.
+in OFF state.
+If this is prevented by deactivation of the watch- dog monitoring in the module, the outputs can be switched or set also in the SAFEOP state.
+Operational (Op) Before the EtherCAT master switches the EtherCAT slave from Safe-Op to Op it must transfer valid output data.
+In the Op state the slave copies the output data of the masters to its outputs.
+Process data and mailbox communication is possible.
+Boot In the Boot state the slave firmware can be updated.
+The Boot state can only be reached via the Init state.
+In the Boot state mailbox communication via the file access over EtherCAT (FoE) protocol is possible, but no other mailbox communication and no process data communication.
+2.2.2 CoE interface 2.2.2.1 CoE interface – parameter management in the EtherCAT system Background Many different devices are used in an automation environment.
+These devices can be used separately or together in a group on a bus system.
+Such devices can be controllers, shaft encoders, servo drives, motors, I/O modules or sensors among other things.
+Depending upon complexity, such a device must be parameterizable/adjustable for the respective requirement.
+Parameterization is perhaps not necessary in the case of a simple digital 24 V input with a fixed switching threshold and delay; in the case of a rotary encoder, however, it will not be possible to do without it (e.g.
+number of lines, absolute or relative, data format, etc.) On top of that it can be of interest to store data in the device during production or operation.
+The manufacturer could store production data such as device name, serial number, firmware version, calibration data or date of manufacture, if necessary provided with protection against access or amendment.
+The user could store user calibration data and the application-specific settings in the device.
+In order to create a user-friendly interface for device operation, different organizations have created various standards in which the following are defined: • The device classes that exist (e.g.: class ‘rotary encoder’, ‘analogue input module’) • The parameters that each representative of such a class has (obligatory and optional elements) • The place where these parameters are to be found and the mechanism with which they are to be changed.
+EtherCAT follows the so called CoE standard here: Can-Application-protocol-over-EtherCAT.
+Can-over-EtherCAT The CiA organization (CAN in Automation) pursues among other things the goal of creating order and exchangeability between devices of the same type by the standardization of device descriptions.
+For this purpose so-called profiles are defined, which conclusively describe the changeable and unchangeable parameters of a device.
+Such a parameter encompasses at least the following characteristics: • Index number – for the unambiguous identification of all parameters.
+The index number is divided into a main index and a subindex in order to mark and arrange associated parameters.
+- Main index - Subindex, offset by a colon ‘:’ • Official name – in the form of an understandable, self-descriptive text • Specification of changeability, e.g.
+whether it can only be read or can also be written • A value – depending upon the parameter the value can be a text, a number or another parameter index.
+Sample: the parameter ‘Vendor ID’ might have the index number 0x4120:01 and the numerical value ‘2’ as the ID of a Beckhoff device.
+Since hexadecimal values are favored in the machine environment, the parameter is thus represented from the user’s point of view as with the property RO (read only), because the vendor ID should not be changed by the user.
+Such a list of parameters, the whole of the device-specific CoE directory, can become very extensive.
+The first entries of a Beckhoff EL3152 analog input terminal appear as follows in the TwinCAT System Manager: Fig.
+9: EL3152 CoE directory The index numbers are specified in the profile; they begin in EtherCAT with 0x1000, because the underlying entries do not have to be displayed.
+CoE directory – availability An EtherCAT device can have a CoE directory, but does not need to have one.
+Simple slaves need no parameter directory or do not have the controller required for administration.
+On the other hand, the EtherCAT master (like TwinCAT) as a software EtherCAT device can also manage a CoE directory.
+If present, the CoE directory is in operation from the PREOP state.
+The object directory can be read via the SDO information service (Service Data Objects).
+CoE directory – localization in the EtherCAT Slave The CoE directory as a parameter system must be administrated in the device in the firmware (FW) in the local controller.
+This is the so-called online directory, because it is only available to the user if the EtherCAT slave is in operation with operating voltage supplied and, if applicable, can be manipulated via EtherCAT communication.
+So that the parameters can be viewed and changed in advance without the presence of a slave, a default copy of the entire directory is usually stored in the device description file ESI (XML).
+This is called the offline directory.
+Changes in this directory do not affect the later operation of the slave with TwinCAT.
+The xml files can be obtained from the Beckhoff website in the Download area.
+The TwinCAT system manager 2.11 can display both lists and marks this: Fig.
+10: Online/Offline display In the online directory In the offline directory the actual current slave list is read.
+This may take several seconds, depending on the size and cycle time the offline list from the ESI file is displayed.
+In this case modifications are not meaningful or possible.
+the actual identity is displayed the configured status is shown under Identity the firmware and hardware version of the equipment according to the electronic information is displayed no firmware or hardware version is displayed, since these are features of the physical device a green online is visible in the TwinCAT System Manager, CoE Online tab a red offline is visible in the TwinCAT System Manager, CoE Online tab Classification Different CoE parameter types are possible, including string (text), integer numbers, Boolean values or larger byte fields.
+They can be used to describe a wide range of features.
+Examples of such parameters include manufacturer ID, serial number, process data settings, device name, calibration values for analog measurement or passwords.
+The ranges in the Slave CoE that are important for the application-oriented EtherCAT fieldbus user are • 0x1000: This is where fixed identity information for the device is stored, including name, manufacturer, serial number etc., plus information about the current and available process data configurations.
+• 0x8000: This is where the operational and functional parameters for all channels are stored, such as filter settings or output frequency.
+The following ranges are also of interest • 0x4000: In some EtherCAT devices the channel parameters are stored here (as an alternative to the 0x8000 range).
+• 0x6000: Input PDOs ("input" from the perspective of the EtherCAT master) • 0x7000: Output PDOs ("output" from the perspective of the EtherCAT master) Channel-based order The CoE directory is located in EtherCAT devices that usually encompass several functionally equivalent channels.
+e.g.
+a 4-channel 0 – 10 V analog input terminal also has 4 logical channels and thus 4 identical sets of parameter data for the channels.
+In order to avoid having to list each channel in the documentation, the placeholder "n" tends to be used for the individual channel numbers.
+In the CoE system 16 indices, each with 255 subindices, are generally sufficient for representing all channel parameters.
+The channel-based order is therefore arranged in 16dec/10hex steps.
+The parameter range 0x8000 exemplifies this: • Channel 0: Parameter range 0x8000:00 ...
+0x800F:255 • Channel 1: Parameter range 0x8010:00 ...
+0x801F:255 • Channel 2: Parameter range 0x8020:00 ...
+0x802F:255 • tbc...
+This is generally written as 0x80n0.
+CoE directory – changes of value Several parameters, in particular the setting parameters of the slave, are variable and can be written by the user from the fieldbus side.
+This can be done in write or read mode • via the system manager (Fig.
+Manual insertion of a start-up entry) by the operator clicking on it.
+The values are then changed directly in the online-connected slave.
+This is useful for commissioning of the system/slaves.
+Click on the row of the index to be parameterized and enter a value in the "SetValue" dialog.
+• from the control system/PLC via ADS, e.g.
+through blocks from the TcEtherCAT.lib library This is recommended for modifications while the system is running or if no System Manager or operating staff are available.
+• during the EtherCAT startup through predefined commands, the so-called startup list.
+The TwinCAT configuration is usually created in advance without EtherCAT slaves actually being present.
+Then it should be possible before commissioning to adjust known properties such as filter settings offline in order to accelerate commissioning.
+CoE directory – startup list Start-up list Changes made to the local CoE directory of the EtherCAT slaves are lost with the old device in case of exchange.
+If a device is replaced with a new Beckhoff device, it will have the default set- tings.
+It is therefore advisable to link all changes in the CoE list of an EtherCAT slave with the Startup list of the slave, which is processed whenever the EtherCAT fieldbus is started.
+In this way a replacement EtherCAT slave can automatically be parameterized with the specifications of the user.
+If EtherCAT slaves are used which are unable to store local CoE values permanently, the Startup list must be used.
+The startup list is used for these cases: the values here, which are entered by the user, are transmitted to the respective slave upon each EtherCAT state transition/start.
+A startup entry consists of • Time: the state transition in which the command is sent PS (PREOP-->SAFEOP) is usually the correct choice, since an EtherCAT slave then switches to operative input mode.
+• Index: Subindex • Data The order of the entries is not taken into account: all entries to which a state transition applies are handed over simultaneously as asynchronous commands to the EtherCAT system and executed there, as soon as the bus load allows.
+No check is made of whether an identical entry is already present in the slave.
+Sample In the following, the user scaling is activated in the startup list of an EL3152.
+Entries required for operation that already exist in the list are marked with a grey background.
+Upon right-clicking on the surface, the following dialog appears: Fig.
+11: Manual insertion of a startup entry Fig.
+12: Edit The corresponding values are adopted upon clicking the entry 0x8000:01; 01 is entered in Data as the desired value.
+The entry ‘P->S’ marks the time of the execution.
+Fig.
+13: Changed startup list Entries created by the user are marked with a light blue background.
+CoE directory - data management Data management If slave CoE parameters are modified online, Beckhoff devices store any changes in a fail-safe manner in the EEPROM, i.e.
+the modified CoE parameters are still available after a restart.
+The situation may be different with other manufacturers.
+If EtherCAT slaves are used which are unable to store local CoE values permanently, the Startup list must be used.
+Summary of the characteristics • Not every EtherCAT device must have a CoE directory • If a CoE directory is present, it is administrated, prepared for querying and writing and stored in the device by the controller.
+• The EtherCAT master can be used for viewing/querying/changing, or a local user interface on the device (keypad, screen) allows access.
+• Changed settings are stored fail-safe in Beckhoff devices.
+If the device is later exchanged, however, the settings that have been changed from the series standard are lost.
+The EtherCAT master can then load the changed CoE parameters into the new device at startup, if it is set up appropriately.
+• So that a CoE directory is available offline during the preparation for configuration, it can be contained in the device description as a copy.
+• The extent to which the CoE directory is supported depends on the capabilities of the EtherCAT master.
+2.2.2.2 Example program R/W CoE Program description/ function: After starting this example program, by setting TRUE of the variable startRead or startWrite, read or write access from/to the CoE directory of a particular EtherCAT participant can be made.
+Notes: • An EtherCAT slave with CoE directory on the EtherCAT Master is present; this example is initial configured for usage of a EL3751 terminal; configuration e.g.: IPC/CX + (EK1100) + EL3751 + EL9011 • AmsNetId of the EtherCAT Master is known (it has to be inserted in the code before starting the program and can usually be found in the EtherCAT tab of the EtherCAT master) • The address of the EtherCAT slave have to be adapted by variable declaration of userSlaveAddr as the case may be (usually the terminal, which CoE directory have to be accessed, e.g.
+1002, 1007, etc.) • Depending on which EtherCAT slave is used, the corresponding nIndex for the CoE object ID as well as the nSubIndex for the sub index of the CoE object must be entered at the places of the value transfer for reading and writing.
+The correct data length and data type may also need to be adjusted.
+• This example program only makes accesses to a specific value identified by the (sub) index of a CoE object.
+If accesses are to be made to a complete object, the corresponding FB_EcCoeSdoReadEx and FB_EcCoeSdoWriteEx function blocks must be used.
+See additional documentation of library: Tc2_EtherCAT: https://infosys.beckhoff.com/ TwinCAT 3 → TE1000 XAE → PLC → Libraries → TwinCAT 3 PLC Lib: Tc2_EtherCAT → CoE interface This example writes into the CoE object 0x8000 with sub index 0x16 the value 22 and activates thereby filter 1 to „IIR Butterw.
+LP 5th Ord.
+1000 Hz“, or reads out the internal temperature value of the EL3751 terminal from CoE object 0x9000, Sub‑Index 0x01.
+The program variable for writing has already been assigned the value in the variable declaration.
+For test of writing the CoE directory can be reviewed and the variable (int16Buffer) can be watched to check reading.
+Download: https://infosys.beckhoff.com/content/1033/ethercatsystem/Resources/zip/5299954699.zip Preparations for starting the sample programs (tnzip file / TwinCAT 3) • Click on the download button to save the Zip archive locally on your hard disk, then unzip the *.tnzip archive file in a temporary folder.
+Fig.
+14: Opening the *.
+tnzip archive • Select the .tnzip file (sample program).
+• A further selection window opens.
+Select the destination directory for storing the project.
+• For a description of the general PLC commissioning procedure and starting the program please refer to the terminal documentation or the EtherCAT system documentation.
+Declaration (ST) PROGRAM MAIN VAR fb_coe_write          : FB_EcCoESdoWrite; // Function Block for writing in CoE fb_coe_read           : FB_EcCoESdoRead;  // Function Block for reading from CoE userNetId             : T_AmsNetId := 'a.b.c.d.4.1'; // Have to be entered userSlaveAddr         : UINT := 1002;     // Have to be entered startWrite            : BOOL := FALSE;    // Sign for start writing startRead             : BOOL := FALSE;    // Sign for start reading nState                : BYTE := 0;        // RW-status // Example: Read EL3751 PAI Internal Data: Temperature Value int16Buffer           : INT;              // Buffer for reading // Example: Select EL3751 Filter1: 22 = IIR Butterw.
+LP 5th Ord.
+1000 Hz: uint16Buffer          : UINT:=22;         // Buffer for writing bTxPDOState AT%I*     : BOOL;             // (PDO for synchronization) END_VAR Implementation (ST): CASE nState OF 0: IF startWrite THEN // Prepare CoE-Access: Write value of CoE object/ sub index: fb_coe_write(bExecute := FALSE); nState := 1;// Next state for writing startWrite := FALSE; END_IF IF startRead THEN // Prepare CoE-Access: Read value of CoE object/ sub index: fb_coe_read(bExecute := FALSE); nState := 11;// Next state for reading startRead := FALSE; END_IF // ============== COE WRITE ================ 1: // Write entry fb_coe_write( sNetId:= userNetId, nSlaveAddr:= userSlaveAddr, nSubIndex:= 16#16, nIndex:= 16#8000, pSrcBuf:= ADR(uint16Buffer), cbBufLen:= 2, bExecute:= TRUE, tTimeout:= T#1S ); nState := nState + 1; // Next state 2: fb_coe_write();       // Execute CoE write until done IF fb_coe_write.bError THEN nState := 100;     // Error case ELSE IF NOT fb_coe_write.bBusy THEN nState := 0;    // Done END_IF END_IF // ============== COE READ ================= 11: // Read entry fb_coe_read( sNetId:= userNetId, nSlaveAddr:= userSlaveAddr, nSubIndex:= 1, nIndex:= 16#9000, pDstBuf:= ADR(int16Buffer), cbBufLen:= 2, bExecute:= TRUE, tTimeout:= T#1S ); nState := nState + 1; // Next state 12: fb_coe_read();        // Execute CoE read until done IF fb_coe_read.bError THEN nState := 100;     // Error case ELSE IF NOT fb_coe_read.bBusy THEN nState := 0;    // Done END_IF END_IF 100: ;                     // Error handling..
+END_CASE 2.2.2.3 CoE reset, restoring the default values The CoE object "Restore default parameters", subindex 001 (if present) can be used to restore the delivery state of the changeable CoE objects in the ELxxxx terminals (see Fig.
+Selecting the "Restore default parameters" PDO).
+Fig.
+15: Selecting the "Restore default parameters" PDO All changeable entries in the slave are reset to the default values by writing the reset word to these indices.
+• The values can only be successfully restored if the reset is directly applied to the online CoE, i.e.
+to the slave.
+No values can be changed in the offline CoE.
+• TwinCAT must be in the RUN or CONFIG/Freerun state for this; error-free EtherCAT traffic must take place.
+• A changeable object can be manipulated beforehand for the purposes of checking; no separate confirmation takes place.
+• This reset procedure can also be adopted as the first entry in the startup list of the slave, e.g.
+in the state transition PREOP->SAFEOP or, as in Fig.
+CoE reset as a startup entry, in SAFEOP->OP.
+Hence any settings in the slave are reset.
+Fig.
+16: CoE reset as a startup entry • The EtherCAT slave must be at least in the PREOP state for this • Depending upon firmware and slave, the reset word reads: ◦64616F6C "load"hex (as a rule in the case of FW since approx.
+2008) or ◦6C6F6164hex "daol" (in the case of earlier FW versions) • An incorrect entry for the restore value has no effect.
+Fig.
+17: Entering a restore value in the Set Value dialog 2.3 System features 2.3.1 EtherCAT cable redundancy 2.3.1.1 The principle Beckhoff TwinCAT cable redundancy is designed to compensate for the failure of a communication cable section in the EtherCAT system.
+A ring topology, which normally is operated in both directions, is therefore used.
+Both branches can nevertheless still be reached if the ring is interrupted at some point.
+Fig.
+18: The cable redundancy principle A second network port is used for ring closure at the EtherCAT Master IPC.
+Both cyclic and acyclic frames are sent simultaneously through both ports, and are transported through the system.
+• In the absence of any fault, all the EtherCAT slaves are reached in the forward direction from the primary port.
+This means that they are processed, since the EtherCAT Slave Controller (ESC) is only passed through in the forward sense.
+• When there is no fault, all the EtherCAT slaves are reached from the secondary port in the reverse direction - the data in the "redundancy" frame is therefore not changed.
+In each case, the EtherCAT frames arrive, possibly modified, at the other port, and are combined again by the EtherCAT Master.
+If, as a result of a broken cable, the redundancy comes into play, it is then unimportant whether an EtherCAT slave is reached from the primary or redundancy port.
+Assuming that, when the redundancy comes into play (due to a damaged cable, damaged plug or electromagnetic interference) the two Ethernet frames are not, by coincidence, both directly affected, then redundant operation continues without interruption or loss of data.
+The supplement is single-fault tolerant, i.e.
+communication with the slaves can continue if the cable is interrupted in one place.
+When the communication is restored the original communication direction is restored.
+If the communication is interrupted in more than one places, all connections have to be restored before another fault may occur.
+It is also possible to start up the system under redundancy conditions.
+Due to the nature of this principle, a closed ring topology is most suited to redundant cable operation.
+Depending on the operating conditions, it is also possible to use a connection point other than the last one for the redundant connection to the controller, see Fig.
+Special solution for cable redundancy.
+Fig.
+19: Special solution for cable redundancy Due to the synchronization mechanism for Distributed Clocks, the CU2508 port multiplier must be used for a combination of cable redundancy with Distributed Clocks slaves.
+Failure of an EtherCAT slave Note the following if the "Cable Redundancy" supplement is to be used to enable communication with all remaining devices in the event of an EtherCAT device failure (e.g.
+EK1100 coupler or EPxxxx box).
+• Create SyncUnits for the I/O group that could be affected by failure • Failure of several EtherCAT slaves is not covered.
+Depending on the location, number and order of the failures the complete EtherCAT array may have to be restarted.
+It is advisable to operate the master and slave states from the application and to disable the cor- responding automatic mechanism under System Manager | EtherCAT Device | Advanced Set- tings.
+2.3.1.2 Conditions The use of cable redundancy is subject to the following conditions: • A supplementary license with the appropriate scope is installed on the IPC (XP/CE).
+At present, licenses are available for a maximum of 250, 1000 or for an unlimited number of slaves.
+The TwinCAT EtherCAT redundancy supplement for the Windows NT and CE family is offered for download on the Beckhoff website • Platform-dependent/operating system on the target device ◦Windows NT family (XP/XPe/7): the supplement is installed on the target device.
+Starting in the TwinCAT RUN mode with activated cable redundancy is prevented if no local license is present.
+◦Windows CE family (CE, WES): the supplement must be installed on at least one NT platform.
+After that the installation file ("TwinCAT_EtherCAT_Redundancy_CE.I586_250.cab") is present under TwinCAT -> CE -> TwinCAT EtherCAT Redundancy.
+This must be copied to the embedded device and executed there.
+• Please refer to the appropriate documentation for the combination of cable redundancy with the HotConnect principle.
+• TwinCAT 2.10 from build 1313 or TwinCAT from version 2.11 is used.
+• The user creates SyncUnits in the System Manager as required according to the configuration, see section SyncUnits.
+• The control PC has two full-value, real-time capable, non-switched Ethernet ports.
+As a rule embedded devices (BXxxxx / CXxxxx) are not suitable.
+• Parallel wiring from an EK1122 for the purposes of cable redundancy is not permitted.
+• The supplementary EtherCAT cable redundancy secures against ◦failure of Ethernet cable sections (e.g.
+between EK1100 couplers), provided the power supply to the stations is not interrupted.
+◦failure of the communications segment of a single terminal, provided the power supply to the subsequent terminals is not interrupted.
+• The supplementary cable redundancy is only single-fault tolerant.
+If more than one malfunction occurs in the topology, full I/O communication will only be restored when all the faults have been eliminated.
+Manual or automation restart of the affected slaves may be required.
+This is partly also done by the System Manager.
+• A combination of cable redundancy with distributed clocks is possible only with the use of the additional CU2508 device.
+2.3.1.3 Setting up - Network settings Creation of the configuration It is not possible to set up a configuration through scanning in TwinCAT with redundancy path.
+You should therefore disconnect the redundancy port in order to scan for or create the slaves.
+Once the redundancy supplement has been installed, set up continues under TwinCAT 2.11 as follows: • Create the primary port manually, or allow it to be found through a scan.
+Fig.
+20: Setting up the device • Configure the redundancy properties of the EtherCAT system in the Advanced Settings.
+Specify the location from which the connection to the redundancy port is to be created - entry points that are not located at the end of a line topology can also be selected here.
+Fig.
+21: Parameterizing the redundancy The cable redundancy is active following activation of the configuration.
+2.3.1.4 Setting up - SyncUnits setup SyncUnits only have to be created if failure of an EtherCAT slave is to be expected.
+Cyclic data SyncUnits are only relevant for communication via cyclic data.
+Acyclic communication, e.g.
+via mail- box, is always controlled by the System Manager.
+By default the System Manager tries to integrate all I/O data in a few Ethernet/EtherCAT frames as possible, i.e.
+the System Manager tries to utilize the maximum frame size of 1518 byte per Ethernet frame or 15 datagrams.
+The aim is to achieve efficient and optimized communication with minimum load on the fieldbus.
+A datagram is a telegram with exactly one read/write instruction.
+A datagram may be a read command over 2 bytes from an analog input terminal or a write command for 400 bytes of data to 10 servo drives.
+Fig.
+22: Structure of an Ethernet frame with EtherCAT protocol data This is illustrated in Fig.
+Structure of an Ethernet frame with EtherCAT protocol data: the Ethernet frame (row 1) consists of a header (blue), data (yellow) and the checksum CRC (blue).
+If the Ethernet frame carries EtherCAT protocol data, these data also consist of an EtherCAT header (red) and 1 to 15 datagrams (green).
+The latter consist of a header, data and a WorkingCounter (WC).
+The working counter is the key parameter for the cable redundancy principle.
+The working counter is a 16-bit number sent by the EtherCAT master with the value "0".
+Each EtherCAT slave that is accessed by this datagram in write or read mode increases this number by 1, 2 or 3, depending on the type of access.
+Once the datagram has run through the complete configuration, the working counter therefore returns to the master with a value greater than 0.
+The master expects a certain value, because it knows how many slaves have to process this datagram.
+If the WC returned by the datagram does not match the expected value, one of the slaves did not fulfil its task.
+The master then has to employ special measures in order to establish which slave is affected and whether the datagram has to be repeated.
+The frame structure of the cyclic data based on the current configuration can be viewed in the TwinCAT System Manager (EtherCAT tab of the respective EtherCAT device).
+Example for a small configuration: Fig.
+23: TwinCAT view, frame structure - small topology Only one Ethernet frame is used for the cyclic I/O data (red), carrying 3 EtherCAT datagrams, i.e.
+2x LRD (LogicalRead) and 1x BRD (BroadcastRead).
+With 59 bytes of data the frame is 6.72 µs long and uses 0.17% of the cycle time of 4 ms.
+The first datagram has an expected working counter of 1 and a BRD command of 2, see column WC.
+In a larger configuration the frame structure becomes more complex: Fig.
+24: TwinCAT view, frame structure - larger topology With a cycle time of 1 ms 3 Ethernet frames are in transit carrying a total of 9 datagrams with expected working counters between 3 and 52.
+This configuration uses 35.94% of the available bandwidth of 100 Mbit FastEthernet at a cycle time of 1 ms.
+Application to the cable redundancy in the event of slave failure If a datagram returns to the master with an incorrect working counter, the master is initially unable to determine which slave failed to deliver data.
+The master therefore has to declare all input data in this datagram invalid, i.e.
+in all affected slaves the WC indicator switches to 1=invalidData.
+Fig.
+25: WC = 1 indicates invalid data The System Manager sets this WC indicator immediately on receipt of the datagrams for the respective slave.
+This is illustrated for an EL3162 in Fig.
+WC = 1 indicates invalid data, the input data are frozen, WcState = 1 and the State in accordance with the bit meanings of 0x0101 "Slave in INIT" and "Slave not present".
+If an EtherCAT slave fails, e.g.
+an analog input box EP3174, this would mean other input data contained in the same datagram to make the frame structure efficient would also be discarded.
+As a remedy the user can manually assign each slave to a so-called SyncUnit.
+In extreme case each slave could have its own SyncUnit, with associated negative consequences for the fieldbus efficiency and excessive bus load.
+The corresponding dialog is accessible via the EtherCAT tab, see Fig.
+TwinCAT view, frame structure - larger topology.
+A slave is assigned to a SyncUnit, see Fig.
+Entering the SyncUnits in a default frame structure • by clicking in the column • Enter a name (any name) under SyncUnitNames If a name is allocated more than once, the slaves are operated accordingly in a datagram (logical SyncUnit).
+Fig.
+26: Entering the SyncUnits in a default frame structure This results in a new structure of the cyclic Ethernet frame in accordance with Fig.
+New frame structure with SyncUnits: Fig.
+27: New frame structure with SyncUnits The System Manager will continue to automatically consolidate devices that are not set manually in datagrams and may identify them as <default>.
+Typically modules are defined as a separate SyncUnit and communicate via an Ethernet cable connection: • EK11xx coupler including append EL/ES/EMxxxx terminals • EP boxes • AX drives • ...
+If the communication with such a station fails, only the data for this SyncUnit become invalid.
+The data exchange with all other stations remains unaffected.
+2.3.1.5 System behavior TwinCAT handles the redundancy case in real-time, and the user has no intervention option.
+However, information on the current status is provided by variables in the System Manager.
+Fig.
+28: Available information • SlaveCount/SlaveCount2 This indicates how many EtherCAT slaves are at present being reached through the primary or redundancy port.
+This information refers to the most recent cycle.
+• FrmXWcState This information refers to the most recent cycle.
+It is recommended that this accumulated information for all the working counters of an EtherCAT frame is monitored on the application level, even in redundancy mode.
+• DevState The meanings of the bits ◦0x0001: Link error at primary port ◦0x0004: Link error at redundancy port ◦0x0008: Missing one frame • refer to the cable redundancy.
+If all three bits are zero, then the status of the cable redundancy is normal, and the next connection fault can occur.
+Under some circumstances the link status messages can be delayed by a few milliseconds.
+They can therefore not be used in a real-time context.
+The redundancy case is illustrated accordingly in the Topology display.
+• Fig.
+Typical error patterns in the redundancy case, top: Interruption at redundancy port • Fig.
+Typical error patterns in the redundancy case, center: 2 interruptions, communication failure to one terminal block.
+• Fig.
+Typical error patterns in the redundancy case, bottom: Terminal in the second terminal block removed while running, causing interruption in power supply to subsequent terminals and failure of communication with them.
+Fig.
+29: Typical error patterns in the redundancy case The redundancy case Redundancy is an irregular operating condition.
+It is recommended that occurrence of the redun- dancy case is detected at an early stage through evaluation of the diagnostic variables shown above, and that the cause is rectified promptly.
+2.3.2 HotConnect 2.3.2.1 The principle The Beckhoff TwinCAT EtherCAT Hot Connect function allows preconfigured sections to be removed from or added to the data traffic before the start or during operation of the system.
+This can take place by disconnecting/connecting the communication line, switching the device on or off or by some other measure.
+This is called "flexible topology" or Hot Connect.
+Sample: In a modular production system, modules with integrated EtherCAT I/O are connected or disconnected with respect to communication during operation.
+Following the establishment of a connection to a Hot Connect group, some commissioning actions are carried out that result in a boot up time of several seconds: • establishment of an Ethernet link • device parameterization • EtherCAT boot up INIT -> OP • if necessary Distributed Clocks synchronization An accelerated boot up is advantageous in particular in applications in which topology changes are frequently made, such as tool changers.
+In addition, special Fast Hot Connect components are available that ensure a boot up time of less than 1 second.
+See Notes on Fast Hot Connect regarding this.
+[} 41] The Hot Connect/Fast Hot Connect principle is thus an extension to the otherwise generally applicable rule that the sequence/arrangement of the EtherCAT devices in the field must correspond precisely to the configuration created.
+No separate license is required for setup, just the EtherCAT devices (couplers and branches) conceived for the purpose.
+TwinCAT The use of the Hot Connect function in the form described here is possible only with TwinCAT 2.11 from build 1539 upwards.
+In particular, TwinCAT 2.10 does not support any combination with Dis- tributed Clocks.
+Properties and system behavior • The information in this document applies to both XP and CE-based TwinCAT 2.11 systems.
+• Hot Connect groups can be groups of slaves (couplers & terminals) or also individual slaves (drives, terminals, sensors, position encoders).
+• Although a Hot Connect group can be physically connected to the EtherCAT network and can receive and send the EtherCAT frame, it only participates in the process data traffic from the point of view of the controller if its address (see below) has been recognized by the master.
+• The identification and start-up of a Hot Connect group by the master can take up to several seconds, depending on the position.
+Accelerated boot up can be realized with Fast Hot Connect components.
+• The monitoring of the WcState, status and link information from the slaves is strongly recommended.
+• Start-up of a Hot Connect group by the master ◦if the EtherCAT master does not detect a valid address in the station, the station will not be accepted into the process data traffic.
+◦after a valid address is detected (“switching in” with a DIP switch, changing the SSA), the station is accepted.
+◦the above points remain unchanged until the station is switched off or disconnected from the network.
+• SyncUnit: The System Manager automatically creates its own SyncUnits for Hot Connect groups which are separate from each other; hence, they are given their own WorkingCounter and their being taken out of operation does not affect the process data of other devices.
+• The first device/coupler after the master should not be a configured Hot Connect device, as this slows down link detection in the master.
+• The combination with the “cable redundancy” property is partly possible.
+• Distributed Clocks-capable slaves can be used.
+When a Distributed Clocks slave (DC slave) is put into operation, its local clock is initialized and then continuously synchronized with the existing network.
+The Hot Connect group is resynchronized following the establishment of a connection; this procedure can take several seconds.
+The EtherCAT Slaves concerned are held in the SAFEOP state during this time.
+After successful resynchronization they are switched to the OP state.
+EL terminals as a Hot Connect group The connection/disconnection of KL/KS/EL/ES Terminals when live is not allowed.
+Therefore, a configuration of individual terminals or terminal blocks below a coupler as a variable Hot Connect group does not make sense.
+The smallest unit at terminal level is a coupler (EK/BK) or an EP Box.
+Topologies The following topologies were checked: Type 1: Star Star topologies are particularly useful for the Hot Connect concept - the branching groups are defined as a Hot Connect group and can be connected/disconnected during operation.
+In general, any topology is possible in which an EtherCAT network is connected to an EtherCAT port.
+Fig.
+30: Star topology The following are suitable for use as branching points: EK110x, EK150x, EK1122, EP1122 and all slaves that have more than one IN and OUT port.
+A Hot Connect group can be connected to any regular free port in the topology.
+The combination of cable redundancy (chargeable supplement) in the main circuit and branching Hot Connect groups at radial connections is not permitted for the time being.
+The use of DC slaves is not yet possible when using cable redundancy.
+Fig.
+31: Star topology with cable redundancy – presently not permitted Type 2: Line When using the line topology, all devices will be re-initialized when the connection is restored after a separation point.
+Fig.
+32: Line topology If HC groups and non-HC groups are mixed in the line topology, all non-HC groups must be placed in front of the HC groups and (as is usual for EtherCAT) in the correct order.
+In the picture here, a non-HC group is arranged in front of 3 HC groups.
+In an extreme case, all stations can be HC groups.
+The use of cable redundancy (chargeable supplement) with HC groups in the redundancy path is not possible.
+Fig.
+33: Line topology with cable redundancy is not possible General notes • Stacked Groups If Hot Connect groups are operated in physical succession (“stacked”), the higher level group must participate in traffic first before the lower level groups can be put into operation.
+Fig.
+34: Stacked groups Sample: The groups A and B, each with their own address, are connected/switched on together.
+Group B (in spite of a possibly valid address) is only put into operation if it was possible for Group A to be put into operation regularly by the master.
+• Regular free ports The Hot Connect groups can only be connected to free Ethernet ports in the configuration - if a group is connected to an irregular free port, the group is not put into operation, despite having a possibly valid address.
+Fig.
+35: Free ports Sample: The coupler D (not a Hot Connect group!) is disconnected from Port C.
+Hence, port C is irregularly free.
+A Hot Connect group A or B connected to this port will not be put into operation by the master.
+2.3.2.2 Notes re.
+EtherCAT Fast Hot Connect technology EtherCAT components that support Fast Hot Connect enable a faster fieldbus boot up following the establishment of a connection.
+The boot up depends in detail on the number of devices, the topology and activated Distributed Clocks.
+Whereas the normal establishment of a connection and communication takes several seconds, less than 1 second is possible with FHC components.
+Properties and system behavior • Fast Hot Connect is supported from TwinCAT 2.11R3 Build 2221.
+• Fast Hot Connect ports are specially marked.
+Fig.
+36: Identification of FHC port at EK1122-0080 and EK1101-0080 • Standard EtherCAT devices may not be connected to Fast Hot Connect ports.
+This is to be ensured by measures on the application side, which is easy to implement by means of the topology change that is usually carried out mechanically in such applications.
+Fig.
+37: Recommended combination of Ethernet ports • If corresponding ports are nevertheless connected, a power reset of the devices involved (branch terminal and coupler/box) is required.
+• With Fast Hot Connect devices the establishment of an Ethernet connection is accelerated compared to the normal Fast Ethernet connection.
+If in addition the use of Distributed Clocks functions is omitted in the entire topology, then the resynchronization time of the components is also dispensed with.
+Group boot up of < 1 second is then possible, from plugging in the Ethernet connection to the OP state.
+• An incorrect port allocation is detected in the TwinCAT ADS Logger Fig.
+38: Detection of incorrect port allocation in the TwinCAT logger Configuration The configuration of Fast Hot Connect groups in the TwinCAT System Manager takes place in exactly the same way as Hot Connect groups, specifying the associated group ID.
+Fig.
+39: Configuration of a Fast Hot Connect group Corresponding Fast Hot Connect ports are marked red in the TwinCAT System Manager.
+Fig.
+40: Marking in the TwinCAT System Manager A configuration of FHC groups is possible only if at least 1 corresponding junction is present e.g.
+EK1122-0080.
+Distributed Clocks If no Distributed Clocks functions are used, this is visible in the master settings by the absence of “DC in use”: Fig.
+41: DC master setting This setting is automatically selected by the System Manager if there are no EtherCAT slaves in the configuration in which Distributed Clocks is activated.
+“DC in use“ should not be randomly deactivated by the user, because otherwise these devices will no longer function.
+2.3.2.3 Addressing Addressing and identification At present three different methods are defined for the explicit identification of Hot Connect stations: • SecondSlaveAddress (SSA) Here, the station address [0..65536] is permanently stored in the E²PROM of the EtherCAT slave.
+At the start the EtherCAT Slave Controller (ESC) loads this address into its register 0x0012, from where it can be read by the EtherCAT master.
+This address is written ◦via the EtherCAT master/TwinCAT System Manager by the user during the system setup ◦via a user interface on the slave (keyboard, display, selector switch, etc.) at device start-up • In almost all cases they are used for unambiguous identification of a device, rather than as a flexible station.
+In case of exchange the current address must be stored again in the replacement device.
+A changed SSA will usually only be accepted by the ESC after a power restart of the device.
+The SSA can be checked by the user by reading the register 0x0012 from the PLC (see TcEtherCAT- lib -> FB_EcPhysicalReadCmd) • InputWord/IdentificationValue/Data Word Here, a bit sequence corresponding to the station address [0...65535] is expected in the process data area of an EtherCAT slave and is interpreted by the master as the station address.
+TwinCAT 2.10 expects the 16 bits data starting from register 0x1000.
+From TwinCAT 2.11R2 the information can be stored in any desired place in the slave; the EtherCAT master is informed of the storage location via the ESI description, called ADO (Address Offset) in the dialog (see Fig.
+Default setting of an EtherCAT slave that supports the DataWord identification mode).
+The Input Word is usually displayed in the configuration as process data in the supporting slave (see EK1501, EK1101).
+• Explicit Device Identification On request by the master the slave informs the master of its ID [0 to 65535] via the AL status register 0x0134 during the start-up phase.
+This method is supported from TwinCAT 2.11R3.
+Addressing method In general the ESI file belonging to the EtherCAT device contains the information regarding which addressing methods the slave supports.
+This is displayed in TwinCAT System Manager -> Ether- CAT Slave -> Advanced Settings and in general should not be changed by the user.
+See Fig.
+(Default setting of an EtherCAT slave that supports the DataWord identification mode) Ex- ception: The SSA identification mode is possible in every slave that has an ESC EEPROM (refer to the manufacturer's notes).
+Beckhoff EtherCAT terminals/boxes usually have an EEPROM.
+Fig.
+42: Default setting of an EtherCAT slave that supports the DataWord identification mode All EtherCAT slaves are always initially addressed via the auto-increment procedure, after which the EtherCAT master attempts to find the configured station addresses in the field and assign them to the stations/couplers.
+To this end the outgoing port is opened and closed specifically for the purpose of determining the IDs.
+Address allocation in the slave Explicit Device Identification The ID setting is to be carried out according to the device manual.
+InputWord/IdentificationValue As a rule, a selector switch accessible from the outside on such slaves allows the position to be set; the selection switch can be sealable or protected via a software mechanism.
+Other devices offer a user interface which allows ID setting.
+Sample: Beckhoff EK1101 - free accessibility of the ID switch Fig.
+43: EK1101 with ID switch SecondSlaveAddress The SSA can be set by the master or via a user interface on the slave.
+The procedure for setting via the Beckhoff TwinCAT master is described below: • Put the EtherCAT slave into operation in a simple configuration without addressing.
+The slave should be in OP, WorkingCounter = 0, no LostFrames • Proceed via Slave -> EtherCAT -> Advanced Settings -> E²PROM to the SecondAddress dialog.
+• The current address is displayed there; write the New Second Address in the slave E²PROM.
+• The address is accepted after a power restart.
+• In this example, the new address 10dec/0Ahex is set.
+Fig.
+44: setting the SSA You can check whether the slave has accepted the address as follows: Proceed in the same dialog to Memory and check the contents of register 0x0012.
+Fig.
+45: Checking the SSA If nothing is displayed: • Normally Wc = 0 is the “error-free” state; in this case WorkingCounter must be 1, otherwise there will be no communication with the slave for other reasons.
+• Check whether you are on the right slave.
+• As can be seen by Length = 400, the dialog reads 400hex bytes from the ESC in one operation.
+Most third party ESCs do not support this; in this case, no data will be displayed in the columns.
+Try to find out from Length = 2, how many bytes your ESC supports.
+Note about TwinCAT 2.11 The setting dialog for the SSA was slightly changed in TwinCAT 2.11, but retains the same properties.
+Fig.
+46: Setting SSA under TwinCAT 2.11 Compatible Beckhoff devices In general, every EtherCAT slave can be assigned a Hot Connect address, regardless of whether it is an IO terminal, a drive or a module of couplers and terminals.
+Hot Connect capability Check whether the EtherCAT slave you are using is Hot Connect-capable.
+Beckhoff slaves cur- rently support the function as follows (as of May 2012): (see following table) Version SecondSlaveAddress InputWord Explicit Device Identification EK1100 from HW18 - - EK1101, EK1501, EK1101-0080 all all - BK1120 from HW09 - - EL terminals In general yes for most series from an XML version xxxx-xxxx-0016 - - EP boxes In general yes for most series from an XML version xxxx-xxxx-0016 - - AX2xxx - - - AX5xxx all see documentatio n see documentation 2.3.2.4 Setup TwinCAT 2.10 The configuration procedure effort under TwinCAT 2.10 is described below by means of an example.
+Step 1: creating the initial configuration First of all, all components must be present in the configuration; the components are then connected in the (offline) topology view in the order prescribed by the configuration or the “PreviousPort” specification.
+Shown here is the offline view of 4 stations with EK1100, output terminals (red) and an EK1122.
+Fig.
+47: Creating the configuration Fig.
+48: Creating the configuration Step 2: Define as a HotConnect group Right clicking on the EtherCAT slave opens the HotConnect group dialogue.
+Fig.
+49: Assign HotConnect group Now enter the desired address, paying attention to the method used.
+Fig.
+50: Assign address The success of the operation can only be seen in the configuration: the station is removed from the order and is appended below, marked in red.
+The property “PreviousPort” can no longer be selected, as TwinCAT is now expecting the station everywhere.
+Fig.
+51: Hot Connect group The station similarly releases itself in the (offline) topology view and hangs without a connection in the air.
+Fig.
+52: Topology view This also applies to all other HotConnect stations.
+Fig.
+53: Topology view Step 3: Online operation The actual arrangement can only be viewed in the online topology view if this configuration is in operation after activation.
+Green bars over EtherCAT slaves display the OP state, red bars the INIT state.
+In figure Online topology view it can be seen that HotConnect Station A was docked with the EK1122, whereas station B does not participate in the data traffic due to absence.
+Fig.
+54: Online topology view These slaves are also correctly displayed by station B in the online display as not present.
+Fig.
+55: Online display The assigned address can also be subsequently changed via the HotConnect tab.
+Fig.
+56: HotConnect tab 2.3.2.5 Setup TwinCAT 2.11R2 The configuration dialogs under TwinCAT 2.11R2 are different, although the principle is the same as for TwinCAT 2.10.
+Configuration parameterization Alternatively, the EtherCAT configuration can be set up via an online scan or manually, as described below.
+1.
+First set up a maximum configuration, i.e.
+the configuration should cover all bus coupler stations that could be used in the system, even if they are not all operated at the same time.
+The order and the as- sociated “Previous Port” parameter are irrelevant.
+Fig.
+57: PreviousPort at bus station HotConnect units Only units that communicate via Ethernet may be assigned an EtherCAT ID, because only these units can be connected or disconnected during operation.
+These are devices with RJ45/optical fiber/ M8/M12 Ethernet port (couplers, EP boxes, drives, ...).
+Terminals may not be connected or discon- nected while live.
+Specification as flexible HotConnect group therefore makes no sense.
+Terminals may be used for unambiguous identification via SSA.
+2.
+The designated flexible bus stations are assigned the HotConnect characteristic in the System Man- ager.
+The dialog is called up by right-clicking on a coupler station/EP box.
+Fig.
+58: Calling up the HotConnect dialog 3.
+In TwinCAT 2.11R2 a coupled bus station can be identified as the “right” one via two properties: - the ID “identification value” - the EtherCAT address of the previous slave Activate the associated characteristic and specify the value [0; 65535].
+The ID refers to identification through InputWord and SecondSlaveAdress.
+The default setting is InputWord.
+To use SSA proceed as follows.
+Fig.
+59: HotConnect features Identification via “previous slave” If "previous slave" is specified as the address, a bus station parameterized in this way can no longer by inserted and operated at any port, but only at the specific EtherCAT port that follows directly after the specified slave.
+This method therefore significantly restricts the location of such a station.
+“Pre- vious” refers to the preceding slave in terms of the EtherCAT communication, not necessarily the actual order in the topology.
+This is particularly relevant for the EK1122/EK1521 multi-port slaves.
+4.
+The station then has an additional “HotConnect” tab, in which the attributes can be modified.
+Fig.
+60: HotConnect features Under Properties, the InputWord default identification (from the “DataWord” dialog under process data) can be changed to SecondSlaveAdress via Configure (in dialog “Configured Station Alias” from slave register 12hex).
+Fig.
+61: Setting detail In the System Manager the device is identified with a red HotConnect icon.
+Identification via “Data Word” The 16 bit identification data are read from the slave at a specified location.
+TwinCAT 2.10 only sup- ports register 1000hex.
+TwinCAT 2.11 can read from any location, as shown in the dialog in Fig.
+Set- ting detail “ADO (hex)”.
+The default setting is register 1000hex or the specification from the ESI file.
+HotConnect operation For HotConnect operation TwinCAT must be in Config/FreeRun or RUN mode.
+After changes in the configuration (other ID, ID location etc.) the configuration must be reloaded or TwinCAT restarted.
+Sample 1: Groups not identified but linked If stations that have an ID are connected via Ethernet but are not yet identified, the respective slaves come up with status messages: Fig.
+62: Status messages • “LNK_ADD” together with the port information is shown for the slaves at which the stations were connected: this indicates an unsuspected LINK to unidentified devices.
+• The stations themselves (in this case Group A, Group B) are still in INIT state.
+No communication is possible.
+TwinCAT will keep trying to identify the coupled devices.
+Sample 2: Group identified The EK1101 “Group A” is now set to the right ID via the ID switches.
+After a few seconds TwinCAT recognizes this, includes the group in the process data traffic and changes the devices to OP state.
+Fig.
+63: Group A in operation The control system indicates this via the process data (WC state, state) of the coupler: Fig.
+64: Process data of the ID module Sample 3: Utilization of the topology view The online topology view reflects the current actual link status and coupling location.
+The offline view shows the ID stations without communication connection, since the connection locations are unknown.
+Fig.
+65: Offline view Stations that are not identified or present are shown in red in the online view.
+Fig.
+66: Online view If stations are activated by changing the ID (here: switch setting at EK1101) the green OP bar appears.
+Fig.
+67: Online view Switching to offline view and back updates the current connection status.
+Fig.
+68: Current connection status 2.3.2.6 Identification If HotConnect is used, the current topology status can be viewed in the online topology view in the system manager, i.e.
+which HotConnect group is connected and where.
+Several ADS accesses are necessary in order to access this information from the controller/PLC.
+https://infosys.beckhoff.com/content/1033/ethercatsystem/Resources/zip/2469147275.zip (PLC and System Manager) takes the following approach: • a function block contains the necessary code • the FB can be instanced several times and must be linked with its I/O variables to a HotConnect head (EK coupler, EP-box).
+As a result of this it receives information about the EtherCAT master and its own ADS port.
+• As soon as the Wc (Working Counter) reports operation, the device’s own data are queried from the EtherCAT master via ADS, as are the data of the devices that directly follow.
+• In addition the identities and names of the neighboring devices are determined.
+The identifier is the EtherCAT address, which remains constant.
+This https://infosys.beckhoff.com/content/1033/ethercatsystem/Resources/zip/2469149451.zip also contains a visualization template that uses placeholder variables.
+EtherCAT topology in the PLC In the introductory part of the documentation for the TcEtherCAT.lib there is an extensive sample program for determining various items of information about an EtherCAT network.
+This documenta- tion is to be found in the information system (online or on DVD): TwinCAT --> TwinCAT PLC --> PC Libraries --> EtherCAT --> Overview.
+This sample program uses function blocks from there.
+The following structure is assumed: Fig.
+69: Demo structure The first EK1100 coupler is equipped with EK1110 and EK1122 as branch stations for the EK1101s GroupA and GroupB.
+Regarding the procedure: the linking of the address information into the function block is crucial, see Fig.
+AdsAddr.
+Fig.
+70: AdsAddr In the example the EK1101 HotConnect coupler has the EtherCAT address 1007.
+The FB can also access the EtherCAT Master NetId and the ADS Port = EtherCAT address via the link.
+ADS address If the ADS address is not displayed in the green InfoData, the display can be switched on in the Ad- vanced Settings for the slave.
+(See Fig.
+"Switching on the "ADS Address" in the Advanced Set- tings") Fig.
+71: Switching on the "ADS Address" in the Advanced Settings The function block outputs a status structure, which supplies information about the own identities of the linked coupler and the connected devices; see Fig.
+Information structure.
+Since an EtherCAT Slave has a maximum of 4 ports, a maximum of 4 neighboring devices can be determined.
+The device names are taken from the configuration.
+Fig.
+72: Information structure Most important for self-orientation is the predecessor slave on port A/0.
+Via this mechanism an entire topology can also be determined from the PLC.
+2.3.3 EtherCAT data exchange A range of components are available for implementing direct synchronous data exchange between two EtherCAT systems.
+Depending on the application requirements, the appropriate method can be selected based on the following criteria.
+The characteristic features are: • Synchronous data exchange with predefined process data that are specified in the configuration • Asynchronous data exchange • Support for ADS over EtherCAT (AoE) • Support for synchronization of the distributed clocks (DC) in the two systems Some characteristics are listed in the following table.
+This information is only intended as a guide.
+The actual specification can be found in the respective online component documentation.
+EL6692 Publisher/Sub- scriber EL6601 FC1100 CX50x0-B110 Maximum synchronous data quantity 480 bytes, bidirectional variable 1024 bytes, bidirectional (publisher/ subscriber method) 1024 bytes, bidirectiona l Maximum asynchronous data quantity - - variable - AoE support yes yes - yes yes DC support yes - - - - Note - recommended for synchronization of EtherCAT systems - TwinCAT 2.11 required - use of an Ethernet port in both systems as real-time device - recommended for synchronous data exchange - transfer of the RT devices into an EtherCAT terminal - recommended for synchronous data exchange - requires free PCI slot in the IPC - TwinCAT 2.11 R2 required - CX5000 as subordinate autonomous controller with its own IOs is integrated in the higher- level system as an EtherCAT slave - option B110 required - TwinCAT 2.11 R2 required Fig.
+73: Topologies for different data exchange methods 2.3.4 Safety over EtherCAT - TwinSAFE The Beckhoff EtherCAT safety products use the TwinSAFE protocol, which is transported as part of the data within the EtherCAT datagrams.
+The TwinSAFE protocol is basically independent of the communication channel and has its own error detection mechanisms.
+In the EtherCAT system an EL6900 logic terminal deals with the safety functions and transfers data to the input and output terminals (EL1904, EL2904) via the TwinSAFE protocol.
+For the application and commissioning, the corresponding device documentation and a TwinSAFE application manual are accessible in the Download section on the Beckhoff website.
+Fig.
+74: TwinSAFE application manual
+
+
+<<Section3.6.7>>
+Setup in the TwinCAT System Manager EtherCAT 142 Version: 5.6 Fig.
+201: TwinCAT 2 Dialog Change to Alternative Type If called, the System Manager searches in the procured device ESI (in this example: EL1202-0000) for details of compatible devices contained there.
+The configuration is changed and the ESI-EEPROM is overwritten at the same time – therefore this process is possible only in the online state (ConfigMode).
+3.6.7 Standard behavior of the EtherCAT master 3.6.7.1 General For simple and fast commissioning TwinCAT supports the user with suitable default settings and automatisms.
+In most cases these settings are adequate for stable system operation.
+The settings, their effects and setting options are described below to facilitate customer specified handling or special behavior.
+The following topics will be discussed: • process data information • EtherCAT master settings • slave settings • Sync Task • distributed clock settings • EoE Check the following elements for regular and proper operation of the EtherCAT system: Setup in the TwinCAT System Manager EtherCAT 143 Version: 5.6 Element Control options - online/commis- sioning engineer Control options – application TwinCAT on target system in RUN state (or CONFIG/FREERUN) TwinCAT icon on target system (not programming system!) is green or blue System Manager info is green or blue/ flashes red (FreeRun) Application checks TwinCAT state via ADS EtherCAT master in OP state see Fig.
+Online diagnostics for EtherCAT device, A EcMasterState query via ADS (PLC: block from TcEtherCAT.lib) ADS NetId of the EcMaster known from the device info data (see Fig.
+Online diagnostics for EtherCAT device) All EtherCAT slaves in OP state see Fig.
+Online diagnostics for EtherCAT device, B EcSlavesState query via ADS (PLC: block from TcEtherCAT.lib) Cyclic telegrams are sent based on cycle time see Fig.
+Online diagnostics for EtherCAT device, C Query via ADS Acyclic telegrams are sent occasionally see Fig.
+Online diagnostics for EtherCAT device, D Query via ADS none or few LostFrames/CRC in the slaves see Fig.
+Online diagnostics for EtherCAT device, D Query via ADS EtherCAT DevState = 0 see Fig.
+Online diagnostics for EtherCAT device, E Link to monitoring task All slaves WorkingCounter = 0 throughout see Fig.
+Online diagnostics for EtherCAT device, F Link to monitoring task or Frm0WcState collect information from EcMaster inputs No conspicuous outputs in the logger window - (if diagnostics are OK, causes for logger outputs are determined by other means) No cycle time exceedings PLC: integration of TcUtilities.lib, thus access to SystemInfo and SystemTaskInfoArr[] if logged in No E-bus current violation see Fig.
+Online diagnostics for EtherCAT device, G - Various watchdogs adhered to (terminal standard 100 ms, FSoE with confirmation 100 ms) determined through monitoring of states Setup in the TwinCAT System Manager EtherCAT 144 Version: 5.6 Fig.
+202: online diagnostics for EtherCAT device The standard automatisms in the System Manager establish this state as soon as the configuration is activated and TwinCAT is switched to RUN/CONFIG mode.
+3.6.7.2 Default settings and information Process data information Fig.
+203: Process data The EtherCAT master features info data which provide up-to-date cycle diagnostics (yellow variables) and general information outside the real-time context (green variables).
+The main parameters are described below: • DevState: target = 0; all slaves are then in OP state, with no link errors etc.
+Setup in the TwinCAT System Manager EtherCAT 145 Version: 5.6 • Frm0WcState: should also be 0.
+Such a variable (Frm0WcState, Frm1WcState, ...) is created for each cyclic Ethernet frame As a minimum, an application should check and monitor these two master inputs during each cycle.
+• AmsNetId: the application (PLC, external task) requires this AMS address for addressing the EtherCAT master or the subordinate slaves via ADS.
+Further options are available via Advanced Settings: Master settings Fig.
+204: Master settings Setup in the TwinCAT System Manager EtherCAT 146 Version: 5.6 Element Detail Explanation Effects StartUp State As soon as TwinCAT is “started” (RUN or Config/ FreeRun), the master assumes the state selected here.
+The transition to OP only takes place once the Sync Task has started.
+If several tasks run on a system, the Sync Task which includes the distributed control has the highest priority.
+DC-capable slaves cannot be switched to OP if their lo- cal clock is not adjusted properly, or they may come out of OP state again if the control does not succeed (“Sync lost”).
+It is recommended to set and monitor the EcMas- ter state from the application (PLC, as available), (FB_EcGet/SetMasterState from TcEther- CAT.lib).
+This enables the master to assume OP even af- ter serious communication errors.
+Run-Time behavior Log Topology Changes Activated by default Online outputs in the logger window are activated Deactivation not sensible Log CRC counters Activated by default.
+In OnlineView the CRC errors of the slaves are read from the field and accumulated.
+If the CRC register counters in the slaves are to be displayed in the online view, this option is to be deactivated – i.e.
+it clears the local x0300ff registers once they have been read in order to prevent overflow at xFF.
+Log error counters no function ReInit after communica- tion error After a communication error during which the master has left the OP state (connection disconnected and lost frames for more than 10 cycles, stations switched off) TwinCAT tries to switch the master back to OP state.
+If the EcMaster state is controlled from the appli- cation it is essential to disable this option, since otherwise both mechanisms may hinder each other.
+Both access the master via ADS.
+Show input toggle infor- mation If activated, an additional toggle variable is displayed for input terminals, which can be linked.
+It changes its state 0/1 whenever a new datagram is received.
+Info data The display of these (green) non-real-time information data in the System Manager tree can be deactivated here.
+DeviceId: useful for access from the application AdsNetId: required for access from the applica- tion CfgSlaveCount: number of changes in the config- uration so far Dc time offsets: the offsets between external, in- ternal and TwinCAT clock (which are constant at runtime) are displayed.
+Required for external EtherCAT synchronization.
+E-bus power warning By default the System Manager issues a warning of the maximum load of an EtherCAT coupler (e.g.
+EK1100) is about to be exceeded.
+Setup in the TwinCAT System Manager EtherCAT 147 Version: 5.6 Slave settings Fig.
+205: Slave settings Setup in the TwinCAT System Manager EtherCAT 148 Version: 5.6 Element Detail Explanation Effects StartUp checking During EtherCAT startup the properties of all slaves activated here are checked.
+However corresponding slave settings have priority!
+By default the VendorID and ProductCode (e.g.
+El2521-0010) are checked.
+This is recommended, because it enables de- vices of the same type but with higher re- vision number to be used as replacement devices.
+State ma- chine Auto restore states If the slave has left the OP for inherent reasons (loss of power, synchronization error), the EtherCAT master tries to put the slave back to OP state or to the last regularly reached state, if the checkbox is activated.
+It is recommended to set and monitor the slave state from the application (PLC, if available, FB_EcGet/SetMasterState from TcEtherCAT.lib).
+This enables the application to control the slave in accordance with the application- specific requirements.
+Example (servo axis): the EtherCAT mas- ter would switch the axis back to OP state as soon as possible, without deeper knowledge of the safety or functional con- text.
+On the contrary, the application can decide whether and when the axis should be switched back to OP state after the se- rious “Failure State” error.
+Besides, a DeadLock can occur: If the master resets the slave to OP but only reaches SAFEOP before another fault oc- curs, the master will then only try to put the slave to SAFEOP.
+OP state can no longer be reached.
+It is therefore advisable to control the master and slave state through the appli- cation.
+ReInit after Comm.Error If the communication to a slave was interrupted, the master will restart the slave via the INIT state once the connection has been restored, even if the slave had only returned to the SAFEOP state.
+Thus ensures proper startup and an explicit state of the slave.
+If a slave is restarted from INIT --> OP, the outputs are usually disconnected.
+Log commu- nication changes Activated by default.
+State changes are displayed if the option “Show Change Counter” is activated in online view.
+Deactivation not sensible Info data The display of these (green) non-real-time information data in the System Manager tree can be (de)activated here.
+Showing the ADS address in each slave is useful for linking with a slave-specific FUNCTIONBLOCK that will monitor a slave, for example.
+Enhanced link detec- tion This function is not intended for the general use.
+Using this function on EtherCAT devices that do not support it can lead to substan- tial and irreversible faults in the EtherCAT communication.
+In devices that support this function it is already activated through the ESI installed during production.
+Setup in the TwinCAT System Manager EtherCAT 149 Version: 5.6 Sync Task Fig.
+206: Sync Task Element Explanation Max Sync Task TwinCAT 2.10/2.11 supports up to 4 SyncTasks.
+A SyncTask is a task (PLC, NC) that triggers an I/O update, i.e.
+with its own EtherCAT frames it communicates with the I/O field using cyclic communication and a fixed cycle time.
+Fig.
+Sync Task shows the configuration for 3 active tasks in with cycle times of 2, 3 and 4 ms.
+Make sure the task prioritization order is correct.
+If the configuration comprises more than 4 tasks, the tasks with the larger cycle times are set to the slowest task.
+Hint: This can be useful in cases where a very slow PLC task (> 100 ms) is to be used but the I/O communication has to be faster due to the slave watchdog.
+In this case the number of “Max Sync Task” should be reduced until only tasks <100 ms remain.
+MTU The “Max Transfer Unit” (MTU) is the maximum byte length of an Ethernet frame with EtherCAT datagrams.
+Frame repeat count The TwinCAT EtherCAT master supports multiple sending of EtherCAT frames for the purpose of enhanced interference immunity.
+ATTENTION: the used and affected EtherCAT slaves must support this functionality.
+The slave manufacturer specifies this in the ESI description.
+Setup in the TwinCAT System Manager EtherCAT 150 Version: 5.6 Distributed Clocks Fig.
+207: Distributed Clocks These settings are discussed in a separate section [} 154].
+EoE support (Ethernet over EtherCAT) Fig.
+208: Ethernet over EtherCAT support Setup in the TwinCAT System Manager EtherCAT 151 Version: 5.6 Element Detail Explanation Effects Virtual Ethernet switch The forwarding of standard TCP/IP traffic via the virtual switch within the TwinCAT EtherCAT system, is automatically set depending on the slaves used.
+EL6601 devices (SwitchPort terminals) e.g.
+result in activation of the VirtualEthernetSwitch and adding of ports.
+(see Fig.
+"Activating the VirtualEthernetSwitch") For further information please refer to the respective terminal documentations (EL6601, EL6614).
+Explicit activation and specification of ports is required for communication with an intelligent drive via EoE for the purpose of parameterization or firmware updates.
+In this case a port must be created for each connected device.
+The number of “Max.Frames” represents the internal queue and can be increased in the event of throughput problems.
+However, in this case the EtherCAT cycle time and the mailbox-sizes should be checked first.
+See also EL6601 documentation.
+Fig.
+209: Activating the VirtualEthernetSwitch Element Detail Explanation Effects Windows Network IP Routin g See diagram above.
+EtherCAT mailbox gateway This setting is required for special slaves.
+Setup in the TwinCAT System Manager EtherCAT 152 Version: 5.6 Cable redundancy Fig.
+210: EtherCAT cable redundancy The options for media redundancy are described in a separate Cable Redundancy section [} 29].
+A TwinCAT Supplement license is required.
+If an Ethernet port is entered here (installation real-time-driver see here), the configuration cannot assume RUN state without a license.
+Setup in the TwinCAT System Manager EtherCAT 153 Version: 5.6 Sync Unit assignment Fig.
+211: Sync Unit assignment The Sync Unit assignment only applies to the cyclic data of the EtherCAT system.
+By default the System Manager implements a very efficient assignment of cyclic I/O data and sent datagrams.
+This means as many as possible/all cyclic data are packed in a single/a few datagrams, resulting in low bus load thanks to low telegram overhead.
+With only a few, in the best case a single datagram as many as possible, in the best case all slaves can be addressed.
+The working counter is a diagnostic tool in the EtherCAT system.
+Each slave that is tasked to process a datagram (writing or reading of data) increases the WorkingCounter (WC).
+The master sends the datagrams with WC=0 and expects them back with WC>0.
+By checking the WC the master can immediately detect whether all controlled slaves have processed the datagram correctly.
+If this is not the case, the master cannot trust the returned data and discards all input data from this datagram.
+In addition, it commences acyclic diagnostic measures to determine the fault location.
+If working counter errors are expected in a system, e.g.
+because the flexible “HotConnect” topology concept is used, this dialog can be used to allocate coupler modules or individual slaves/terminals to special datagrams, the so-called.
+SyncUnits.
+In extreme cases each slaves is allocated a separate datagram, resulting in very inefficient bus utilization since many datagrams and Ethernet frames have to be sent with associated overhead.
+Note: an Ethernet frame may contain up to 16 EtherCAT datagrams.
+
+
+<<Section3.7>>
+Setup in the TwinCAT System Manager EtherCAT 154 Version: 5.6 3.7 Notes on distributed clocks 3.7.1 EtherCAT Distributed Clocks - default settings General The distributed clock technology in the EtherCAT system enables synchronized operation of local clocks in all EtherCAT devices (master and slaves).
+If an EtherCAT slave supports distributed clocks (DC), its ESC (EtherCAT slave controller) contains a hardware-based clock (usually 64 bit, in rarer cases 32 bit) with a resolution of 1 bit = 1 ns.
+These local clocks can be used for synchronous outputs or data acquisition (e.g.
+of analog value inputs).
+An EtherCAT slave may support DC, but does not have to.
+Mixed operation in the EtherCAT system is possible, so long as the EtherCAT master supports DC.
+One device is the reference clock, all other DC-capable devices are continuously synchronized with an accuracy of generally less than 100 ns.
+The synchronization process and the method of communication of EtherCAT dictate that the first DC-capable slave in the system represents the reference clock ("M" in Fig.
+Topology of the EtherCAT system with DC-capable devices).
+Via a special telegram the subsequent slaves cyclically receive information about the state of the reference clock and readjust themselves based on this time.
+Data from the readjustment process provide important diagnostic information about the state of the distributed clock system.
+Fig.
+212: topology of the EtherCAT system with DC-capable devices The TwinCAT EtherCAT master deals with the basic topology-dependent calculations, the adjustment during EtherCAT startup and the continuous synchronization.
+The corresponding settings are specified in the System Manager configurator dialogs.
+Additional notes and more detailed information about the distributed clocks system can be found in the respective sections [} 234].
+Distributed clocks in operation The distributed clock system is synchronized when EtherCAT starts up during the transition from PREOP to OP.
+The slaves are set to OP state.
+In DC-capable slaves proper synchronization in OP state is usually important.
+Otherwise the slaves automatically return to PREOP state.
+TwinCAT 2.11 can synchronize such devices and switch them to OP.
+Default settings for the EtherCAT master Effectiveness of modifications The distributed clock system is analyzed and calculated when EtherCAT starts up.
+Changes in the settings of this system therefore always require activation of the modified configuration and an EtherCAT restart.
+Setup in the TwinCAT System Manager EtherCAT 155 Version: 5.6 By default the distributed clocks system (DC) is calculated such that the usual I/O configurations can run in a stable manner.
+Nevertheless, it may be advisable to adjust the settings during machine commissioning using the diagnostic tools provided.
+Fig.
+213: distributed clock master settings By default is “Automatic DC mode selection” is active.
+“DC in use” should only be selected for explicit modifications of the automatic configuration.
+Setup in the TwinCAT System Manager EtherCAT 156 Version: 5.6 Element Detail Explanation Effects DC mode Automatic DC mode selection Default setting, automatic selection of the ReferenceClock DC in use The ReferenceClock (see next paragraph) and the synchronization direction (see section “Coupling of EtherCAT [} 161]”) can be selected manually.
+If only one EtherCAT device is available in the configuration and DC slaves are used, “Independent DC Time” should be selected (exception: external synchronization [} 279]).
+Take care when changing these settings!
+The stability of the whole system may be impaired.
+Settings Continuo us Runtime Measurin g Cyclic measurement of the intervals between the devices during runtime.
+This process also takes places for EtherCAT.
+For new applications under TwinCAT 2.11 it is advisable to deactivate this function Sync Window monitorin g If activated, EtherCAT DevState shows in bit 12 whether all DC devices are maintaining their local clocks within the specified window (see Fig.
+DevState with SyncWindow monitoring display).
+A cyclic BRD command on x092C (system time difference) is used for this.
+The information is only usable if the first EtherCAT device also contains the ReferenceClock clock.
+Show DC system time (64- bit) If activated, the current DC time is displayed in the inputs of the EtherCAT master as a copy from the master clock.
+Since the read out process is subject to the fieldbus transport, preference should be given to the PLC blocks in order to obtain the current DC system time.
+(see Fig.
+"DcSysTime" display in the TwinCAT tree") Fig.
+214: "DcSysTime" display in the TwinCAT tree Element Detail Explanation Effects SYNC shift time The automatically calculated shift times for inputs and outputs are shown (grey fields).
+In additional the local slave shift events slave can be offset through manual entries.
+Further information can be found in the general distributed clock section [} 234].
+The results from the DC diagnostics should be reported here, if applicable.
+In the event of synchronization problems, for the outputs +10–20 % of the cycle time, for inputs -10–20 % of the cycle time can be entered here as reference value (unit: µs).
+Values >100 % of the cycle time are not meaningful.
+Setup in the TwinCAT System Manager EtherCAT 157 Version: 5.6 Fig.
+215: DevState with SyncWindow display monitoring Reference Clock selection Manual selection of the reference clock for this EtherCAT system is only required in exceptional circumstances and should be done with caution.
+TwinCAT generally selects the correct DC-supporting slave, i.e.
+the first one.
+Fig.
+216: Manual selection of the reference clock If a different slave is selected manually • this one must either support DC explicitly (DC tab is shown in the slave): Fig.
+217: Distributed Clocks tab (DC) • or must be manually marked with Fig.
+218: checkbox for manual selection in the advanced slave settings.
+Setup in the TwinCAT System Manager EtherCAT 158 Version: 5.6 Potential reference clock If a slave without the required hardware support is marked as “potential Reference Clock”, the EtherCAT system has no reference clock after startup.
+The slaves will not switch to OP state and report PREOP_ERR.
+From version 2.11R2 build 2032, TwinCAT checks during each startup whether the selected reference clock also supports this function.
+The following logger message ap- pears: "slave xx is reference clock device, but does not support dc!" (see Fig.
+"Event logger mes- sage: no support by reference clock") In logger window TwinCAT 2.11R2 (from build 2028) will issue a message “DC not synchronized”, if a slave cannot be switched from PREOP to OP state because it is not synchronized.
+(see Fig.
+"Event logger message: no synchronization") Fig.
+219: Event logger message: no support by reference clock Fig.
+220: Event logger message: no synchronization Default settings for EtherCAT slaves The distributed clocks settings can be found in the advanced settings of the EtherCAT slave.
+If the slave is intended by the manufacturer for DC operation, it includes such an operation mode; see Fig.
+Default slave setting – slave with and without DC capability below.
+Selection of this operation mode activates the integration of the slave into the synchronization mechanism on the master side.
+Setup in the TwinCAT System Manager EtherCAT 159 Version: 5.6 Fig.
+221: Default slave setting – slave with and without DC capability Setup in the TwinCAT System Manager EtherCAT 160 Version: 5.6 Distributed clock activation If the settings “Enable” and “Use as potential Reference Clock” are activated for devices that do not support this functionality, the system may malfunction.
+The function must be enabled by the device manufacturer.
+Slave shift time settings As in the master settings for all slaves, the SYNC times can be offset separately in the individual DC slaves.
+Not the general instructions [} 249].
+Checking for DC support EtherCAT slaves with DC function are • loaded with the DC configuration during the transition from SAFEOP to PREOP.
+• synchronized during the transition from SAFEOP to OP.
+If problems occur in the individual phases as a result of incorrect configuration, the target states are not reached and the logger window of the System Manager shows associated information (e.g.
+“DC invalid sync cfg”) Fig.
+222: logger window showing information relating to invalid DC configuration of the slave To check whether and to what extent a device supports distributed clocks, the local clock registers can be displayed online.
+In the online display call up the Properties dialog by right-clicking in the free space.
+Fig.
+223: display of additional register values from the slaves In this case select the 4 registers 0x0910 to 0x0916.
+The local DC clock runs in these 2-byte registers.
+Like certain other slave registers, the System Manager can read these cyclically online.
+Fig.
+224: DC register selection The register values are displayed and automatically updated by the System Manager.
+Setup in the TwinCAT System Manager EtherCAT 161 Version: 5.6 Fig.
+225: display of DC register values The following can be seen in Fig.
+Display of DC register values • slaves with 64-bit DC support (highlighted in green here) • slaves without DC support (highlighted in red here) • slaves with 32-bit DC support (highlighted in yellow here) 32 bits cover approx.
+4.2 seconds.
+This is adequate for synchronization of the DC system.
+Information for working with 32/64 bit times in the PLC can be found in the corresponding section [} 258].
+Up-to-dateness of the online display The System Manager reads and displays the values without claim of real-time and consistency.
+They have informative character and can provide an initial overview.
+The reading process takes up capacity in the acyclic EtherCAT communication, potentially at the expense of other applications Not all slave ESC register values can be read by the System Manager/EtherCAT master.
+3.7.2 EtherCAT Distributed Clocks - coupling of EtherCAT systems An EtherCAT system with distributed clock functionality has the following properties: • the controller/IPC uses one Ethernet port Note: for cable redundancy two Ethernet ports are used.
+However, the combination of distributed clocks (DC) and cable redundancy is only possible with device CU2508, see associated device documentation.
+• up to 65,535 slaves are cyclically/acyclically supplied with process data at this port by a real-time EtherCAT master.
+• the first DC-capable EtherCAT slave in the system represents the reference clock (Fig.
+Distributed clocks system topology: "M"), to which all subsequent slaves are synchronized (Fig.
+Distributed clocks system topology: "S") • in order to keep the real-time synchronous with the DC environment, the internal TwinCAT real-time clock is also synchronized with this field ReferenceClock.
+A TwinCAT controller can therefore contain only one reference clock, which synchronizes the TwinCAT real- time.
+All other EtherCAT systems must adjust themselves and their local ReferenceClocks accordingly.
+All EtherCAT systems nevertheless retain their local ReferenceClocks in first DC EtherCAT slave.
+This should be taken into account in the following settings.
+Setup in the TwinCAT System Manager EtherCAT 162 Version: 5.6 Fig.
+226: distributed clocks system topology The synchronization direction can be set in the advanced settings of the EtherCAT master.
+Fig.
+227: synchronization direction If more than one EtherCAT system is used in a TwinCAT control system, i.e.
+if the I/O configuration contains more than one “EtherCAT device” and some or all of these use distributed clocks functions, proceed as follows: • in the DC settings set one system to “Independent mode”.
+In this system a ReferenceClock sits in a slave and synchronizes all other slaves in this system.
+The TwinCAT real-time of this clock is also synchronized based on frequency.
+• all other DC systems should be set to "Slave Mode".
+These systems also contain the local ReferenceClocks for synchronizing the subsequent devices.
+However, during the EtherCAT startup and subsequently this ReferenceClock is itself synchronized based on the TwinCAT time and is referred to as "tracking reference clock".
+Setup in the TwinCAT System Manager EtherCAT 163 Version: 5.6 Fig.
+228: DC-coupling of EtherCAT systems Notes - This kind of DC-coupling is only possible from TwinCAT 2.11 - Only EtherCAT slaves without inherent intelligence/firmware should be used as "tracking reference clock".
+Such slaves are characterized by the lack of CoE/SoE or process data.
+Simple digital input/output terminals (EL1202-0100, EL2202-0100) or couplers (EK1100) are suit- able.
+WARNING!
+Only devices that support this functionality should be selected as ReferenceClock.
+See notes in section “DC standard settings [} 154]”.
+Failure to follow these instructions may have the following effects: DC devices in subordinate sys- tems do not assume OP state and remain in PREOP state.
+Devices come out of synchronization and OP state due to "SyncLost".
+Setup in the TwinCAT System Manager EtherCAT 164 Version: 5.6 Tracking accuracy As can be seen in Fig.
+DC-coupling of EtherCAT systems, a chain of synchronizations must be executed via the TwinCAT controller through to the "tracking reference clock".
+The control accuracy of the EtherCAT systems among each other that can be achieved in this way is reduced.
+The user needs to check whether this approach meets the long-term requirements of the application in terms of control accuracy and stability.
+The CU2508 port multiplier is designed for maximum synchronization precision.
+It supports up to 8 connected EtherCAT systems (or 4 with simultaneous cable redundancy).
+It also enables the combination of distributed clock function and cable redundancy.
+The configuration of the CU2508 is transparent, i.e.
+the configuration may still contain independent EtherCAT devices.
+For further information please refer to the CU2508 documentation.
+Fig.
+229: EtherCAT topology with CU2508 and 2 EtherCAT systems
+
+
+<<Section4.1~4.2>>
+EtherCAT diagnostics 4.1 General Notes - EtherCAT Slave Application This summary briefly deals with a number of aspects of EtherCAT Slave operation under TwinCAT.
+More detailed information on this may be found in the corresponding sections of, for instance, the EtherCAT System Documentation.
+Diagnosis in real time: WorkingCounter, EtherCAT State and Status Generally speaking an EtherCAT Slave provides a variety of diagnostic information that can be used by the controlling task.
+This diagnostic information relates to differing levels of communication.
+It therefore has a variety of sources, and is also updated at various times.
+Any application that relies on I/O data from a fieldbus being correct and up to date must make diagnostic access to the corresponding underlying layers.
+EtherCAT and the TwinCAT System Manager offer comprehensive diagnostic elements of this kind.
+Those diagnostic elements that are helpful to the controlling task for diagnosis that is accurate for the current cycle when in operation (not during commissioning) are discussed below.
+Fig.
+230: Selection of the diagnostic information of an EtherCAT Slave In general, an EtherCAT Slave offers • communication diagnosis typical for a slave (diagnosis of successful participation in the exchange of process data, and correct operating mode) This diagnosis is the same for all slaves.
+as well as • function diagnosis typical for a channel (device-dependent) See the corresponding device documentation The colors in Fig.
+Selection of the diagnostic information of an EtherCAT Slave also correspond to the variable colors in the System Manager, see Fig.
+Basic EtherCAT Slave Diagnosis in the PLC.
+Colour Meaning yellow Input variables from the Slave to the EtherCAT Master, updated in every cycle red Output variables from the Slave to the EtherCAT Master, updated in every cycle green Information variables for the EtherCAT Master that are updated acyclically.
+This means that it is possible that in any particular cycle they do not represent the latest possible status.
+It is therefore useful to read such variables through ADS.
+Fig.
+Basic EtherCAT Slave Diagnosis in the PLC shows an example of an implementation of basic EtherCAT Slave Diagnosis.
+A Beckhoff EL3102 (2-channel analogue input terminal) is used here, as it offers both the communication diagnosis typical of a slave and the functional diagnosis that is specific to a channel.
+Structures are created as input variables in the PLC, each corresponding to the process image.
+Fig.
+231: Basic EtherCAT Slave Diagnosis in the PLC The following aspects are covered here: Code Function Implementation Application/evaluation A The EtherCAT Master's diagnostic infor- mation updated acyclically (yellow) or provided acyclically (green).
+At least the DevState is to be evaluated for the most recent cycle in the PLC.
+The EtherCAT Master's diagnostic informa- tion offers many more possibilities than are treated in the EtherCAT System Documenta- tion.
+A few keywords: • CoE in the Master for communication with/through the Slaves • Functions from TcEtherCAT.lib • Perform an OnlineScan B In the example chosen (EL3102) the EL3102 comprises two analogue input channels that transmit a single function status for the most recent cycle.
+Status • the bit significations may be found in the device documentation • other devices may supply more information, or none that is typical of a slave In order for the higher-level PLC task (or cor- responding control applications) to be able to rely on correct data, the function status must be evaluated there.
+Such information is therefore provided with the process data for the most recent cycle.
+C For every EtherCAT Slave that has cyclic process data, the Master displays, using what is known as a WorkingCounter, whether the slave is participating success- fully and without error in the cyclic ex- change of process data.
+This important, el- ementary information is therefore provided for the most recent cycle in the System Manager 1.
+at the EtherCAT Slave, and, with identical contents 2.
+as a collective variable at the EtherCAT Master (see Point A) for linking.
+WcState (Working Counter) 0: valid real-time communication in the last cycle 1: invalid real-time communication This may possibly have effects on the process data of other Slaves that are located in the same Syn- cUnit In order for the higher-level PLC task (or cor- responding control applications) to be able to rely on correct data, the communication sta- tus of the EtherCAT Slave must be evaluated there.
+Such information is therefore provided with the process data for the most recent cy- cle.
+D Diagnostic information of the EtherCAT Master which, while it is represented at the slave for linking, is actually determined by the Master for the Slave concerned and represented there.
+This information cannot be characterized as real-time, because it • is only rarely/never changed, except when the system starts up • is itself determined acyclically (e.g.
+EtherCAT Status) State current Status (INIT..OP) of the Slave.
+The Slave must be in OP (=8) when operating normally.
+AdsAddr The ADS address is useful for communicating from the PLC/task via ADS with the EtherCAT Slave, e.g.
+for reading/writing to the CoE.
+The AMS-NetID of a slave corre- sponds to the AMS-NetID of the EtherCAT Master; communication with the individual Slave is possible via the port (= EtherCAT address).
+Information variables for the EtherCAT Mas- ter that are updated acyclically.
+This means that it is possible that in any particular cycle they do not represent the latest possible sta- tus.
+It is therefore possible to read such vari- ables through ADS.
+NOTE Diagnostic information It is strongly recommended that the diagnostic information made available is evaluated so that the applica- tion can react accordingly.
+CoE Parameter Directory The CoE parameter directory (CanOpen-over-EtherCAT) is used to manage the set values for the slave concerned.
+Changes may, in some circumstances, have to be made here when commissioning a relatively complex EtherCAT Slave.
+It can be accessed through the TwinCAT System Manager, see Fig.
+EL3102, CoE directory: Fig.
+232: EL3102, CoE directory EtherCAT System Documentation The comprehensive description in the EtherCAT System Documentation (EtherCAT Basics --> CoE Interface) must be observed!
+A few brief extracts: • Whether changes in the online directory are saved locally in the slave depends on the device.
+EL terminals (except the EL66xx) are able to save in this way.
+• The user must manage the changes to the StartUp list.
+Commissioning aid in the TwinCAT System Manager Commissioning interfaces are being introduced as part of an ongoing process for EL/EP EtherCAT devices.
+These are available in TwinCAT System Managers from TwinCAT 2.11R2 and above.
+They are integrated into the System Manager through appropriately extended ESI configuration files.
+Fig.
+233: Example of commissioning aid for a EL3204 This commissioning process simultaneously manages • CoE Parameter Directory • DC/FreeRun mode • the available process data records (PDO) Although the “Process Data”, “DC”, “Startup” and “CoE-Online” that used to be necessary for this are still displayed, it is recommended that, if the commissioning aid is used, the automatically generated settings are not changed by it.
+The commissioning tool does not cover every possible application of an EL/EP device.
+If the available setting options are not adequate, the user can make the DC, PDO and CoE settings manually, as in the past.
+EtherCAT State: automatic default behaviour of the TwinCAT System Manager and manual operation After the operating power is switched on, an EtherCAT Slave must go through the following statuses • INIT • PREOP • SAFEOP • OP to ensure sound operation.
+The EtherCAT Master directs these statuses in accordance with the initialization routines that are defined for commissioning the device by the ES/XML and user settings (Distributed Clocks (DC), PDO, CoE).
+See also the section on "Principles of Communication, EtherCAT State Machine [} 19]" in this connection.
+Depending how much configuration has to be done, and on the overall communication, booting can take up to a few seconds.
+The EtherCAT Master itself must go through these routines when starting, until it has reached at least the OP target state.
+The target state wanted by the user, and which is brought about automatically at start-up by TwinCAT, can be set in the System Manager.
+As soon as TwinCAT reaches the status RUN, the TwinCAT EtherCAT Master will approach the target states.
+Standard setting The advanced settings of the EtherCAT Master are set as standard: • EtherCAT Master: OP • Slaves: OP This setting applies equally to all Slaves.
+Fig.
+234: Default behaviour of the System Manager In addition, the target state of any particular Slave can be set in the “Advanced Settings” dialogue; the standard setting is again OP.
+Fig.
+235: Default target state in the Slave Manual Control There are particular reasons why it may be appropriate to control the states from the application/task/PLC.
+For instance: • for diagnostic reasons • to induce a controlled restart of axes • because a change in the times involved in starting is desirable In that case it is appropriate in the PLC application to use the PLC function blocks from the TcEtherCAT.lib, which is available as standard, and to work through the states in a controlled manner using, for instance, FB_EcSetMasterState.
+It is then useful to put the settings in the EtherCAT Master to INIT for master and slave.
+Fig.
+236: PLC function blocks Note regarding E-Bus current EL/ES terminals are placed on the DIN rail at a coupler on the terminal strand.
+A Bus Coupler can supply the EL terminals added to it with the E-bus system voltage of 5 V; a coupler is thereby loadable up to 2 A as a rule.
+Information on how much current each EL terminal requires from the E-bus supply is available online and in the catalogue.
+If the added terminals require more current than the coupler can supply, then power feed terminals (e.g.
+EL9410) must be inserted at appropriate places in the terminal strand.
+The pre-calculated theoretical maximum E-Bus current is displayed in the TwinCAT System Manager as a column value.
+A shortfall is marked by a negative total amount and an exclamation mark; a power feed terminal is to be placed before such a position.
+Fig.
+237: Illegally exceeding the E-Bus current From TwinCAT 2.11 and above, a warning message “E-Bus Power of Terminal...” is output in the logger window when such a configuration is activated: Fig.
+238: Warning message for exceeding E-Bus current NOTE Caution!
+Malfunction possible!
+The same ground potential must be used for the E-Bus supply of all EtherCAT terminals in a terminal block!
+4.2 EtherCAT AL Status Codes 4.2.1 Error Code 0x0000 Meaning No error Description No error Current State (or state change) Any Resulting state Current state Solution n/a 4.2.2 Error Code 0x0001 Meaning Unspecified error Description No error code is defined for occurred error Current State (or state change) Any Resulting state Any + E Solution Read user manual or contact device manufacturer 4.2.3 Error Code 0x0002 Meaning No Memory Description Less hardware memory, slave needs more memory.
+Example: For slave configuration, application configuration files are downloaded (possibly via FoE or large CoE objects).
+The size of those files exceeds the local memory Current State (or state change) Any Resulting state Any + E Solution Download smaller files or objects.
+Check user manual.
+4.2.4 Error Code 0x0004 Meaning Invalid Revision Description Output/Input mapping is not valid for this hardware or software revision (0x1018:03) Current State (or state change) P→S Resulting state P+E Solution Change mapping or use different hardware 4.2.5 Error Code 0x0011 Meaning Invalid requested state change Description The EtherCAT State Machine (ESM) defines which state changes are allowed.
+All other state changes are not allowed Example: If the master requests the slave to go from OP (AL Control = 0x08) directly to BOOT (AL Control = 0x03).
+Current State (or state change) P→S, I→O, P→O, O→B, S→B, P→B Resulting state Current State + E Solution Go step-by-step from the original state to the desired state.
+4.2.6 Error Code 0x0012 Meaning Unknown requested state change Description The ESM defines the following states.
+They are coded with fixed values (only lower (=right) nibble): BOOT: AL Control = 0x03 INIT: AL Control = 0x01 PREOP: AL Control = 0x02 SAFEOP: AL Control = 0x04 OP: AL Control = 0x08 The fifth bit of the AL Control (left nibble is 1) is the “Error Acknowledge Bit”.
+If the slave is in AL STATUS = 0x14, i.e.
+ERROR SAFEOP the master acknowledges this by setting the Acknowledge bit.
+Example: If any other value for AL Control than those specified are sent.
+Current State (or state change) Any Resulting state Current State + E Solution Do only request the defined states 4.2.7 Error Code 0x0013 Meaning Boot state not supported Description Device does not support BOOT state, but the master requests the slave to go to BOOT (AL Control = 0x03 Current State (or state change) I→B Resulting state I + E Solution n/a 4.2.8 Error Code 0x0014 Meaning No valid firmware Description This error code may be returned after a firmware download, if the downloaded file cannot be used by the application controller Current State (or state change) I→P Resulting state I + E Solution Download a firmware that can be supported by the hardware and bootloader.
+Check Product Code and Revision Number (CoE object 0x1018).
+If this cannot be read from the firmware any more you may see this in the network configuration (CoE object dictionary) or probably in the ESI file (element Profile: ObjectDictionary:Objects:Object).
+4.2.9 Error Code 0x0015 Meaning Invalid mailbox configuration Description Mailbox communication (= acyclic parameter exchange) is done via two memory areas on the EtherCAT Slave Controller (ESC) – the “Output Mailbox” (master -> slave) and the “Input Mailbox” (slave-> master).
+Those memory areas are protected by SyncManagers to prevent from simultaneous access from master and salve controller at the same time.
+SyncManagers are hardware entities on the ESC.
+They are configured via certain registers in the ESC register area (starting at 0x0800).
+The configuration includes start address, length, and direction (output or input).
+If those settings differ from those expected by the host controller of the slave this error is returned Current State (or state change) I→B Resulting state n/a Solution Replace previous network description of old slave with the one of the new slave 4.2.10 Error Code 0x0016 Meaning Invalid mailbox configuration Description Example: The slave hardware was replaced while the network configuration remained unchanged.
+The new hardware expects different mailbox SyncManager settings Current State (or state change) I→S Resulting state I + E Solution Replace previous network description of old slave with the one of the new slave 4.2.11 Error Code 0x0017 Meaning Invalid Sync Manager configuration Description Process data communication (cyclic communication) is done via extra memory areas on the ESC, separated for outputs and inputs.
+The process data length and the process data SyncManager length have to be the same.
+If this is not the case or the start address or direction does not match this error is returned.
+Example: The process data configuration was changed of the slaves which also changed the length of the data.
+The change was not activated in the configuration so that the configuration tool would have recalculated the SyncManager settings.
+Current State (or state change) P→S, S→O Resulting state Current State + E Solution Issue a re-calculation of the EtherCAT configuration 4.2.12 Error Code 0x0018 Meaning No valid inputs available Description The slave application cannot provide valid input values Example: A certain hardware which needs to be connected to the slave was disconnected Current State (or state change) O, S→O Resulting state S + E Solution n/a 4.2.13 Error Code 0x0019 Meaning No valid outputs available Description The slave application cannot recieve valid output values.
+Example: The slave has a RxPdoToggle output or an “Output Valid” information in its process data.
+The RxPdoToggle does not toggle or the OutputValid is not true.
+Therefore the slave has no process data which the application can use.
+If supported, check the RxPDO Toggle Failed Counter in object 0x1C3x.0E).
+Also, the Synchronization may have problems (see object 0x10F1:SI2 Sync Error Counter Limit) so that process data are received too late by the slave so that the local slave cycle misses the toggle event.
+Another reason can be that the PLC stopped working Current State (or state change) O, S→O Resulting state S + E Solution The RxPdoToggle may need to be handled by the PLC program The outputs valid may have to be set by the PLC program PLC may have stopped, restart PLC 4.2.14 Error Code 0x001A Meaning Synchronization error Description If too many RxPDO Toggle error occur, i.e.
+the RxPDO Toggle Failed Counter increases the internal limit the slave returns to SAFEPERROR with 0x001A.
+Multiple synchronization errors.
+Device is not synchronized any more (used if the causes mirrored by the AL Status Codes 0x2C, 0x2D, 0x32, 0x33, 0x34 cannot be distinguished).
+Current State (or state change) O, S→O Resulting state S + E Solution n/a 4.2.15 Error Code 0x001B Meaning Sync manager watchdog Description The slave did not receive process data within the specified watchdog time.
+Usually, the WD time is 100ms.
+The WD is re-started every time it receives new process data, usually when the Output SyncManager (SyncManager2) is written.
+For devices which have only inputs usually no WD is used.
+Increasing the WD is not a solution.
+Reason: PLC stopped Current State (or state change) O, S Resulting state S + E Solution n/a 4.2.16 Error Code 0x001C Meaning Invalid Sync Manager Types Description n/a Current State (or state change) O, S, O, P→S Resulting state S + E Solution n/a 4.2.17 Error Code 0x001D Meaning Invalid Output Configuration Description SM configuration for output process data is invalid Current State (or state change) O, S, O, P→S Resulting state S + E Solution n/a 4.2.18 Error Code 0x001E Meaning Invalid Input Configuration Description SM configuration for input process data is invalid Current State (or state change) O, S, O, P→S Resulting state S + E Solution n/a 4.2.19 Error Code 0x001F Meaning Invalid Watchdog Configuration Description The Watchdog is configured in the ESC register 0x0400 and 0x0420.
+EtherCAT defines default watchdog settings (100ms) or they are defined in the ESI file.
+If the slave does not accept a change of the expected settings it returns this AL Status Code Example: A slave may not accept that the WD is deactivated.
+Current State (or state change) O, S, O, P→S Resulting state P + E Solution Use default WD settings 4.2.20 Error Code 0x0020 Meaning Slave needs cold start Description Slave device require a power off - power on reset Current State (or state change) Any Resulting state Current State + E Solution n/a 4.2.21 Error Code 0x0021 Meaning Slave needs INIT Description Slave application requests INIT state Current State (or state change) B, P, S, O Resulting state Current State + E Solution n/a 4.2.22 Error Code 0x0022 Meaning Slave needs PREOP Description Slave application requests PREOP state Current State (or state change) S, O Resulting state S + E, O + E Solution n/a 4.2.23 Error Code 0x0023 Meaning Slave needs SAFEOP Description Slave application requests SAFEOP state Current State (or state change) O Resulting state O + E Solution n/a 4.2.24 Error Code 0x0024 Meaning Invalid Input Mapping Description The process data are described by the configuration (PdoConfig) and PDO assignment (PdoAssign).
+PdoConfig: list of actual variables (usually indexes 0x6nnn for inputs and 0x7nnn for outputs).
+Variables are also called PDO entries.
+There can be one or several variables with in one list (i.e.
+within one PDO).
+The Input PDOs have the index 0x1Amm.
+The Output PDOs have the index 0x16mm.
+PdoAssign: The list of PDOs (object index 0x16nn, 0x1Amm) which are actually part of the process data and hence, are transferred cyclically, are listed in the PDO Assign Objects 0x1C12 (output PDOs) and 0x1C13 (input PDOs).
+All this can be seen in the SystemManager on the TAB “Process Data”.
+If the mapping which was set by the user on the Process Data tab and which was expected by the slave do not match this Status Code is returned.
+Current State (or state change) P→S Resulting state P + E Solution n/a 4.2.25 Error Code 0x0025 Meaning Invalid Output Mapping Description The process data are described by the configuration (PdoConfig) and PDO assignment (PdoAssign).
+PdoConfig: list of actual variables (usually indexes 0x6nnn for inputs and 0x7nnn for outputs).
+Variables are also called PDO entries.
+There can be one or several variables with in one list (i.e.
+within one PDO).
+The Input PDOs have the index 0x1Amm.
+The Output PDOs have the index 0x16mm.
+Example: Slave does only support one or certain PDO combinations but a different setting was made by the user.
+For a bus coupler the connected terminals differ from the configured terminals in the SystemManager Current State (or state change) P→S Resulting state P + E Solution n/a 4.2.26 Error Code 0x0026 Meaning Inconsistent Settings Description General settings mismatch Current State (or state change) P→S Resulting state P + E Solution n/a 4.2.27 Error Code 0x0027 Meaning Freerun not supported Description n/a Current State (or state change) P→S Resulting state P + E Solution n/a 4.2.28 Error Code 0x0028 Meaning Synchronization not supported Description n/a Current State (or state change) P→S Resulting state P + E Solution n/a 4.2.29 Error Code 0x0029 Meaning Freerun needs 3 Buffer Mode Description FreeRun mode, SM has to run in 3-buffer mode Current State (or state change) P→S Resulting state P + E Solution n/a 4.2.30 Error Code 0x002A Meaning Background Watchdog Description n/a Current State (or state change) S, O Resulting state P + E Solution n/a 4.2.31 Error Code 0x002B Meaning No Valid Inputs and Outputs Description n/a Current State (or state change) O, S→O Resulting state S + E Solution n/a 4.2.32 Error Code 0x002C Meaning Fatal Sync Error Description The hardware interrupt signal (so called Sync signal) generated by the ESC is not generated any more.
+The master sets and activated the cycle time of the Sync signal during state transition from PREOP to SAFEOP.
+If a slave was disconnected and reconnected (also due to lost frames or CRC errors) the generation of the SyncSignal may be lost.
+Current State (or state change) O Resulting state S + E Solution Set master to INIT and back to OP so that the DCs are initialized again 4.2.33 Error Code 0x002D Meaning ana Description SyncSignal not received: In SAFEOP the slave waits for the first Sync0/Sync1 events before switching to OP, if these events were not received during the SAFEOP to OP-Timeout time the slave refuses the state transition to OP Current State (or state change) n/a Resulting state n/a Solution n/a 4.2.34 Error Code 0x0030 Meaning Invalid DC SYNC Configuration Description Distributed Clock Configuration is invalid due to application requirements Current State (or state change) O, S→O, P→S Resulting state P + E, S + E Solution n/a 4.2.35 Error Code 0x0031 Meaning Invalid DC Latch Configuration Description DC Latch configuration is invalid due to application requirements Current State (or state change) O, S→O, P→S Resulting state P + E, S + E Solution n/a 4.2.36 Error Code 0x0032 Meaning PLL Error Description Master not synchronized, at least one DC event recieved Current State (or state change) O, S→O Resulting state S + E Solution n/a 4.2.37 Error Code 0x0033 Meaning DC Sync IO Error Description Multiple Synchronization Errors: At least one SycnSignal was received before.
+However, the PLL between slave and master is not synchronized any more.
+This may occur if the master application jitters too much Current State (or state change) O, S→O Resulting state S + E Solution Use specific industrial pc, standard office PCs may have power saving options, graphic accelerateds and other system services which disturb the real-time of the master.
+CPU power may be too small for the PLC/NC program.
+Increase EtherCAT and PLC/NC cycle time.
+Use SyncUnits for the slaves using DCs.
+4.2.38 Error Code 0x0034 Meaning DC Sync Timeout Error Description Multiple Synchronization Errors, too much SM events missed Current State (or state change) O, S→O Resulting state S + E Solution n/a 4.2.39 Error Code 0x0035 Meaning DC Invalid Sync Cycle Time Description n/a Current State (or state change) P→S Resulting state P + E Solution n/a 4.2.40 Error Code 0x0036 Meaning DC Sync0 Cycle Time Description DC Sync0 cycle time does not fit to the application requirements Current State (or state change) P→S Resulting state P + E Solution n/a 4.2.41 Error Code 0x0037 Meaning DC Sync1 Cycle Time Description DC Sync1 cycle time does not fit to the application requirements Current State (or state change) P→S Resulting state P + E Solution n/a 4.2.42 Error Code 0x0041 Meaning MBX_AOE Description n/a Current State (or state change) B, P, S, O Resulting state Current State + E Solution n/a 4.2.43 Error Code 0x0042 Meaning MBX_EOE Description n/a Current State (or state change) B, P, S, O Resulting state Current State + E Solution n/a 4.2.44 Error Code 0x0043 Meaning MBX_COE Description n/a Current State (or state change) B, P, S, O Resulting state Current State + E Solution n/a 4.2.45 Error Code 0x0044 Meaning MBX_FOE Description n/a Current State (or state change) B, P, S, O Resulting state Current State + E Solution n/a 4.2.46 Error Code 0x0045 Meaning MBX_SOE Description n/a Current State (or state change) B, P, S, O Resulting state Current State + E Solution n/a 4.2.47 Error Code 0x004F Meaning MBX_VOE Description n/a Current State (or state change) B, P, S, O Resulting state Current State + E Solution n/a 4.2.48 Error Code 0x0050 Meaning EEPROM No Access Description EEPROM not assigned to PDI Current State (or state change) Any Resulting state Any + E Solution n/a 4.2.49 Error Code 0x0051 Meaning EEPROM Error Description EEPROM access error Current State (or state change) Any Resulting state Any + E Solution n/a 4.2.50 Error Code 0x0060 Meaning Slave Requested Locally Description n/a Current State (or state change) Any Resulting state I Solution n/a 4.2.51 Error Code 0x0061 Meaning Device Identification Value updated Description n/a Current State (or state change) P Resulting state P + E Solution n/a 4.2.52 Error Code 0x00F0 Meaning Application Controller available Description n/a Current State (or state change) n/a Resulting state n/a Solution n/a
+
+

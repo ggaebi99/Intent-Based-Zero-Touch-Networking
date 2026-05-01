@@ -1,0 +1,451 @@
+<<Section7>>
+7.
+Time-synchronization model for a packet network 7.1 General This clause provides a model for understanding the operation of the generalized precision time protocol (gPTP), which specifies the operation of time-aware systems on a packet network.
+Although this standard is based on the precision time protocol (PTP) described in IEEE Std 1588-2019 (and, indeed, is a proper profile of IEEE Std 1588-2019 in particular configurations), there are differences, which are summarized in 7.5.
+Although this standard has been written as a stand-alone document, it is useful to understand the IEEE 1588 architecture as described in Clause 6 of IEEE Std 1588-2019.
+7.2 Architecture of a time-aware network 7.2.1 General A time-aware network consists of a number of interconnected time-aware systems that support the gPTP defined within this standard.
+These time-aware systems can be any networking device, including, for example, bridges, routers, and end stations.
+A set of time-aware systems that are interconnected by gPTP- capable network elements is called a gPTP network.
+Each instance of gPTP that the time-aware systems support is in one gPTP domain, and the instances of gPTP are said to be part of that gPTP domain.
+A time- aware system can support, and therefore be part of, more than one gPTP domain.
+The entity of a single time- aware system that executes gPTP in one gPTP domain is called a PTP Instance.
+A time-aware system can contain multiple PTP Instances, which are each associated with a different gPTP domain.
+There are two types of PTP Instances: a) PTP End Instance, which, if not a Grandmaster PTP Instance, is a recipient of time information, and b) PTP Relay Instance, which, if not a Grandmaster PTP Instance, receives time information from the Grandmaster PTP Instance (perhaps indirectly through other PTP Relay Instances), applies corrections to compensate for delays in the local area network (LAN) and the PTP Relay Instance itself, and retransmits the corrected information.
+This standard defines mechanisms for delay measurements using standard-based procedures for the following: c) IEEE 802.3 Ethernet using full-duplex point-to-point links (11) d) IEEE 802.3 EPON links (Clause 13) e) IEEE 802.11 wireless (Clause 12) f) Generic coordinated shared networks (CSNs, e.g., MoCA and G.hn) (Clause 16) 7.2.2 Time-aware network consisting of a single gPTP domain above network technologies [i.e.,  item c) through item f) of 7.2.1], where end stations on several local networks are connected to a Grandmaster PTP Instance on a backbone network via an EPON access network.
+local network bridge (current GM) stratum 1 clock source GNSS backbone network (optical Ethernet) access network (EPON) Ethernet wireless CSN Ethernet Ethernet end station (potential GM) end station bridge router router clock target clock target end station clock target clock target end station clock target bridge router end station end station bridge Note 1: all the “bridges” and “routers" in this ﬁgure are examples of time-aware systems that each contain a PTP Relay Instance.
+Note 2: GM denotes Grandmaster PTP Instance Any PTP Instance with clock sourcing capabilities can be a potential Grandmaster PTP Instance, and a selection method (the best master clock algorithm, or BMCA) ensures that all of the PTP Instances in a gPTP domain use the same Grandmaster PTP Instance.12 The BMCA is largely identical to that used in IEEE Std 1588-2019, but somewhat simplified.
+In Grandmaster PTP Instance being on the network backbone.
+If, however, the access network fails, the systems on a local network automatically switch over to one of the potential Grandmaster PTP Instances on the local network that is as least as “good” as any other.
+For example, in has failed, and a potential Grandmaster PTP Instance that has a GNSS reference source has become the active Grandmaster PTP Instance.
+As a result, now two gPTP domains exist where there used to be one.
+Finally, note that when a time-aware system supports more than one domain, one of the domains supported must be domain 0 for backward compatibility with the 2011 edition of this standard, though domain 0 is not necessarily active in a time-aware system.
+12 There are, however, short periods during network reconfiguration when more than one Grandmaster PTP Instance might be active while the BMCA process is taking place.
+local network bridge (current GM) stratum 1 clock source GNSS backbone network (optical Ethernet) access network (EPON) Ethernet wireless CSN Ethernet Ethernet end station (local GM) end station bridge router router clock target clock target end station clock target clock target end station clock target bridge router end station end station bridge lost connection to access network Note 1: all the “bridges” and “routers" in this ﬁgure are examples of time-aware systems that each contain a PTP Relay Instance.
+Note 2: GM denotes Grandmaster PTP Instance 7.2.3 Time-aware network consisting of multiple gPTP domains used in an industrial application.
+Specifically, in this example the network has two timescales/domains, where domain 0 uses the PTP timescale and domain 1 uses the arbitrary (ARB) timescale (see 8.2).
+Notice that not all PTP Instances in domain 1 (within the blue shorter-dashed area) have domain 0 active in this example, even though every time-aware system supports domain 0 for backward compatibility with the 2011 edition of this standard.
+In addition, it is required that all PTP Instances belonging to the same domain have direct connections among them in their physical topology (e.g., time cannot be transported from one PTP Instance in domain 0 to another PTP Instance in domain 0 via a time-aware system that does not have domain 0 active).
+In addition, the time-aware systems for which both domains are active are depicted by slanted internal hatching, representing two independent, active PTP Instances.
+As in the single-domain case, any of the network technologies of 7.2.1 can be used.
+The Grandmaster PTP Instance of each domain is selected by the BMCA; in this case, a separate, independent instance of the BMCA is invoked in each domain.
+domain number 1 (uses the ARB timescale) domain number 0 (uses the PTP timescale) GNSS router router router clock target clock source clock target clock target clock target end station end station end station end station end station (current Grandmaster PTP Instance in domain 1) bridge bridge end station (current Grandmaster PTP Instance in domain 0 ) bridge bridge Note: all the “bridges” and “routers" in this ﬁgure are examples of time-aware systems that contain at least one PTP Relay Instance, and the end stations are time- aware  systems that contain at least one PTP End Instance.
+domain 0 only domain 1 only both domain 0 and 1 7.2.4 Time-aware networks with redundant Grandmaster PTP Instances and/or redundant paths 7.2.4.1 General Redundancy has many levels of sophistication, performance, and cost.
+Therefore, the appropriate level and/ or amount of redundancy required in a time-aware network can be very different for each application.
+Nonetheless, all solutions for redundancy consist of a detection component, a correction component, and an action component.
+The detection component detects that something is not working correctly.
+The correction component determines the appropriate corrective action.
+The action component performs the required action(s) to fix the detected problem.
+7.2.4.2 Redundancy specified in this standard (BMCA) This standard provides a basic level of redundancy as follows: — A detection component that triggers when the current Grandmaster PTP Instance stops working (i.e., loss of Sync messages and Announce messages for a period of time) or if the link to the Grandmaster PTP Instance goes down (i.e., immediate loss of Sync messages and Announce messages).
+— A correction component that triggers the Best Master Clock Algorithm (BMCA) and the sending of Announce messages so that a new Grandmaster PTP Instance can be elected.
+— An action component, where the winning Grandmaster PTP Instance starts sending Announce messages and Sync messages and all the PTP Instances listen to this new Grandmaster PTP Instance.
+7.2.4.3 Redundacy not fully specified in this standard In addition to providing the basic level of redundancy, this standard provides the ability to support more sophisticated network configurations that provide additional levels of Grandmaster PTP Instance and clock path redundancy.
+levels of redundancy as a way to deal with these failures.
+The information necessary to implement and configure these network configurations is contained in this standard.
+In order to take advantage of these failure correction configurations, new types of fault detection are required.
+The category of fault detection where a Grandmaster PTP Instance completely fails and stops sending clock information is supported as mentioned above.
+Other types of faults involve instability of the Grandmaster Clock, such as time glitches, excess jitter, or wander, or various other impairments that could occur in the Grandmaster Clock.
+Techniques for identifying these types of failures, and the appropriate correction necessary, are not specified in this standard.
+However, if other techniques or standards are used for detection and correction of these types of failures, this standard provides the means to recover from these errors.
+each synchronization tree in a different gPTP domain (there are a total of two gPTP domains).
+clock source providing time to two domains bridge end station (current GM) clock source bridge bridge bridge end station end station end station clock target clock target clock target first redundant sync tree second redundant sync tree Note 1: The methods used for merging the redundant sync msgs received at each end station are not specified in this standard.
+Note 2: All the “bridges” in this figure are examples of time-aware systems that contain PTP Relay Instances, and the end stations are examples of time-aware systems that contain PTP End Instances.
+Note 3: GM denotes Grandmaster PTP Instance secondary GM, where each GM has one of the two redundant synchronization trees originating from it.
+This example supports hot-standby operating mode.
+In this mode, the secondary GM has to be synchronized to the primary GM, because it is part of the synchronization tree of the primary GM as shown in the figure.
+hot-standby GM, which are separated in two gPTP domains bridge end station (hot-standby GM) bridge end station end station end station clock target clock target clock target end station (current GM) clock source end station clock target sync tree of the primary GM sync tree of the hot standby GM clock source clock target Note 1: The methods used for merging the redundant sync msgs received at each end station are not specified in this standard.
+Note 2: All the “bridges” in this figure are examples of time-aware systems that contain PTP Relay Instances, and the end stations are examples of time-aware systems that contain PTP End Instances.
+Note 3: GM denotes Grandmaster PTP Instance both For the techniques shown in the examples of component, correction component, and action component are not fully specified in this standard.
+7.3 Time synchronization 7.3.1 General Time synchronization in gPTP is done the same way (in the abstract) as is done in IEEE Std 1588-2019: a Grandmaster PTP Instance sends information including the current synchronized time to all directly attached PTP Instances.
+Each of these PTP Instances must correct the received synchronized time by adding the propagation time needed for the information to transit the gPTP communication path from the Grandmaster PTP Instance.
+If the PTP Instance is a PTP Relay Instance, then it must forward the corrected time information (including additional corrections for delays in the forwarding process) to all the other attached PTP Instances.
+To make this all work, there are two time intervals that must be precisely known: the forwarding delay (called the residence time), and the time taken for the synchronized time information to transit the gPTP communication path between two PTP Instances.
+The residence time measurement is local to a PTP Relay Instance and easy to compute, while the gPTP communication path delay is dependent on many things including media- dependent properties and the length of the path.
+with one primary and one hot-standby GM.
+Each GM establishes two sync trees, resulting in a total of four Sync trees that are separated in four gPTP domains clock target clock target bridge clock source bridge end station end station end station clock target end station (current GM) clock source end station Two redundant sync trees rooted at the hot-standby GM are separated in another two gPTP domains bridge bridge bridge bridge end station (hot-standby GM) } Two redundant sync trees rooted at the primary GM are separated in two gPTP domains } clock target clock target Note 1: The methods used for merging the redundant sync msgs received at each end station are not specified in this standard.
+Note 2: All the “bridges” in this figure are examples of time-aware systems that contain PTP Relay Instances, and the end stations are examples of time-aware systems that contain PTP End Instances.
+Note 3: GM denotes Grandmaster PTP Instance 7.3.2 Delay measurement Each type of LAN or gPTP communication path has different methods for measuring propagation time, but they are all based on the same principle: measuring the time that a well-known part of a message is transmitted from one device and the time that the same part of the same message is received by the other device, then sending another message in the opposite direction and doing the same measurement as shown in This basic mechanism is used in the various LANs in the following ways: a) Full-duplex Ethernet LANs use the two-step peer-to-peer (P2P) path delay algorithm as defined in IEEE Std 1588-2019, where the messages are called Pdelay_Req, Pdelay_Resp, and Pdelay_Resp_Follow_Up (see b) IEEE 802.11 wireless LANs use the Timing Measurement (TM) procedure or the Fine Timing Measurement (FTM) procedure defined in IEEE Std 802.11-2016.
+The Timing measurement messages are the “Timing Measurement frame” and its corresponding “Ack” (see Fine Timing Measurement messages are the “initial FTM request frame” and the “Fine Timing Measurement frame” and its “Ack” (see c) EPON LANs use the discovery process, where the messages are “GATE” and “REGISTER_REQ” (see Clause 64 and Clause 77 of IEEE Std 802.3-2018).
+d) CSNs either use the same mechanism as full-duplex Ethernet or use a method native to the particular CSN (similar to the way native methods are used by IEEE 802.11 networks and EPON) (see 7.3.3 Logical syntonization The time-synchronization correction previously described is dependent on the accuracy of the delay and residence time measurements.
+If the clock used for this purpose is frequency locked (syntonized) to the Grandmaster Clock, then all the time interval measurements use the same time base.
+Since actually adjusting the frequency of an oscillator (e.g., using a phase-lock loop) is slow and prone to gain peaking effects, PTP Relay Instances can correct time interval measurements using the Grandmaster Clock frequency ratio.
+802.1AS initiator 802.1AS responder tx: t1 rx: t2 tx: t3 rx: t4 know t1,t2,t3,t4 calculate: d=((t2-t1)+(t4-t3))/2 Each PTP Instance measures, at each PTP Port, the ratio of the frequency of the PTP Instance at the other end of the link attached to that PTP Port to the frequency of its own clock.
+The cumulative ratio of the Grandmaster Clock frequency to the local clock frequency is accumulated in a standard organizational type, length, value (TLV) attached to the Follow_Up message (or the Sync message if the optional one-step processing is enabled).
+The frequency ratio of the Grandmaster Clock relative to the local clock is used in computing synchronized time, and the frequency ratio of the neighbor relative to the local clock is used in correcting the propagation time measurement.
+The Grandmaster Clock frequency ratio is measured by accumulating neighbor frequency ratios for two main reasons.
+First, if there is a network reconfiguration and a new Grandmaster PTP Instance is elected, the nearest neighbor frequency ratios do not have to be newly measured as they are constantly measured using the Pdelay messages.
+This results in the frequency offset relative to the new Grandmaster Clock being known when the first Follow_Up message (or first Sync message if the optional one-step processing is enabled) is received, which reduces the duration of any transient error in synchronized time during the reconfiguration.
+This is beneficial to many high-end audio applications.
+Second, there are no gain peaking effects because an error in frequency offset at one PTP Relay Instance, and resulting residence time error, does not directly affect the frequency offset at a downstream PTP Relay Instance.
+7.3.4 Grandmaster PTP Instance (best master) selection and network establishment All PTP Instances participate in best master selection so that the IEEE 802.1AS protocol can determine the synchronization spanning tree.
+This synchronization spanning tree can be different from the forwarding spanning tree determined by IEEE 802.1Q™ Rapid Spanning Tree Protocol (RSTP) since the spanning tree determined by RSTP can be suboptimal or even inadequate for synchronization or can be for a different topology of nodes from the synchronization spanning tree.
+gPTP requires that all systems in the gPTP domain be time-aware systems, i.e., the protocol does not transfer timing over systems that are not time-aware (e.g., those that meet the requirements of IEEE Std 802.1Q- 2018, but do NOT meet the requirements of the present standard).
+A time-aware system uses the peer-to- peer delay mechanism on each PTP Port to determine if a non-time-aware system is at the other end of the link or between itself and the Pdelay responder.
+If, on sending Pdelay_Req, a) No response is received, b) Multiple responses are received, or c) The measured propagation delay exceeds a specified threshold, then the protocol concludes that a non-time-aware system or end-to-end Transparent Clock (TC) (see IEEE Std 1588-2019) is present.
+In this case, the link attached to the PTP Port is deemed not capable of running gPTP, and the BMCA ignores it.
+However, the PTP Port continues to attempt the measurement of propagation delay using the peer-to-peer delay mechanism (for full-duplex IEEE 802.3 links), multipoint control protocol (MPCP) messages (for EPON), or IEEE 802.11 messages (for IEEE 802.11 links), and periodically checks whether the link is or is not capable of running the IEEE 802.1AS protocol.
+7.3.5 Energy efficiency Sending PTP messages at relatively high rates when there is otherwise little or no traffic conflicts with the goal of reducing energy consumption.
+This standard specifies a way to request that a neighbor PTP Port reduce the rate of sending Sync (and Follow_Up if optional one-step processing is not enabled), peer delay, and Announce messages and also to inform the neighbor not to compute neighbor rate ratio and/or propagation delay on this link.
+A time-aware system could do this when it enters low-power mode, but this standard does not specify the conditions under which this is done; it specifies only the actions a time-aware system takes.
+7.4 PTP Instance architecture The model of a PTP Instance is shown in A PTP Instance consists of the following major parts: a) If the PTP Instance includes application(s) that either use or source time information, then they interface with the gPTP information using the application interfaces specified in Clause 9.
+b) A single media-independent part that consists of ClockMaster, ClockSlave, and SiteSync logical entities, one or more PortSync entities, and a LocalClock entity.
+The BMCA and forwarding of time information between logical ports and the ClockSlave and ClockMaster is done by the SiteSync media dependent (see lauses 11, 12, 13 and ϭϲͿ media independent (see lause 10) media dependent (see lauses 11, 12, 13 and 1ϲͿ Media-dependent PTP Instance entities LLC MS PortSync MD SiteSync ClockSlave ClockMaster Time-aware higher-layer application (see &lause 9) LocalClock PortSyncSync ClockSlaveTime MDSyncSend MDSyncReceive PortSyncSync PortSync PortSyncSync LLC MD MDSyncSend MDSyncReceive PHY MAC ISS PHY MAC ISS PortSyncSync Media-dependent PTP Instance entities MS PHY MAC ISS PHY MAC ISS entity, while the computation of PTP Port-specific delays needed for time-synchronization correction is done by the PortSync entities.
+c) Media-dependent ports, which translate the abstract “MDSyncSend” and “MDSyncReceive” structures received from or sent to the media-independent layer and corresponding methods used for the particular LAN attached to the port.
+For full-duplex Ethernet ports, IEEE 1588 Sync and Follow_Up (or just Sync if the optional one-step processing is enabled) messages are used, with an additional TLV in the Follow_Up (or the Sync if the optional one-step processing is enabled) used for communication of rate ratio and information on phase and frequency change when there is a change in Grandmaster PTP Instance.
+The path delay is measured using the two-step IEEE 1588 peer-to-peer delay mechanism.
+This is defined in Clause 11.
+For IEEE 802.11 ports, timing information is communicated using the MAC Layer Management Entity to request a “Timing Measurement” or “Fine Timing Measurement” (as defined in IEEE Std 802.11-2016), which also sends everything that would be included in the Follow_up message for full-duplex Ethernet.
+The Timing Measurement or Fine Timing Measurement result includes all the information to determine the path delay.
+This is defined in Clause 12.
+For EPON, timing information is communicated using a “slow protocol” as defined in Clause 13.
+CSNs use the same communication system used by full-duplex Ethernet, as defined in Clause 16.
+7.5 Differences between gPTP (IEEE Std 802.1AS) and PTP (IEEE Std 1588-2019) a) gPTP assumes all communication between PTP Instances is done only using IEEE 802 MAC PDUs and addressing, while IEEE Std 1588-2019 supports various layer 2 and layer 3-4 communication methods.
+b) gPTP specifies a media-independent sublayer that simplifies the integration within a single timing domain of multiple different networking technologies with radically different media access protocols.
+gPTP specifies a media-dependent sublayer for each medium.
+The information exchanged between PTP Instances has been generalized to support different packet formats and management schemes appropriate to the particular networking technology.
+IEEE Std 1588-2019, on the other hand, has introduced a new architecture based on media-independent and media-dependent sublayers (see 6.5.2, optional.
+The architecture of IEEE Std 1588-2008 [B10], which is not based on media-independent and media-dependent layers, has been retained for Internet Protocol (IP) version 4, IP version 6, Ethernet LANs, and several industrial automation control protocols.
+The intent in IEEE Std 1588- 2019 is that the new architecture, based on media-independent and media-dependent layers, will be used for IEEE 802.11 networks, IEEE 802.3 EPON, and CSN using the specifications of gPTP, and that the architecture must be used for transports that define native timing mechanisms if those native timing mechanisms are used.
+c) In gPTP there are only two types of PTP Instances: PTP End Instances and PTP Relay Instances, while IEEE Std 1588-2019 has Ordinary Clocks, Boundary Clocks, end-to-end Transparent Clocks, and P2P Transparent Clocks.
+A PTP End Instance corresponds to an IEEE 1588 Ordinary Clock, and a PTP Relay Instance is a type of IEEE 1588 Boundary Clock where its operation is very tightly defined, so much so that a PTP Relay Instance with Ethernet ports can be shown to be mathematically equivalent to a P2P Transparent Clock in terms of how synchronization is performed, as shown in 11.1.3.
+In addition, a PTP Relay Instance can operate in a mode (i.e., the mode where the variable syncLocked is TRUE; see 10.2.5.15) where the PTP Relay Instance is equivalent to a P2P Transparent Clock in terms of when time-synchronization messages are sent.
+A time-aware system measures link delay and residence time and communicates these in a correction field.
+In summary, a PTP Relay Instance conforms to the specifications for a Boundary Clock in IEEE Std 1588-2019, but a PTP Relay Instance does not conform to the complete specifications for a P2P Transparent Clock in IEEE Std 1588-2019 because: 1) When syncLocked is FALSE, the PTP Relay Instance sends Sync according to the specifications for a Boundary Clock, and 2) The PTP Relay Instance invokes the BMCA and has PTP Port states.
+d) PTP Instances communicate gPTP information only directly with other PTP Instances.
+That is, a gPTP domain consists ONLY of PTP Instances.
+Non-PTP Relay Instances cannot be used to relay gPTP information.
+In IEEE Std 1588-2019, it is possible to use non-IEEE-1588-aware relays in an IEEE 1588 domain, although this slows timing convergence and introduce extra jitter and wander that must be filtered by any IEEE 1588 clock.
+e) For full-duplex Ethernet links, gPTP requires the use of the peer-to-peer delay mechanism, while IEEE Std 1588-2019 also allows the use of end-to-end delay measurement.
+f) For full-duplex Ethernet links, gPTP requires the use of two-step processing (use of Follow_Up and Pdelay_Resp_Follow_Up messages to communicate timestamps), with an optional one-step processing mode that embeds timestamps in the Sync “on the fly” as they are being transmitted (gPTP does not specify one-step processing for peer delay messages).
+IEEE Std 1588-2019 allows either two-step or one-step processing to be required (for both Sync and peer delay messages) depending on a specific profile.
+g) All PTP Instances in a gPTP domain are logically syntonized; in other words, they all measure time intervals using the same frequency.
+This is done by the process described in 7.3.3 and is mandatory.
+Syntonization in IEEE Std 1588-2019 is optional.
+The syntonization method used by gPTP is supported as an option in IEEE Std 1588-2019, but uses a TLV standardized as part of IEEE Std 1588-2019 (this feature is new for IEEE Std 1588-2019), while gPTP uses the ORGANIZATION_EXTENSION TLV specified in 11.4.4.3.
+h) Finally, this standard includes formal interface definitions, including primitives, for the time-aware applications (see Clause 9).
+IEEE Std 1588-2019 describes external interfaces without describing specific interface primitives.
+
+
+<<Section8>>
+8.
+IEEE 802.1AS concepts and terminology 8.1 gPTP domain A gPTP domain, hereafter called simply a domain, consists of one or more PTP Instances and links that meet the requirements of this standard and communicate with each other as defined by the IEEE 802.1AS protocol.
+A gPTP domain defines the scope of gPTP message communication, state, operations, data sets, and timescale.
+A domain is identified by two attributes: domain number and sdoId.
+The sdoId of a domain is a 12-bit unsigned integer.
+The sdoId is structured as a two-part attribute as follows: — The most significant 4 bits are named the majorSdoId, and — The least significant 8 bits are named the minorSdoId.
+A time-aware system shall support one or more domains, each with a distinct domain number in the range 0 through 127.
+A time-aware system shall support the domain whose domain number is 0, and that domain number shall not be changed to a nonzero value.
+Unless otherwise specified in this standard, the operation of gPTP and the timescale in any given domain is independent of operation in any other domain.
+The value of majorSdoId for a gPTP domain shall be 0x1.
+The value of minorSdoId for a gPTP domain shall be 0x00.
+NOTE 1—The above requirements for majorSdoId and minorSdoId are for gPTP domains.
+The requirements for the Common Mean Link Delay Service (CMLDS) are given in 11.2.17.
+Both the domainNumber and the sdoId are carried in the common header of all PTP messages (see 10.6.2.2).
+NOTE 2—In the 2011 edition of this standard, the attribute majorSdoId was named transportSpecific, and its value was specified as 0x1 in 10.5.2.2.1 of Corrigendum 1.
+The attribute minorSdoId did not exist in the 2011 edition, but its location in the common header was a reserved field, which was specified to be transmitted as 0 and ignored on receipt.
+Unless otherwise stated, information in the remainder of this document is per domain.
+NOTE 3—In steady state, all PTP Instances in a gPTP domain are traceable to a single Grandmaster PTP Instance.
+8.2 Timescale 8.2.1 Introduction The timescale for a gPTP domain is established by the Grandmaster Clock.
+There are two types of timescales supported by gPTP: — The timescale PTP: The epoch is the PTP epoch (see 8.2.2), and the timescale is continuous.
+The unit of measure of time is the second defined by International Atomic Time (TAI) (for the definition of TAI, see Service de la Rotation Terrestre [B28], with further amplification in IAU [B27]; and for more information on TAI, see Jekeli [B22], international system of units (SI) brochure [B14], and Petit and Luzum [B26]).
+The timescale of domain 0 shall be PTP.
+See IEEE Std 1588-2019 for more details.
+— The timescale ARB (arbitrary): The epoch is the domain startup time and can be set by an administrative procedure.
+Between invocations of the administrative procedure, the timescale is continuous.
+Additional invocations of the administrative procedure can introduce discontinuities in the overall timescale.
+The unit of measure of time is determined by the Grandmaster Clock.
+The second used in the operation of the protocol can differ from the SI second.
+8.2.2 Epoch The epoch is the origin of the timescale of a gPTP domain.
+The PTP epoch (epoch of the timescale PTP) is 1 January 1970 00:00:00 TAI.
+NOTE—The common portable operating system interface (POSIX) algorithms can be used for converting elapsed seconds since the PTP epoch to the ISO 8601:2004 [B15] printed representation of time of day on the TAI timescale (see also ISO/IEC 9945:2003 [B17]).
+See Annex C for information on converting between common timescales.
+8.2.3 UTC offset When the timescale is PTP, it is possible to calculate Coordinated Universal Time (UTC) time using the value of currentUtcOffset.
+The value of currentUtcOffset is given by currentUtcOffset = TAI – UTC where the difference TAI – UTC is derived from UTC – TAI (the negative of currentUtcOffset) specified in IERS Bulletin C.
+The value of currentUtcOffset for the current Grandmaster PTP Instance is maintained in the currentUtcOffset member of the time properties data set (see 14.5.2).
+NOTE 1—As of 0 hours 1 January 2017 UTC, UTC was behind TAI by 37 s, i.e., TAI – UTC = +37 s.
+At that moment, the IEEE-802.1AS-defined value of currentUtcOffset was +37 s, as designated in the applicable IERS Bulletin C (see Clause 2; see also Service de la Rotation Terrestre [B28] and U.S.
+Naval Observatory [B29]).
+NOTE 2—Leap second events and the value of UTC – TAI are posted well in advance in IERS Bulletin C.
+A list of all leap second events is maintained by the U.S.
+Naval Observatory [B29], which also offers an extensive discussion of timescales, leap seconds, and related time issues.
+NOTE 3—The value of currentUtcOffset represents the difference between TAI and UTC.
+Since 1972, only integral values are permitted for this difference.
+Due to leap seconds, UTC cannot be correctly represented as a single integer but can be expressed in the ISO 8601:2004 [B15] print form.
+See also C.2 for an example of the use of the POSIX algorithm to compute the correct print form.
+When the timescale is PTP, it is possible to calculate local time from the time provided by a gPTP domain using the currentUtcOffset, leap59, and leap61 member values of the time properties data set and knowledge of the local time zone and whether and when daylight savings time is observed.
+When the timescale is ARB, the values of currentUtcOffset, leap59, and leap61 cannot be used to compute UTC.
+The mechanism for computing UTC or any other time does not change the synchronized time (see 3.29), i.e., the PTP Instance time, of a PTP Instance.
+8.2.4 Measurement of time within a gPTP domain Time in a gPTP domain shall be measured as elapsed time since the epoch of the timescale of that domain.
+8.3 Link asymmetry This standard requires the measurement of the mean propagation time (also known as the mean propagation delay) between the time-aware systems that comprise the two endpoints of a link.
+The measurement is performed when one of the time-aware systems (the initiator time-aware system) sends a message to the other time-aware system (the responder time-aware system).
+The responder then sends a message back to the initiator at a later time.
+The departure of the message sent by the initiator time-aware system is timestamped, and the timestamp value is retained by that system.
+The arrival of this message at the responder time-aware system is timestamped, and the timestamp value is conveyed to the initiator time- aware system in a subsequent message.
+The departure of the response message sent by the responder time- aware system (in response to the message it receives from the initiator time-aware system) is timestamped, and the timestamp value is conveyed to the initiator time-aware system in a subsequent message.
+The arrival of this response message at the initiator time-aware system is timestamped, and the timestamp value is retained by that system.
+The mean propagation time is computed by the initiator time-aware system after receiving the response message, from the four timestamp values it has at this point.
+Typically, the propagation time is not exactly the same in both directions, and the degree to which it differs in the two directions is characterized by the delay asymmetry.
+The relation between the individual propagation times in the two directions, the mean propagation time, and the delay asymmetry is as follows.
+Let tir be the propagation time from the initiator to the responder, tri be the propagation time from the responder to the initiator, meanLinkDelay be the mean propagation time (see 10.2.5.8), and delayAsymmetry be the delay asymmetry.
+The propagation times in the two directions are illustrated in The meanLinkDelay is the mean value of tir and tri, i.e., meanLinkDelay = (tir + tri) / 2.
+The delayAsymmetry is defined as: tir = meanLinkDelay – delayAsymmetry tri = meanLinkDelay + delayAsymmetry In other words, delayAsymmetry is defined to be positive when the responder to initiator propagation time is longer than the initiator to responder propagation time.
+This standard does not explicitly require the measurement of delayAsymmetry; however, if delayAsymmetry is modeled, it shall be modeled as specified in this clause.
+Responder time-aware system Initiator time-aware system tir tri NOTE 1—A time-aware system can change the value of delayAsymmetry during operation (see 14.8.10, 14.16.8, and Annex G).
+NOTE 2—A time-aware system PTP Port cannot measure the value of delayAsymmetry during live operation of the system (i.e., asymmetryMeasurementMode is FALSE; see 10.2.5.2); therefore, the value of delayAsymmetry must be defined separately using information from the supplier or additional testing before running the live system.
+The methods for measuring asymmetry are not specified in this standard.
+These values can be added to the system configuration to improve the accuracy of time synchronization.
+The inaccuracy caused by asymmetry is half the value of the difference between tri and tir, and these inaccuracies can either accumulate over successive hops or, if the successive asymmetries have different signs, cancel each other over the successive hops.
+8.4 Messages 8.4.1 General All communications occur via PTP messages and/or media-specific messages.
+8.4.2 Message attributes 8.4.2.1 General All messages used in this standard have the following attributes: a) Message class b) Message type The message class attribute is defined in this clause.
+The message type attribute is defined in 3.18.
+Some messages have additional attributes; these are defined in the subclauses where the respective messages are defined.
+8.4.2.2 Message class There are two message classes, the event message class and the general message class.
+Event messages are timestamped on egress from a PTP Instance and ingress to a PTP Instance.
+General messages are not timestamped.
+Every message is either an event message or a general message.
+8.4.3 Generation of event message timestamps All event messages are timestamped on egress and ingress.
+The timestamp shall be the time, relative to the LocalClock entity (see 10.1) at which the message timestamp point passes the reference plane marking the boundary between the PTP Instance and the network media.
+The definition of the timestamp measurement plane (see 3.33), along with the corrections defined as follows, allows transmission delays to be measured in such a way (at such a low layer) that they appear fixed and symmetrical to gPTP even though the MAC client might otherwise observe substantial asymmetry and transmission variation.
+For example, the timestamp measurement plane is located below any retransmission and queuing performed by the MAC.
+NOTE 1—If an implementation generates event message timestamps using a point other than the message timestamp point, then the generated timestamps should be appropriately corrected by the time interval (fixed or otherwise) between the actual time of detection and the time the message timestamp point passed the reference plane.
+Failure to make these corrections results in a time offset between PTP Instances.
+NOTE 2—In general, the timestamps can be generated at a timestamp measurement plane that is removed from the reference plane.
+Furthermore, the timestamp measurement plane, and therefore the time offset of this plane from the reference plane, is likely to be different for inbound and outbound event messages.
+To meet the requirement of this clause, the generated timestamps should be corrected for these offsets.
+model the appropriate corrections are as follows: egressTimestamp = egressMeasuredTimestamp + egressLatency ingressTimestamp = ingressMeasuredTimestamp ingressLatency where the timestamps relative to the reference plane, egressTimestamp and ingressTimestamp, are computed from the timestamps relative to the timestamp measurement plane, egressMeasuredTimestamp and ingressMeasuredTimestamp, respectively, using their respective latencies, egressLatency and ingressLatency.
+Failure to make these corrections results in a time offset between the slave and master clocks.
+8.4.4 Priorities IEEE Std 802.1AS messages shall be transmitted in expedited manner compared to other traffic (e.g., best effort).
+NOTE 1—If IEEE Std 802.1AS messages are not expedited in the internal queueing, long bursts of other traffic can cause loss of synchronization due to timeouts.
+NOTE 2—For example, two outbound queues can be supported: one outbound queue is used to transmit nonexpedited traffic (e.g., best-effort), and another outbound queue is used to transmit frames in an expedited manner, including IEEE 802.1AS messages.
+Outbound queues are often implemented in hardware, but software implementation is possible.
+NOTE 3—When IEEE Std 802.1Q-2018 is supported, the outbound queue used for transmitting IEEE 802.1AS messages uses a traffic class (see 3.268 of IEEE Std 802.1Q-2018) greater than zero.
+NOTE 4—Frames carrying IEEE 802.1AS messages are neither VLAN-tagged nor priority-tagged, i.e., they are untagged (see 11.3.3).
+measurement plane, and latency constants PHY MAC ISS MS LLC MD Media-dependent time-aware system entities Higher layers Reference plane Ingress timestamp measurement plane Egress timestamp measurement plane egressLatency ingressLatency xxxxxxxxxxxxxxxxxxxx…..xxxxYxxxxx xxxxxxxxxxxxxxxxxxxx…..xxxxYxxxxx Ingress event message Egress event message Message timestamp point Message timestamp point 8.5 Ports 8.5.1 General The PTP Instances in a gPTP domain interface with the network media via physical ports.
+gPTP defines a logical port, i.e., a PTP Port, in such a way that communication between PTP Instances is point-to-point even over physical ports that are attached to shared media.
+One logical port, consisting of one PortSync entity and one media-dependent (MD) entity, is instantiated for each PTP Instance with which the PTP Instance communicates.
+For shared media, multiple logical ports can be associated with a single physical port.
+Unless otherwise qualified, each instance of the term port refers to a logical port.
+8.5.2 Port identity 8.5.2.1 General A PTP Port is identified by a port identity of type PortIdentity (see 6.4.3.7).
+The value is maintained in portDS.portIdentity (see 14.8.2).
+A port identity consists of the following two attributes: a) portIdentity.clockIdentity b) portIdentity.portNumber 8.5.2.2 clockIdentity The clockIdentity attribute shall be as specified in 7.5.2.2 of IEEE Std 1588-2019.
+8.5.2.3 Port number The portNumber values for the PTP Ports on a time-aware system shall be distinct in the range 1, 2, …, 0xFFFE.
+The portNumber value 0 is assigned to the interface between the ClockMaster and ClockSource entities (see 10.1 and 8.5.2.4 Ordering of clockIdentity and portIdentity values Two clockIdentity values X and Y are compared as follows.
+Let x be the unsigned integer formed by concatenating octets 0 through 7 of X such that octet j+1 follows octet j (i.e., is less significant than octet j) in x (j = 0, 1, ..., 6).
+Let y be the unsigned integer formed by concatenating octets 0 through 7 of Y such that octet j+1 follows octet j (i.e., is less significant than octet j) in y (j = 0, 1, ..., 6).
+Then: a) X = Y if and only if x = y, b) X > Y if and only if x > y, and c) X < Y if and only if x < y.
+Two portIdentity values A and B with members clockIdentity and portNumber are compared as follows.
+Let a be the unsigned integer formed by concatenating octets 0 through 7 of A.clockIdentity, such that octet j+1 follows octet j (i.e., is less significant than octet j) in a (j = 0, 1, ..., 6), followed by octet 0 of A.portNumber, followed by octet 1 of A.portNumber.
+Let b be the unsigned integer formed by concatenating octets 0 through 7 of B.clockIdentity, such that octet j+1 follows octet j (i.e., is less significant than octet j) in b (j = 0, 1, ..., 6), followed by octet 0 of B.portNumber, followed by octet 1 of B.portNumber.
+Then: d) A = B if and only if a = b, e) A > B if and only if a > b, and f) A < B if and only if a < b.
+A portIdentity A with members clockIdentity and portNumber and a clockIdentity B are compared as follows.
+The unsigned integer a is formed from portIdentity A as described above.
+The unsigned integer b is formed by first forming a portIdentity B' whose clockIdentity is B and portNumber is 0.
+b is then formed from B' as described above.
+A and B are then compared as described in items d) through  f) in this subclause.
+8.6 PTP Instance characterization 8.6.1 PTP Instance type There are two types of PTP Instances used in a gPTP domain, as follows: a) PTP End Instance b) PTP Relay Instance All PTP Instances are identified by clockIdentity.
+In addition, PTP Instances are characterized by the following attributes: c) priority1 d) clockClass e) clockAccuracy f) offsetScaledLogVariance g) priority2 h) clockIdentity i) timeSource j) numberPorts NOTE—Attributes c) through i) can be considered to be associated with the ClockMaster entity of the PTP Instance.
+8.6.2 PTP Instance attributes 8.6.2.1 priority1 priority1 is used in the execution of the BMCA (see 10.3).
+The value of priority1 is an integer selected from the range 0 through 255.
+The ordering of priority1 in the operation of the BMCA (see 10.3.4 and 10.3.5) is specified as follows.
+A ClockMaster A shall be deemed better than a ClockMaster B if the value of priority1 of A is numerically less than that of B.
+The value of priority1 shall be 255 for a PTP Instance that is not grandmaster-capable.
+The value of priority1 shall be less than 255 for a PTP Instance that is grandmaster-capable.
+The value 0 shall be reserved for management use, i.e., the value of priority1 shall be set to 0 only via management action.
+The default value shall be set to one of the values listed in Table 8-1, and the choice of value from Table 8-1 is left to the implementer of the PTP Instance.
+NOTE 1—Care must be applied to multi-function device design, specifically for an end station that also contains a Bridge.
+The Bridge function inside multi-function devices must not be powered down when the end station function is powered down, or else the data and controls (like gPTP) passing through the Bridge function to other network devices will cease.
+Example devices of this are a television and/or amplifier/receiver, each of which contains a Bridge.
+NOTE 2—The BMCA (see 10.3) considers priority1 before other attributes; the priority1 attribute can therefore be used to force a desired ordering of PTP Instances for best master selection.
+NOTE 3—The settings for priority1 in Table 8-1 guarantee that a PTP Instance that is grandmaster-capable is always preferred by the BMCA over a PTP Instance that is not grandmaster-capable.
+NOTE 4—These values are assigned so that PTP Instances with priority1 value of 246 are selected as Grandmaster PTP Instances over PTP Instances with priority1 values of 248 or 250.
+(PTP Instances with priority1 value of 255 are never selected as Grandmaster PTP Instances.) NOTE 5—These default values are suitable for applications in which the availability of the Grandmaster PTP Instance is the most important criterion for Grandmaster PTP Instance selection.
+A PTP Instance built for a specific application for which this is not the case can be capable of having priority1 changed via management.
+8.6.2.2 clockClass The clockClass attribute denotes the traceability of the synchronized time distributed by a ClockMaster when it is the Grandmaster PTP Instance.
+The value shall be selected as follows: a) If defaultDS.gmCapable is TRUE (see 14.2.7), then 1) clockClass is set to the value that reflects the combination of the LocalClock and ClockSource entities; else 2) If the value that reflects the LocalClock and ClockSource entities is not specified or not known, clockClass is set to 248; b) If the defaultDS.gmCapable is FALSE, clockClass is set to 255 (see 8.6.2.1).
+Table 8-1—Default values for priority1, for the respective media PTP Instance type Default value for priority1 PTP Instances that are a central/critical part of the network and are not expected to ever be turned off during normal network operation (e.g., Bridges, wireless access points, and grandmaster-capable end nodes that are intended by the manufacturer to be Grandmaster PTP Instances).
+(End node Grandmaster PTP Instances are not a ‘central’ part of the network, but they are “critical” to this gPTP operation.) PTP Instances that (A) can be turned off at any time and therefore cannot be considered a central/critical part of the network; or (B) are a central/critical part of the network, are not expected to ever be turned off during normal network operation, and are grandmaster-capable, but are not intended by the manufacturer to be Grandmaster PTP Instances.
+PTP Instances that can be turned off and are turned off affect only the function(s) they support and do not affect any other functions of the network (e.g., desktop computers, fixed (heavy or otherwise) end nodes, speakers, receivers, amplifiers, and televisions).
+PTP Instances that can go away (physically or otherwise) at any time (e.g., PTP Instances that are designed to be transient to the network such as laptop computers, cell phones, and battery- powered speakers).
+PTP Instance that is not grandmaster-capable.
+The ordering of clockClass in the operation of the best master clock algorithm (see 10.3.4 and 10.3.5) is specified as follows.
+When comparing clockClass values, PTP Instance A shall be deemed better than PTP Instance B if the value of the clockClass of A is lower than that of B.
+See 7.6.2.5 of IEEE Std 1588-2019 for a more detailed description of clockClass.
+NOTE—The PTP Instance has a LocalClock entity, which can be the free-running quartz crystal that just meets the IEEE 802.3 requirements, but could also be better.
+There can be a ClockSource entity, e.g., timing taken from a GNSS, available in the local system that provides timing to the ClockSource entity.
+The time provided by the PTP Instance, if it is the Grandmaster PTP Instance, is reflected by the combination of these two entities, and the clockClass  reflects this combination as specified in 7.6.2.5 of IEEE Std 1588-2019.
+For example, when the LocalClock entity uses a quartz oscillator that meets the requirements of IEEE Std 802.3-2018 and B.1 of this standard, clockClass is set to 248.
+But, if a GNSS receiver is present and synchronizes the PTP Instance, then the clockClass is set to the value 6, indicating traceability to a primary reference time source (see 7.6.2.5 of IEEE Std 1588-2019).
+8.6.2.3 clockAccuracy The clockAccuracy attribute indicates the expected time accuracy of a ClockMaster.
+The value shall be selected as follows: a) clockAccuracy is set to the value that reflects the combination of the LocalClock and ClockSource entities; else b) If the value that reflects the LocalClock and ClockSource entities is not specified or unknown, clockAccuracy is set to 254 (FE16).
+The ordering of clockAccuracy in the operation of the best master clock algorithm (see 10.3.4 and 10.3.5) is specified as follows.
+When comparing clockAccuracy values, PTP Instance A shall be deemed better than PTP Instance B if the value of the clockAccuracy of A is lower than that of B.
+See 7.6.2.6 of IEEE Std 1588-2019 for more detailed description of clockAccuracy.
+8.6.2.4 offsetScaledLogVariance The offsetScaledLogVariance is a scaled, offset representation of an estimate of the PTP variance.
+The PTP variance characterizes the precision and frequency stability of the ClockMaster.
+The PTP variance is the square of PTP Deviation (PTPDEV) (see B.1.3.2).
+The value shall be selected as follows: a) offsetScaledLogVariance is set to the value that reflects the combination of the LocalClock and ClockSource entities; else b) If the value that reflects these entities is not specified or not known, offsetScaledLogVariance is set to 17258 (436A16).
+This value corresponds to the value of PTPDEV for observation interval equal to the default Sync message transmission interval (i.e., observation interval of 0.125 s; see 11.5.2.3 and B.1.3.2).
+The ordering of offsetScaledLogVariance in the operation of the best master clock algorithm (see 10.3.4 and 10.3.5) is specified as follows.
+When comparing offsetScaledLogVariance values, PTP Instance A shall be deemed better than PTP Instance B if the value of the offsetScaledLogVariance of A is lower than that of B.
+See 7.6.3 of IEEE Std 1588-2019 for more detailed description of PTP variance and offsetScaledLogVariance.
+(Subclause 7.6.3.3 of IEEE Std 1588-2019 provides a detailed description of the computation of offsetScaledLogVariance from PTP variance, along with an example.) 8.6.2.5 priority2 priority2 is used in the execution of the BMCA (see 10.3).
+The value of priority2 shall be an integer selected from the range 0 through 255.
+The ordering of priority2 in the operation of the BMCA is the same as the ordering of priority1 (see 8.6.2.1).
+The default value of priority2 shall be 247 or 248.
+The default value for a PTP Relay Instance should be 247.
+The default value for a PTP End Instance should be 248.
+See 7.6.2.4 of IEEE Std 1588-2019 for a more detailed description of priority2.
+NOTE—IEEE 802.1AS performance is improved when the number of hops between the Grandmaster PTP Instance and a slave PTP End Instance is reduced.
+When BMCA attributes are equal in a network, the preceding recommendations for priority2 select a PTP Relay Instance in order to reduce the number of hops (rather than use clockIdentity alone).
+8.6.2.6 clockIdentity The clockIdentity value for a PTP Instance shall be as specified in 8.5.2.2.
+8.6.2.7 timeSource The timeSource is an information only attribute indicating the type of source of time used by a ClockMaster.
+The value is not used in the selection of the Grandmaster PTP Instance.
+The data type of timeSource shall be TimeSource, which is an Enumeration8.
+The values of TimeSource are specified in Table 8-2.
+These represent categories.
+For example, the global positioning system (GPS) entry includes not only the GPS system of the U.S.
+Department of Defense but the European Galileo system and other present and future GNSSs.
+Table 8-2—TimeSource enumeration Value Time source Description 0x10 ATOMIC_CLOCK Any PTP Instance, or PTP Instance directly connected to such a device, that is based on atomic resonance for frequency and that has been calibrated against international standards for frequency and time.
+0x20 GPS (see NOTE 1) Any PTP Instance synchronized to any of the satellite systems that distribute time and frequency tied to international standards.
+0x30 TERRESTRIAL_RADIO Any PTP Instance synchronized via any of the radio distribution systems that distribute time and frequency tied to international standards.
+0x40 PTP Any PTP Instance synchronized to an IEEE 1588 PTP-based source of time external to the gPTP domain (see NOTE 2).
+0x50 NTP Any PTP Instance synchronized via the network time protocol (NTP) to servers that distribute time and frequency tied to international standards.
+0x60 HAND_SET Used in all cases for any PTP Instance whose time has been set by means of a human interface based on observation of an international standards source of time to within the claimed clock accuracy.
+All unused values are reserved.
+See 7.6.2.8 of IEEE Std 1588-2019 for a more detailed description of timeSource.
+The initialization value is selected as follows: a) If the timeSource (8.6.2.7 and Table 8-2) is known at the time of initialization, the value is derived from the table, else b) The value is set to A016 (INTERNAL_OSCILLATOR).
+8.6.2.8 numberPorts The numberPorts indicates the number of PTP Ports of the PTP Instance.
+0x90 OTHER Any source of time and/or frequency not covered by other values, or for which the source is not known.
+0xA0 INTERNAL_OSCILLATOR Any PTP Instance whose frequency is not based on atomic resonance nor calibrated against international standards for frequency, and whose time is based on a free-running oscillator with epoch determined in an arbitrary or unknown manner.
+NOTE 1—In this standard, this value refers to any GNSS or Regional Navigation Satellite System (i.e., not only GPS).
+NOTE 2—For example, a clock that implements both a gPTP domain and a separate IEEE 1588 (i.e., PTP) domain, and is synchronized by the separate IEEE 1588 domain, would have time source of PTP in the gPTP domain.
+Table 8-2—TimeSource enumeration  (continued) Value Time source Description
+
+
+<<Section10.7>>
+10.6.4.5.6 logGptpCapableMessageInterval (Integer8) The value is the logarithm to base 2 of the mean time interval, desired by the PTP Port that sends this TLV, between successive Signaling messages that contain the gPTP-capable TLV (see 10.6.4.4), sent by the PTP Port at the other end of the link.
+The format and allowed values of logGptpCapableMessageInterval are the same as the format and allowed values of initialLogGptpCapableMessageInterval (see 10.7.2.5).
+The values 127, 126, and –128 are interpreted as defined in Table 10-21.
+When a Signaling message that contains this TLV is sent by a PTP Port, the value of gPtpCapableReceiptTimeoutTimeInterval for that PTP Port (see 10.3.10.1) shall be set equal to pPtpCapableReceiptTimeout (see 10.7.3.3) multiplied by the value of the interval, in seconds, reflected by logGptpCapableMessageInterval.
+10.7 Protocol timing characterization 10.7.1 General This subclause specifies timing and timeout attributes for the media-independent sublayer state machines.
+10.7.2 Message transmission intervals 10.7.2.1 General interval specification The mean time interval between the sending of successive Announce messages, known as the announce interval, shall be as specified in 10.7.2.2.
+The mean time interval between the sending of successive time-synchronization event messages for full- duplex point-to-point, IEEE 802.11, and CSN links, and successive general messages containing time- synchronization information for IEEE 802.3 EPON links, is known as the sync interval.
+The sync interval shall be as specified in 10.7.2.3.
+The mean time interval between the sending of successive Signaling messages that contain the gPTP- capable TLV, known as the gPTP-capable message interval, shall be as specified in 10.7.2.5.
+Table 10-21—Interpretation of special values of logGptpCapableMessageInterval Value Instruction to PTP Instance that receives this TLV Instructs the PTP Port that receives this TLV to stop sending Signaling messages that contain the gPTP-capable TLV.
+Instructs the PTP Port that receives this TLV to set currentlogGptpCapableMessageInterval to the value of initialLogGptpCapableMessageInterval (see 10.7.2.4).
+–128 Instructs the PTP Port that receives this TLV not to change the mean time interval between successive Signaling messages that contain the gPTP-capable TLV.
+All values in the ranges [–127, –25] and [25, 125] are reserved.
+10.7.2.2 Announce message transmission interval The logarithm to the base 2 of the announce interval (in seconds) is carried in the logMessageInterval field of the Announce message.
+When useMgtSettableLogAnnounceInterval (see 14.8.14) is FALSE, the initialLogAnnounceInterval specifies the announce interval when the PTP Port is initialized and the value to which the announce interval is set when a message interval request TLV is received with the logAnnounceInterval field set to 126 (see the AnnounceIntervalSetting state machine in 10.3.17).
+The currentLogAnnounceInterval specifies the current value of the announce interval.
+The default value of initialLogAnnounceInterval is 0.
+Every PTP Port supports the value 127; the PTP Port does not send Announce messages when currentLogAnnounceInterval has this value (see 10.3.17).
+A PTP Port may support other values, except for the reserved values indicated in Table 10-17.
+A PTP Port ignores requests for unsupported values (see 10.3.17).
+The initialLogAnnounceInterval and currentLogAnnounceInterval are per-PTP Port attributes.
+When useMgtSettableLogAnnounceInterval is TRUE, currentLogAnnounceInterval is set equal to mgtSettableLogAnnounceInterval (see 14.8.15), and initialLogAnnounceInterval is ignored.
+Announce messages shall be transmitted such that the value of the arithmetic mean of the intervals, in seconds, between message transmissions is within ± 30% of 2currentLogAnnounceInterval.
+In addition, a PTP Port shall transmit Announce messages such that at least 90% of the inter-message intervals are within ± 30% of the value of 2currentLogAnnounceInterval.
+The interval between successive Announce messages should not exceed twice the value of 2portDS.logAnnounceInterval in order to prevent causing an announceReceiptTimeout event.
+The PortAnnounceTransmit state machine (see 10.3.16) is consistent with these requirements, i.e., the requirements here and the requirements of the PortAnnounceTransmit state machine can be met simultaneously.
+NOTE 1—A minimum number of inter-message intervals is necessary in order to verify that a PTP Port meets these requirements.
+The arithmetic mean is the sum of the inter-message interval samples divided by the number of samples.
+For more detailed discussion of statistical analyses, see Papoulis [B25].
+NOTE 2—If useMgtSettableLogAnnounceInterval is FALSE, the value of initialLogAnnounceInterval is the value of the mean time interval between successive Announce messages when the PTP Port is initialized.
+The value of the mean time interval between successive Announce messages can be changed, e.g., if the PTP Port receives a Signaling message that carries a message interval request TLV (see 10.6.4.3) and the current value is stored in currentLogAnnounceInterval.
+The value of the mean time interval between successive Announce messages can be reset to the initial value, e.g., by a message interval request TLV for which the value of the field logAnnounceInterval is 126 (see 10.6.4.3.8).
+NOTE 3—A PTP Port that requests (using a Signaling message that contains a message interval request TLV; see 10.6.4 and 10.3.17) that the PTP Port at the other end of the attached link set its currentLogAnnounceInterval to a specific value can determine if the request was honored by examining the logMessageInterval field of subsequent received Announce messages.
+10.7.2.3 Time-synchronization event message transmission interval The logarithm to the base 2 of the sync interval (in seconds) is carried in the logMessageInterval field of the time-synchronization messages.
+When useMgtSettableLogSyncInterval (see 14.8.19) is FALSE, the initialLogSyncInterval specifies the sync interval when the PTP Port is initialized and the value to which the sync interval is set when a message interval request TLV is received with the logTimeSyncInterval field set to 126 (see the SyncIntervalSetting state machine in 10.3.18).
+The default value is media-dependent; the value is specified in the respective media-dependent clauses.
+The initialLogSyncInterval is a per-PTP Port attribute.
+The currentLogSyncInterval specifies the current value of the sync interval and is a per-PTP Port attribute.
+When useMgtSettableLogSyncInterval is TRUE, currentLogSyncInterval is set equal to mgtSettableLogSyncInterval (see 14.8.20), and initialLogSyncInterval is ignored.
+When the value of syncLocked is FALSE, time-synchronization messages shall be transmitted such that the value of the arithmetic mean of the intervals, in seconds, between message transmissions is within ± 30% of 2currentLogSyncInterval.
+In addition, a PTP Port shall transmit time-synchronization messages such that at least 90% of the inter-message intervals are within ± 30% of the value of 2currentLogSyncInterval.
+The interval between successive time-synchronization messages should not exceed twice the value of 2portDS.logSyncInterval in order to prevent causing a syncReceiptTimeout event.
+The PortSyncSyncSend state machine (see 10.2.12) is consistent with these requirements, i.e., the requirements here and the requirements of the PortSyncSyncSend state machine can be met simultaneously.
+NOTE 1—A minimum number of inter-message intervals is necessary in order to verify that a PTP Port meets these requirements.
+The arithmetic mean is the sum of the inter-message interval samples divided by the number of samples.
+For more detailed discussion of statistical analyses, see Papoulis [B25].
+NOTE 2—If useMgtSettableLogSyncInterval is FALSE the value of initialLogSyncInterval is the value of the sync interval when the PTP Port is initialized.
+The value of the sync interval can be changed, e.g., if the PTP Port receives a Signaling message that carries a message interval request TLV (see 10.6.4.3) and the current value is stored in currentLogSyncInterval.
+The value of the sync interval can be reset to the initial value, e.g., by a message interval request TLV for which the value of the field logTimeSyncInterval is 126 (see 10.6.4.3.7).
+10.7.2.4 Interval for providing synchronization information by ClockMaster entity The clockMasterLogSyncInterval specifies the mean time interval between successive instants at which the ClockMaster entity provides time-synchronization information to the SiteSync entity.
+The value is less than or equal to the smallest currentLogSyncInterval (see 10.7.2.3) value for all the ports of the PTP Instance.
+The clockMasterLogSyncInterval is an internal, per PTP Instance variable.
+10.7.2.5 Interval for sending the gPTP-capable TLV Signaling message The logarithm to the base 2 of the gPTP-capable message interval (in seconds) is carried in the logGptpCapableMessageInterval field of the gPTP-capable TLV.
+The default value shall be 0.
+The range shall be –24 through 24.
+Other values in the range [–128, 127] shall be reserved.
+When useMgtSettableLogGptpCapableMessageInterval (see 14.8.14) is FALSE, the initialLogGptpCapableMessageInterval specifies the following: a) The mean gPTP-capable message interval when the PTP Port is initialized, and b) The value to which the gPTP-capable message interval is set when a gPTP-capable TLV is received with the logGptpCapableMessageInterval field set to (see the GptpCapableMessageIntervalSetting state machine in 10.4.3).
+The currentLogGptpCapableMessageInterval specifies the current value of the gPTP-capable message interval.
+Every PTP Port supports the value 127; the PTP Port does not send Signaling messages containing a gPTP-capable TLV when currentLogGptpCapableMessageInterval has this value (see 10.4.3).
+A PTP Port may support other values, except for the reserved values indicated in Table 10-21.
+A PTP Port shall ignore requests for unsupported values (see 10.4.3).
+The initialLogGptpCapableMessageInterval and currentLogGptpCapableMessageInterval are per-PTP Port attributes.
+When useMgtSettableLogGptpCapableMessageInterval is TRUE, currentLogGptpCapableMessageInterval is set equal to mgtSettableLogGptpCapableMessageInterval (see 14.8.15), and initialLogGptpCapableMessageInterval is ignored.
+NOTE 1—If useMgtSettableLogGptpCapableMessageInterval is FALSE, the value of initialLogGptpCapableMessageInterval is the value of the mean time interval between successive Signaling messages containing the gPTP-capable TLV when the PTP Port is initialized.
+The value of the mean time interval between successive Signaling messages containing the gPTP-capable TLV can be changed, e.g., if the PTP Port receives a Signaling message that carries a gPTP-capable TLV (see 10.6.4.4) and the current value is stored in currentLogGptpCapableMessageInterval.
+The value of the mean time interval between successive Signaling messages containing the gPTP-capable TLV can be reset to the initial value, e.g., by a Signaling message containing a gPTP- capable message interval request TLV for which the value of the field logGptpCapableMessageInterval is 126 (see 10.6.4.5.6).
+NOTE 2—A PTP Port that requests (using a Signaling message that contains a gPTP-capable message interval request TLV; see 10.6.4 and 10.6.4.5) that the PTP Port at the other end of the attached link set its currentLogGptpCapableMessageInterval to a specific value can determine if the request was honored by examining the logGptpCapableMessageInterval field of subsequent received Signaling messages containing the gPTP-capable TLV.
+NOTE 3—The GptpCapableTransmit state machine ensures that the times between transmission of successive Signaling messages, containing the gPTP-capable TLV, in seconds, are not smaller than 2currentLogGptpCapableMessaggeInterval.
+This is consistent with the manner in which Pdelay_Req messages are transmitted (see NOTE 3 of 11.5.2.2).
+10.7.3 Timeouts 10.7.3.1 syncReceiptTimeout The value of this attribute tells a slave port the number of sync intervals to wait without receiving synchronization information, before assuming that the master is no longer transmitting synchronization information and that the BMCA needs to be run, if appropriate.
+The condition of the slave port not receiving synchronization information for syncReceiptTimeout sync intervals is known as sync receipt timeout.
+The default value shall be 3.
+The syncReceiptTimeout is a per-PTP Port attribute.
+10.7.3.2 announceReceiptTimeout The value of this attribute tells a slave port the number of announce intervals to wait without receiving an Announce message, before assuming that the master is no longer transmitting Announce messages, and that the BMCA needs to be run, if appropriate.
+The condition of the slave port not receiving an Announce message for announceReceiptTimeout announce intervals is known as announce receipt timeout.
+The default value shall be 3.
+The announceReceiptTimeout is a per-PTP Port attribute.
+10.7.3.3 gPtpCapableReceiptTimeout The value of this attribute tells a PTP Port the number of gPTP-capable message intervals to wait without receiving from its neighbor a Signaling message containing a gPTP-capable TLV, before determining that its neighbor is no longer invoking gPTP.
+NOTE—A determination that its neighbor is no longer invoking gPTP will cause the PTP Port to set asCapable to FALSE.
+The default value shall be 9.
+The range shall be 1 through 255.
+
+
+<<AnnexB>>
+Annex B (normative) Performance requirements B.1 LocalClock requirements B.1.1 Frequency accuracy The fractional frequency offset of the LocalClock relative to the TAI frequency (see ISO 80000-3:2006 and Annex C) shall be within ± 100 ppm.
+B.1.2 Time measurement granularity The granularity with which the LocalClock measures time shall be less than or equal to 40/(1-0.0001) ns.
+B.1.3 Noise generation B.1.3.1 Jitter generation The jitter generation of the free-running LocalClock shall not exceed 2 ns peak-to-peak, when measured over a 60 s measurement interval using a band-pass filter that consists of the following low-pass and high- pass filters: a) High-pass filter: first-order characteristic (i.e., 0 dB gain peaking), 20 dB/decade roll-off, and 3 dB bandwidth (i.e., corner frequency) of 10 Hz b) Low-pass filter: maximally-flat (i.e., Butterworth) characteristic, 60 dB/decade roll-off, and 3 dB bandwidth equal to the Nyquist rate of the LocalClock entity (i.e., one-half the nominal frequency of the LocalClock entity) B.1.3.2 Wander generation Wander generation is specified using the Time Deviation (TDEV) parameter.
+The corresponding values of the Allan Deviation (ADEV) and PTP Deviation (PTPDEV) are given for information; the former is also useful in describing the wander generation of clocks and oscillators, and the latter is related to the offsetScaledLogVariance attribute (see 8.6.2.4).
+Information on ADEV and TDEV is contained in ITU-T G.810 [B21] and IEEE Std 1139TM-1999 [B9].
+Information on Allan Deviation and PTP Variance (PTP Deviation is the square root of PTP Variance) is contained in 7.6.3 of IEEE Std 1588-2019.
+TDEV, denoted x(), is estimated from a set of measurements, as shown in Equation (B-1).
+(B-1) where  is n0 = observation interval 0 is the sampling interval N is the total number of samples [(N–1)0 = measurement interval] y denotes the floor function, i.e., the greatest integer less than or equal to y xi is the measured phase (time) error at the ith sampling time [the units of xi and x() are the same] ADEV, denoted y(), is estimated from a set of measurements, as shown in Equation (B-2).
+(B-2) where the notation is the same as defined above for TDEV.
+PTPDEV, denoted PTP(), is estimated from a set of measurements, as shown in Equation (B-3).
+(B-3) where the notation is the same as defined above for TDEV.
+TDEV, ADEV, and PTPDEV are second-order statistics on the phase error.
+All three statistics are functions of second differences of the phase error.
+As a result, these statistics are not affected by a constant frequency offset.
+This behavior is desired, because these statistics are used here to constrain noise generation.
+x   6n2 N 3n – +   --------------------------------------- xi 2n + 2xi n + – xi +   i j = n j – +  j = N 3n – +  n  1 2 N 3---  = = y   2n20 2 N 2n –   ---------------------------------- xi 2n + 2xi n + – xi +  2 i = N 2n –  n  1 2 N – ------------  = = PTP   6 N 2n –   ----------------------- xi 2n + 2xi n + – xi +  2 i = N 2n –  n  1 2 N – ------------  = = TDEV for the LocalClock entity shall not exceed the mask of Table B-1 and Figure B-1, when measured using: a) A measurement interval that is at least 120 s (i.e., at least 12 times the longest observation interval), b) A low-pass filter with 3 dB bandwidth of 10 Hz, first-order characteristic, and 20 dB/decade roll-off, and c) A sampling interval 0 that does not exceed 1/30 s.
+Table B-1—Wander generation TDEV requirement for LocalClock entity TDEV limit Observation interval  No requirement  < 0.05 s 5.0 ns 0.05 10 s No requirement  > 10 s Figure B-1—Wander generation (TDEV) requirement for LocalClock entity Observation interval  (s) 0.01 0.1 TDEV (ns) 0.1 0.05 0.25 The ADEV limit that corresponds to the TDEV requirement of Table B-1 and Figure B-1 is shown in Table B-2 and Figure B-2, respectively.
+Table B-2—ADEV limit corresponding to wander generation requirement of Table B-1 ADEV limit Observation interval  No requirement  < 0.05 s 1.054  10–8 0.05 10 s No requirement  > 10 s Figure B-2—ADEV limit corresponding to wander generation requirement of Figure B-1 Observation interval W (s) 0.01 0.1 ADEV 1e-9 1e-8 1e-7 0.05 1.054e-8 The PTPDEV limit that corresponds to the TDEV requirement of Table B-1 and Figure B-1 is shown in Table B-3 and Figure B-3, respectively.
+Table B-3—PTPDEV limit corresponding to wander generation requirement of Table B-1 PTPDEV limit Observation interval  No requirement  < 0.05 s 6.08 ns 0.05 10 s No requirement  > 10 s Figure B-3—PTPDEV limit corresponding to wander generation requirement of Figure B-1 Observation interval  (s) 0.01 0.1 PTPDEV (ns) 0.1 0.05 0.304 60.8 B.2 PTP Instance requirements B.2.1 General In order to achieve the accuracy goals, certain constraints are placed on the responsiveness and accuracy of PTP Instances.
+B.2.2 Residence time The residence time (see 3.27) of a PTP Instance, measured relative to the TAI second (see 8.2), should be less than or equal to 10 ms.
+Any error in the measured frequency offset relative to the Grandmaster Clock (i.e., error in accumulated rateRatio) results in an error in the transported synchronized time that is equal to the frequency offset error multiplied by the residence time (see 7.3.3 and 11.1.3).
+B.2.3 Pdelay turnaround time The pdelay turnaround time is the duration of the interval between the receipt of a Pdelay_Req message by a port of a time-aware system, and the sending of the corresponding Pdelay_Resp message.
+The pdelay turnaround time of a time-aware system, measured relative to the TAI second (see 8.2), should be less than or equal to 10 ms.
+A nonzero pdelay turnaround time and any error in the measured frequency offset between the peer delay initiator and peer delay responder (i.e., error in neighborRateRatio) results in an error in the measured mean propagation delay.
+This in turn results in an error in the transported synchronized time (see 11.1.2 for more details).
+NOTE—While a larger value of pdelay turnaround time can result in worse time-synchronization performance, the peer delay protocol will still operate as long as the peer delay initiator receives Pdelay_Resp and Pdelay_Resp_Follow_Up within a time interval since sending Pdelay_Req that is less than the current Pdelay_Req message transmission interval (see 11.2.19.4 and 11.5.2.2).
+B.2.4 Measurement of rate ratio This standard requires the measurement of rate ratio or, equivalently, frequency offset, in several subclauses (see 10.2.10, 10.2.11, 11.2.19, 12.5.2, 16.4.2, and 16.4.3.2).
+The error inherent in any scheme used to measure rate ratio shall not exceed 0.1 ppm.
+NOTE—This requirement is consistent with a rate ratio measurement made by measuring the default Pdelay_Req message transmission interval (the nominal interval duration is 1 s; see 11.5.2.2) relative to the clocks whose rate ratio is desired, assuming the clocks meet the time measurement granularity requirement of B.1.2 (i.e., no worse than 40 ns).
+B.3 End-to-end time-synchronization performance Assuming that the requirements of this standard and of standards referenced for each medium are met, any two PTP Instances separated by six or fewer PTP Instances (i.e., seven or fewer hops) will be synchronized to within 1 microsecond peak-to-peak of each other during steady-state operation (i.e., each PTP Instance receives time-synchronization information every sync interval).
+B.4 End-to-end jitter and wander performance The requirements of this standard and standards referenced by this standard ensure that the synchronized time at a PTP Instance that is separated from the Grandmaster PTP Instance by six or fewer PTP Instances (i.e., seven or fewer hops) will, when filtered by a reference endpoint filter with rolloff of 20 dB/decade, gain peaking that does not exceed 0.1 dB, and bandwidth that does not exceed the value given in each entry of Table B-4, have maximum time interval error (MTIE) (see ITU-T G.810 [B21]) that does not exceed the MTIE for that entry of Table B-4, and jitter that does not exceed the peak-to-peak jitter of Table B-4 when measured through the corresponding high-pass jitter measurement filter given in Table B-4.
+NOTE—For example, the endpoint filter can be of the following form: where the xk are the unfiltered synchronized time values, the yk are the filtered synchronized time values, and the ak and bk are filter coefficients.
+The ak and bk are chosen such that the filter has desired bandwidth and gain peaking that does not exceed 0.1 dB.
+The preceding equation is a general infinite impulse response (IIR) digital filter.
+Simplified forms, e.g., a second order IIR filter obtained by setting n = 2, or a finite impulse response (FIR) filter obtained by setting the ak to zero are possible.
+Mask 1 of Table B-4 and Figure B-4 corresponds to consumer digital audio applications.
+Mask 2 of Table B-4 and Figure B-4 corresponds to professional digital audio applications.
+Mask 1 is derived from the requirements given in IEC 60958-3 [B6].
+Mask 2 is derived from the requirements given in IEC 60958-4 [B7], AES3-2009 [B1], and AES11-2009 [B2].
+Garner [B5] describes the methodology for deriving MTIE from the various jitter and synchronization requirements and presents the detailed derivations for masks 1 and 2.
+Table B-4—Maximum endpoint filter bandwidths needed to meet respective MTIE masks and peak-to-peak jitter limits Endpoint filter maximum bandwidth (Hz) Corresponding MTIE mask of Figure B-4 that is not exceeded Corresponding jitter high-pass measurement filter (Hz) Corresponding peak-to-peak jitter that is not exceeded (ns) Mask 2 (Figure B-4,Table B-6) 10.2 Mask 1 (Figure B-4,Table B-5) 11.1 yk a1yk – a2yk –  anyk n – b0xk b1xk –  bnxk n – + + + + + + + = Figure B-4—MTIE masks met for maximum endpoint filter bandwidths of Table B-4 Table B-5—Breakpoints for Mask 1 Observation interval S (s) MTIE (ns) 0.05  S < 0.0637 6954.8S 0.0637  S < 0.3183 0.3183  S  10000 50000S Table B-6—Breakpoints for Mask 2 Observation interval S (s) MTIE (ns) 0.05  S < 0.4069 0.4069  S < 10000 1000S 2EVHUYDWLRQ,QWHUYDOV H H H H H H H H 07,(QV H H H H H H H H H 0DVN 0DVN
+
+

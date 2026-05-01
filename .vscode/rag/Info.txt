@@ -1,0 +1,13 @@
+8021Qci_selected_chunks : 84
+8021Qbv_selected_chunks : 49
+8021AS_selected_chunks : 90
+8021CB_selected_chunks : 140
+8021Qbu_selected_chunks : 59
+21916-g20_chunks : 149
+EPSG301_chunks : 183
+ethercatsystem_chunks : 144
+IEC61508_selected_chunks : 67
+ISO13849_selected_chunks : 139
+OPC10000-14_chunks : 484
+PROFINET_chunks : 26
+PROFINET_chunks : 8
